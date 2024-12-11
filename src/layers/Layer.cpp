@@ -24,6 +24,7 @@
 #include "core/utils/Profiling.h"
 #include "layers/DrawArgs.h"
 #include "layers/contents/RasterizedContent.h"
+#include "tgfx/layers/record/LayerRecorder.h"
 #include "tgfx/core/Recorder.h"
 #include "tgfx/core/Surface.h"
 
@@ -37,6 +38,7 @@ bool Layer::DefaultAllowsEdgeAntialiasing() {
 
 void Layer::SetDefaultAllowsEdgeAntialiasing(bool value) {
   AllowsEdgeAntialiasing = value;
+  LayerRecorder::SetDefaultAllowsEdgeAntialiasing(value);
 }
 
 bool Layer::DefaultAllowsGroupOpacity() {
@@ -45,12 +47,14 @@ bool Layer::DefaultAllowsGroupOpacity() {
 
 void Layer::SetDefaultAllowsGroupOpacity(bool value) {
   AllowsGroupOpacity = value;
+  LayerRecorder::SetDefaultAllowsGroupOpacity(value);
 }
 
 std::shared_ptr<Layer> Layer::Make() {
   TRACE_EVENT_COLOR(TRACY_COLOR_YELLOW);
   auto layer = std::shared_ptr<Layer>(new Layer());
   layer->weakThis = layer;
+  LayerRecorder::MakeLayer(layer.get());
   return layer;
 }
 
@@ -77,6 +81,7 @@ void Layer::setAlpha(float value) {
   }
   _alpha = value;
   invalidate();
+  LayerRecorder::setAlpha(this, value);
 }
 
 void Layer::setBlendMode(BlendMode value) {
@@ -85,6 +90,7 @@ void Layer::setBlendMode(BlendMode value) {
   }
   _blendMode = value;
   invalidate();
+  LayerRecorder::setBlendMode(this, value);
 }
 
 void Layer::setPosition(const Point& value) {
@@ -94,6 +100,7 @@ void Layer::setPosition(const Point& value) {
   _matrix.setTranslateX(value.x);
   _matrix.setTranslateY(value.y);
   invalidate();
+  LayerRecorder::setPosition(this, value);
 }
 
 void Layer::setMatrix(const Matrix& value) {
@@ -102,6 +109,7 @@ void Layer::setMatrix(const Matrix& value) {
   }
   _matrix = value;
   invalidate();
+  LayerRecorder::setMatrix(this, value);
 }
 
 void Layer::setVisible(bool value) {
@@ -110,6 +118,7 @@ void Layer::setVisible(bool value) {
   }
   bitFields.visible = value;
   invalidate();
+  LayerRecorder::setVisible(this, value);
 }
 
 void Layer::setShouldRasterize(bool value) {
@@ -118,6 +127,7 @@ void Layer::setShouldRasterize(bool value) {
   }
   bitFields.shouldRasterize = value;
   invalidate();
+  LayerRecorder::setShouldRasterize(this, value);
 }
 
 void Layer::setRasterizationScale(float value) {
@@ -129,6 +139,7 @@ void Layer::setRasterizationScale(float value) {
   }
   _rasterizationScale = value;
   invalidate();
+  LayerRecorder::setRasterizationScale(this, value);
 }
 
 void Layer::setAllowsEdgeAntialiasing(bool value) {
@@ -137,6 +148,7 @@ void Layer::setAllowsEdgeAntialiasing(bool value) {
   }
   bitFields.allowsEdgeAntialiasing = value;
   invalidate();
+  LayerRecorder::setAllowsEdgeAntialiasing(this, value);
 }
 
 void Layer::setAllowsGroupOpacity(bool value) {
@@ -145,6 +157,7 @@ void Layer::setAllowsGroupOpacity(bool value) {
   }
   bitFields.allowsGroupOpacity = value;
   invalidate();
+  LayerRecorder::setAllowsGroupOpacity(this, value);
 }
 
 void Layer::setFilters(std::vector<std::shared_ptr<LayerFilter>> value) {
@@ -161,6 +174,7 @@ void Layer::setFilters(std::vector<std::shared_ptr<LayerFilter>> value) {
   }
   rasterizedContent = nullptr;
   invalidate();
+  LayerRecorder::setFilters(this, _filters);
 }
 
 void Layer::setMask(std::shared_ptr<Layer> value) {
@@ -176,6 +190,7 @@ void Layer::setMask(std::shared_ptr<Layer> value) {
     _mask->maskOwner = this;
   }
   invalidate();
+  LayerRecorder::setMask(this, _mask);
 }
 
 void Layer::setScrollRect(const Rect& rect) {
@@ -188,6 +203,7 @@ void Layer::setScrollRect(const Rect& rect) {
     _scrollRect = std::make_unique<Rect>(rect);
   }
   invalidate();
+  LayerRecorder::setScrollRect(this, rect);
 }
 
 bool Layer::addChild(std::shared_ptr<Layer> child) {
@@ -223,6 +239,7 @@ bool Layer::addChildAt(std::shared_ptr<Layer> child, int index) {
   child->_parent = this;
   child->onAttachToRoot(_root);
   invalidateChildren();
+  LayerRecorder::addChildAt(this, child, index);
   return true;
 }
 
@@ -254,6 +271,7 @@ void Layer::removeFromParent() {
     return;
   }
   _parent->removeChildAt(_parent->doGetChildIndex(this));
+  LayerRecorder::removeFromParent(this);
 }
 
 std::shared_ptr<Layer> Layer::removeChildAt(int index) {
@@ -266,6 +284,7 @@ std::shared_ptr<Layer> Layer::removeChildAt(int index) {
   child->onDetachFromRoot();
   _children.erase(_children.begin() + index);
   invalidateChildren();
+  LayerRecorder::removeChildAt(this, index);
   return child;
 }
 
@@ -283,6 +302,7 @@ void Layer::removeChildren(int beginIndex, int endIndex) {
   for (int i = endIndex; i >= beginIndex; --i) {
     removeChildAt(i);
   }
+  LayerRecorder::removeChildren(this, beginIndex, endIndex);
 }
 
 bool Layer::setChildIndex(std::shared_ptr<Layer> child, int index) {
@@ -300,6 +320,7 @@ bool Layer::setChildIndex(std::shared_ptr<Layer> child, int index) {
   _children.erase(_children.begin() + oldIndex);
   _children.insert(_children.begin() + index, child);
   invalidateChildren();
+  LayerRecorder::setChildIndex(this, child, index);
   return true;
 }
 
@@ -314,6 +335,7 @@ bool Layer::replaceChild(std::shared_ptr<Layer> oldChild, std::shared_ptr<Layer>
   }
   oldChild->removeFromParent();
   invalidateChildren();
+  LayerRecorder::replaceChild(this, oldChild, newChild);
   return true;
 }
 

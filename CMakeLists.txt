@@ -235,6 +235,8 @@ elseif (APPLE)
     list(APPEND TGFX_SHARED_LIBS ${Metal_LIBS})
 endif ()
 
+list(APPEND TGFX_INCLUDES third_party/json/include)
+
 file(GLOB_RECURSE EGL_PLATFORM_FILES src/gpu/opengl/egl/*.*)
 
 if (TGFX_USE_QT)

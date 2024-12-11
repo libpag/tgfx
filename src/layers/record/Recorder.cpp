@@ -16,36 +16,18 @@
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-#pragma once
-#include <memory>
-#include <vector>
-#include "record/Recordable.h"
+#include "tgfx/layers/record/Recorder.h"
 
 namespace tgfx {
-class Layer;
+std::vector<std::unique_ptr<Command>> Recorder::commands_;
 
-/**
- * A property of a layer that may change the content of the layer.
- */
-class LayerProperty : public Recordable{
- public:
-  virtual ~LayerProperty() = default;
+void Recorder::Replay(std::map<int, Recordable*> objMap) {
+}
 
- protected:
-  /**
-   *  Called when the property is invalidated. This method will notify the layer that the content
-   *  of the layer should be invalidated.
-   */
-  void invalidate();
+std::string Recorder::FlushCommands() {
+}
 
- private:
-  void attachToLayer(const Layer* layer);
-
-  void detachFromLayer(const Layer* layer);
-
-  std::vector<std::weak_ptr<Layer>> owners;
-
-  friend class Layer;
-};
-
+void Recorder::Record(std::unique_ptr<Command> command) {
+  commands_.push_back(command);
+}
 }  // namespace tgfx

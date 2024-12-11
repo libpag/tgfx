@@ -19,6 +19,7 @@
 #pragma once
 
 #include <memory>
+#include "record/Recordable.h"
 #include "tgfx/core/BlendMode.h"
 #include "tgfx/core/Canvas.h"
 #include "tgfx/core/ImageFilter.h"
@@ -39,7 +40,7 @@ class DrawArgs;
  * single thread. Some properties only take effect if the layer has a parent, such as alpha,
  * blendMode, position, matrix, visible, scrollRect, and mask.
  */
-class Layer {
+class Layer : public Recordable {
  public:
   /**
    * Returns the default value for the allowsEdgeAntialiasing property for new Layer instances. The

@@ -16,36 +16,14 @@
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-#pragma once
-#include <memory>
-#include <vector>
-#include "record/Recordable.h"
+#include "tgfx/layers/record/Recordable.h"
+#include <atomic>
+
+static std::atomic_uint32_t IDCount = {1};
 
 namespace tgfx {
-class Layer;
+Recordable::Recordable() {
+  _uuid = IDCount++;
 
-/**
- * A property of a layer that may change the content of the layer.
- */
-class LayerProperty : public Recordable{
- public:
-  virtual ~LayerProperty() = default;
-
- protected:
-  /**
-   *  Called when the property is invalidated. This method will notify the layer that the content
-   *  of the layer should be invalidated.
-   */
-  void invalidate();
-
- private:
-  void attachToLayer(const Layer* layer);
-
-  void detachFromLayer(const Layer* layer);
-
-  std::vector<std::weak_ptr<Layer>> owners;
-
-  friend class Layer;
-};
-
+}
 }  // namespace tgfx
