@@ -54,7 +54,7 @@ struct Command {
   }
   virtual ~Command() = default;
   virtual CommandType getType() const = 0;
-  virtual void execute(std::map<int, std::shared_ptr<Recordable>> objMap) = 0;
+  virtual void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) = 0;
   virtual nlohmann::json toJson() const = 0;
 };
 
@@ -68,7 +68,7 @@ struct CmdSetDefaultAllowsEdgeAntialiasing : Command {
     return CommandType::SetDefaultAllowsEdgeAntialiasing;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -82,7 +82,7 @@ struct CmdSetDefaultAllowsGroupOpacity : Command {
     return CommandType::SetDefaultAllowsGroupOpacity;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -96,7 +96,7 @@ struct CmdMakeLayer : Command {
     return CommandType::MakeLayer;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -111,7 +111,7 @@ struct CmdSetAlpha : Command {
     return CommandType::setAlpha;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -126,7 +126,7 @@ struct CmdSetBlendMode : Command {
     return CommandType::setBlendMode;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -141,7 +141,7 @@ struct CmdSetPosition : Command {
     return CommandType::setPosition;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -156,7 +156,7 @@ struct CmdSetMatrix : Command {
     return CommandType::setMatrix;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -171,7 +171,7 @@ struct CmdSetVisible : Command {
     return CommandType::setVisible;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -186,7 +186,7 @@ struct CmdSetShouldRasterize : Command {
     return CommandType::setShouldRasterize;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -201,7 +201,7 @@ struct CmdSetRasterizationScale : Command {
     return CommandType::setRasterizationScale;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -216,7 +216,7 @@ struct CmdSetAllowsEdgeAntialiasing : Command {
     return CommandType::setAllowsEdgeAntialiasing;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -231,7 +231,7 @@ struct CmdSetAllowsGroupOpacity : Command {
     return CommandType::setAllowsGroupOpacity;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -246,7 +246,7 @@ struct CmdSetFilters : Command {
     return CommandType::setFilters;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -261,7 +261,7 @@ struct CmdSetMask : Command {
     return CommandType::setMask;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -276,7 +276,7 @@ struct CmdSetScrollRect : Command {
     return CommandType::setScrollRect;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -292,7 +292,7 @@ struct CmdAddChildAt : Command {
     return CommandType::addChildAt;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -307,7 +307,7 @@ struct CmdRemoveChildAt : Command {
     return CommandType::removeChildAt;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -324,7 +324,7 @@ struct CmdRemoveChildren : Command {
     return CommandType::removeChildren;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -338,7 +338,7 @@ struct CmdRemoveFromParent : Command {
     return CommandType::removeFromParent;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -354,7 +354,7 @@ struct CmdSetChildIndex : Command {
     return CommandType::setChildIndex;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 
@@ -371,7 +371,7 @@ struct CmdReplaceChild : Command {
     return CommandType::replaceChild;
   }
 
-  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
 

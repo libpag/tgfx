@@ -26,8 +26,8 @@ namespace tgfx {
 struct Command;
 
 class Recorder {
-public:
-  static void Replay(std::string jsonStr, std::map<int, std::shared_ptr<Recordable>> objMap);
+ public:
+  static void Replay(std::string jsonStr, std::map<int, std::shared_ptr<Recordable>>& objMap);
   static std::string FlushCommands();
 
  private:
