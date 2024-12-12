@@ -55,10 +55,10 @@ Rect FontGlyphFace::getBounds(GlyphID glyphID) const {
 }
 
 bool FontGlyphFace::asFont(Font* font) const {
-  if (font != nullptr) {
-    *font = _font;
+  if (font == nullptr) {
+    return false;
   }
-
+  *font = _font;
   return true;
 }
 }  // namespace tgfx
