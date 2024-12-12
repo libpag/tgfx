@@ -34,8 +34,8 @@
 #define ENABLE_METHOD_LOGGING 1
 
 #if ENABLE_METHOD_LOGGING
-#define LOG_METHOD(message) std::cout << "ffjiefan-" << this->TypeToString() << ": " << message << std::endl
-#define LOG_METHOD_STATIC(type, message) std::cout << "ffjiefan-" << type << ": " << message << std::endl
+#define LOG_METHOD(message) std::cout << "[ffjiefan]" << this->TypeToString() << ": " << message << std::endl
+#define LOG_METHOD_STATIC(type, message) std::cout << "[ffjiefan]" << type << ": " << message << std::endl
 #else
 #define LOG_METHOD(message)
 #define LOG_METHOD_STATIC(type, message)
