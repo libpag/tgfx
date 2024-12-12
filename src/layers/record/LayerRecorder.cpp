@@ -1,6 +1,7 @@
 #include "tgfx/layers/record/LayerRecorder.h"
-#include <tgfx/layers/record/Recorder.h>
 #include <layers/record/Commands.h>
+#include <tgfx/layers/Layer.h>
+#include <tgfx/layers/record/Recorder.h>
 
 namespace tgfx {
 
@@ -14,6 +15,11 @@ void LayerRecorder::SetDefaultAllowsGroupOpacity(bool value) {
 
 void LayerRecorder::MakeLayer(Layer* layer) {
   Recorder::Record(std::make_unique<CmdMakeLayer>(layer->_uuid));
+}
+
+void LayerRecorder::setName(Layer* layer, const std::string& value) {
+  Recorder::Record(std::make_unique<CmdSetName>(layer->_uuid, value));
+
 }
 
 void LayerRecorder::setAlpha(Layer* layer, float value) {

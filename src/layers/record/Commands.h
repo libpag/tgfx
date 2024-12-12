@@ -28,6 +28,7 @@ enum class CommandType {
   SetDefaultAllowsEdgeAntialiasing,
   SetDefaultAllowsGroupOpacity,
   MakeLayer,
+  setName,
   setAlpha,
   setBlendMode,
   setPosition,
@@ -94,6 +95,21 @@ struct CmdMakeLayer : Command {
 
   CommandType getType() const override {
     return CommandType::MakeLayer;
+  }
+
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
+  nlohmann::json toJson() const override;
+};
+
+struct CmdSetName : Command {
+  int _id;
+  std::string _name;
+
+  CmdSetName(int id, const std::string& name) : _id(id), _name(name) {
+  }
+
+  CommandType getType() const override {
+    return CommandType::setName;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;

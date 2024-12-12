@@ -18,6 +18,7 @@
 
 #include "Commands.h"
 #include <tgfx/layers/Layer.h>
+#include <iostream>
 
 namespace tgfx {
 
@@ -45,6 +46,17 @@ void CmdMakeLayer::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
 
 nlohmann::json CmdMakeLayer::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}};
+}
+
+void CmdSetName::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
+  auto it = objMap.find(_id);
+  if (it != objMap.end()) {
+    static_cast<Layer*>(it->second.get())->setName(_name);
+  }
+}
+
+nlohmann::json CmdSetName::toJson() const {
+  return {{"type", static_cast<int>(getType())}, {"id", _id}, {"name", _name}};
 }
 
 void CmdSetAlpha::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
@@ -296,6 +308,11 @@ std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
       return std::make_unique<CmdSetDefaultAllowsGroupOpacity>(json.at("value").get<bool>());
     case CommandType::MakeLayer:
       return std::make_unique<CmdMakeLayer>(json.at("id").get<int>());
+    case CommandType::setName: {
+      auto name = json.at("name").get<std::string>();
+      std::cout << "json: " << json.dump(4) << "\n\n name  " << name << std::endl;
+      return std::make_unique<CmdSetName>(json.at("id").get<int>(), name);
+    }
     case CommandType::setAlpha:
       return std::make_unique<CmdSetAlpha>(json.at("id").get<int>(), json.at("alpha").get<float>());
     case CommandType::setBlendMode:

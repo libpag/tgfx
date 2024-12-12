@@ -19,6 +19,7 @@
 #pragma once
 
 #include <memory>
+#include "record/LayerRecorder.h"
 #include "record/Recordable.h"
 #include "tgfx/core/BlendMode.h"
 #include "tgfx/core/Canvas.h"
@@ -91,6 +92,7 @@ class Layer : public Recordable {
    */
   void setName(const std::string& value) {
     _name = value;
+    LayerRecorder::setName(this, value);
   }
 
   /**

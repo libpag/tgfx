@@ -17,16 +17,22 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-#include <tgfx/layers/Layer.h>
+#include <string>
 
 namespace tgfx {
+struct Rect;
+class LayerFilter;
+class Matrix;
+struct Point;
+enum class BlendMode;
+class Layer;
 class LayerRecorder {
  public:
-
  private:
   static void SetDefaultAllowsEdgeAntialiasing(bool value);
   static void SetDefaultAllowsGroupOpacity(bool value);
   static void MakeLayer(Layer* layer);
+  static void setName(Layer* layer, const std::string& value);
   static void setAlpha(Layer* layer, float value);
   static void setBlendMode(Layer* layer, BlendMode value);
   static void setPosition(Layer* layer, const Point& value);
