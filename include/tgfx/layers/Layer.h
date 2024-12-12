@@ -527,6 +527,7 @@ class Layer : public Recordable {
   Matrix getRelativeMatrix(const Layer* targetCoordinateSpace) const;
 
   bool hasValidMask() const;
+  std::string TypeToString() const;
 
   struct {
     bool contentDirty : 1;   // need to update content
