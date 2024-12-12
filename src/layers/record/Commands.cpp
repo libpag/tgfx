@@ -50,9 +50,15 @@ nlohmann::json CmdMakeLayer::toJson() const {
 
 void CmdSetName::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->setName(_name);
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->setName(_name);
 }
 
 nlohmann::json CmdSetName::toJson() const {
@@ -61,9 +67,15 @@ nlohmann::json CmdSetName::toJson() const {
 
 void CmdSetAlpha::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->setAlpha(_alpha);
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->setAlpha(_alpha);
 }
 
 nlohmann::json CmdSetAlpha::toJson() const {
@@ -72,9 +84,15 @@ nlohmann::json CmdSetAlpha::toJson() const {
 
 void CmdSetBlendMode::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->setBlendMode(_blendMode);
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->setBlendMode(_blendMode);
 }
 
 nlohmann::json CmdSetBlendMode::toJson() const {
@@ -85,9 +103,15 @@ nlohmann::json CmdSetBlendMode::toJson() const {
 
 void CmdSetPosition::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->setPosition(_position);
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->setPosition(_position);
 }
 
 nlohmann::json CmdSetPosition::toJson() const {
@@ -107,16 +131,28 @@ nlohmann::json CmdSetMatrix::toJson() const {
 
 void CmdSetMatrix::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->setMatrix(_matrix);
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->setMatrix(_matrix);
 }
 
 void CmdSetVisible::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->setVisible(_visible);
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->setVisible(_visible);
 }
 
 nlohmann::json CmdSetVisible::toJson() const {
@@ -125,9 +161,15 @@ nlohmann::json CmdSetVisible::toJson() const {
 
 void CmdSetShouldRasterize::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->setShouldRasterize(_shouldRasterize);
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->setShouldRasterize(_shouldRasterize);
 }
 
 nlohmann::json CmdSetShouldRasterize::toJson() const {
@@ -138,9 +180,15 @@ nlohmann::json CmdSetShouldRasterize::toJson() const {
 
 void CmdSetRasterizationScale::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->setRasterizationScale(_scale);
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->setRasterizationScale(_scale);
 }
 
 nlohmann::json CmdSetRasterizationScale::toJson() const {
@@ -149,9 +197,15 @@ nlohmann::json CmdSetRasterizationScale::toJson() const {
 
 void CmdSetAllowsEdgeAntialiasing::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->setAllowsEdgeAntialiasing(_allows);
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->setAllowsEdgeAntialiasing(_allows);
 }
 
 nlohmann::json CmdSetAllowsEdgeAntialiasing::toJson() const {
@@ -160,9 +214,15 @@ nlohmann::json CmdSetAllowsEdgeAntialiasing::toJson() const {
 
 void CmdSetAllowsGroupOpacity::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->setAllowsGroupOpacity(_allows);
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->setAllowsGroupOpacity(_allows);
 }
 
 nlohmann::json CmdSetAllowsGroupOpacity::toJson() const {
@@ -171,16 +231,22 @@ nlohmann::json CmdSetAllowsGroupOpacity::toJson() const {
 
 void CmdSetFilters::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    std::vector<std::shared_ptr<LayerFilter>> filters;
-    for (int filter_id : _filter_ids) {
-      auto filterIt = objMap.find(filter_id);
-      if (filterIt != objMap.end()) {
-        filters.push_back(std::static_pointer_cast<LayerFilter>(filterIt->second));
-      }
-    }
-    static_cast<Layer*>(it->second.get())->setFilters(filters);
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::vector<std::shared_ptr<LayerFilter>> filters;
+  for (int filter_id : _filter_ids) {
+    auto filterIt = objMap.find(filter_id);
+    if (filterIt != objMap.end()) {
+      filters.push_back(std::static_pointer_cast<LayerFilter>(filterIt->second));
+    }
+  }
+  std::static_pointer_cast<Layer>(it->second)->setFilters(filters);
 }
 
 nlohmann::json CmdSetFilters::toJson() const {
@@ -189,10 +255,24 @@ nlohmann::json CmdSetFilters::toJson() const {
 
 void CmdSetMask::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  auto maskIt = objMap.find(_mask_id);
-  if (it != objMap.end() && maskIt != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->setMask(std::static_pointer_cast<Layer>(maskIt->second));
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  auto maskIt = objMap.find(_mask_id);
+  if (maskIt == objMap.end()) {
+    std::cerr << "异常: objMap[" << _mask_id << "] 未找到。" << std::endl;
+    return;
+  }
+  if (!maskIt->second) {
+    std::cerr << "异常: objMap[" << _mask_id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->setMask(std::static_pointer_cast<Layer>(maskIt->second));
 }
 
 nlohmann::json CmdSetMask::toJson() const {
@@ -201,9 +281,15 @@ nlohmann::json CmdSetMask::toJson() const {
 
 void CmdSetScrollRect::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->setScrollRect(_rect);
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->setScrollRect(_rect);
 }
 
 nlohmann::json CmdSetScrollRect::toJson() const {
@@ -214,11 +300,25 @@ nlohmann::json CmdSetScrollRect::toJson() const {
 
 void CmdAddChildAt::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto parentIt = objMap.find(_id);
-  auto childIt = objMap.find(_child_id);
-  if (parentIt != objMap.end() && childIt != objMap.end()) {
-    static_cast<Layer*>(parentIt->second.get())
-        ->addChildAt(std::static_pointer_cast<Layer>(childIt->second), _index);
+  if (parentIt == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!parentIt->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  auto childIt = objMap.find(_child_id);
+  if (childIt == objMap.end()) {
+    std::cerr << "异常: objMap[" << _child_id << "] 未找到。" << std::endl;
+    return;
+  }
+  if (!childIt->second) {
+    std::cerr << "异常: objMap[" << _child_id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(parentIt->second)
+      ->addChildAt(std::static_pointer_cast<Layer>(childIt->second), _index);
 }
 
 nlohmann::json CmdAddChildAt::toJson() const {
@@ -230,9 +330,15 @@ nlohmann::json CmdAddChildAt::toJson() const {
 
 void CmdRemoveChildAt::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->removeChildAt(_index);
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->removeChildAt(_index);
 }
 
 nlohmann::json CmdRemoveChildAt::toJson() const {
@@ -241,9 +347,15 @@ nlohmann::json CmdRemoveChildAt::toJson() const {
 
 void CmdRemoveChildren::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->removeChildren(_beginIndex, _endIndex);
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->removeChildren(_beginIndex, _endIndex);
 }
 
 nlohmann::json CmdRemoveChildren::toJson() const {
@@ -255,9 +367,15 @@ nlohmann::json CmdRemoveChildren::toJson() const {
 
 void CmdRemoveFromParent::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    static_cast<Layer*>(it->second.get())->removeFromParent();
+  if (it == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!it->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(it->second)->removeFromParent();
 }
 
 nlohmann::json CmdRemoveFromParent::toJson() const {
@@ -266,12 +384,25 @@ nlohmann::json CmdRemoveFromParent::toJson() const {
 
 void CmdSetChildIndex::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto parentIt = objMap.find(_id);
-  auto childIt = objMap.find(_child_id);
-  if (parentIt != objMap.end() && childIt != objMap.end()) {
-
-    static_cast<Layer*>(parentIt->second.get())
-        ->setChildIndex(std::static_pointer_cast<Layer>(childIt->second), _index);
+  if (parentIt == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!parentIt->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  auto childIt = objMap.find(_child_id);
+  if (childIt == objMap.end()) {
+    std::cerr << "异常: objMap[" << _child_id << "] 未找到。" << std::endl;
+    return;
+  }
+  if (!childIt->second) {
+    std::cerr << "异常: objMap[" << _child_id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(parentIt->second)
+      ->setChildIndex(std::static_pointer_cast<Layer>(childIt->second), _index);
 }
 
 nlohmann::json CmdSetChildIndex::toJson() const {
@@ -283,13 +414,35 @@ nlohmann::json CmdSetChildIndex::toJson() const {
 
 void CmdReplaceChild::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto parentIt = objMap.find(_id);
-  auto oldChildIt = objMap.find(_oldChild_id);
-  auto newChildIt = objMap.find(_newChild_id);
-  if (parentIt != objMap.end() && oldChildIt != objMap.end() && newChildIt != objMap.end()) {
-    static_cast<Layer*>(parentIt->second.get())
-        ->replaceChild(std::static_pointer_cast<Layer>(oldChildIt->second),
-                       std::static_pointer_cast<Layer>(newChildIt->second));
+  if (parentIt == objMap.end()) {
+    std::cerr << "异常: objMap[" << _id << "] 未找到。" << std::endl;
+    return;
   }
+  if (!parentIt->second) {
+    std::cerr << "异常: objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  auto oldChildIt = objMap.find(_oldChild_id);
+  if (oldChildIt == objMap.end()) {
+    std::cerr << "异常: objMap[" << _oldChild_id << "] 未找到。" << std::endl;
+    return;
+  }
+  if (!oldChildIt->second) {
+    std::cerr << "异常: objMap[" << _oldChild_id << "] 是空指针。" << std::endl;
+    return;
+  }
+  auto newChildIt = objMap.find(_newChild_id);
+  if (newChildIt == objMap.end()) {
+    std::cerr << "异常: objMap[" << _newChild_id << "] 未找到。" << std::endl;
+    return;
+  }
+  if (!newChildIt->second) {
+    std::cerr << "异常: objMap[" << _newChild_id << "] 是空指针。" << std::endl;
+    return;
+  }
+  std::static_pointer_cast<Layer>(parentIt->second)
+      ->replaceChild(std::static_pointer_cast<Layer>(oldChildIt->second),
+                     std::static_pointer_cast<Layer>(newChildIt->second));
 }
 
 nlohmann::json CmdReplaceChild::toJson() const {
