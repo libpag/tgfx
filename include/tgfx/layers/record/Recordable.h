@@ -24,8 +24,9 @@ class Recordable {
  public:
   Recordable();
 
- protected:
   int _uuid;
+
+ protected:
 
   friend class Recorder;
   friend class LayerRecorder;

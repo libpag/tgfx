@@ -18,6 +18,7 @@
 
 #pragma once
 #include <map>
+#include <string>
 #include "Recordable.h"
 
 namespace tgfx {
@@ -26,7 +27,7 @@ struct Command;
 
 class Recorder {
 public:
-  static void Replay(std::map<int, Recordable*> objMap);
+  static void Replay(std::string jsonStr, std::map<int, Recordable*> objMap);
   static std::string FlushCommands();
 
  private:

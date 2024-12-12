@@ -17,17 +17,17 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "tgfx/layers/record/Recorder.h"
+#include "layers/record/Commands.h"
 
 namespace tgfx {
 std::vector<std::unique_ptr<Command>> Recorder::commands_;
 
-void Recorder::Replay(std::map<int, Recordable*> objMap) {
-}
-
 std::string Recorder::FlushCommands() {
+  return "";
 }
 
 void Recorder::Record(std::unique_ptr<Command> command) {
-  commands_.push_back(command);
+  commands_.push_back(std::move(command));
+
 }
 }  // namespace tgfx

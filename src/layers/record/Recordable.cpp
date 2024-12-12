@@ -19,7 +19,7 @@
 #include "tgfx/layers/record/Recordable.h"
 #include <atomic>
 
-static std::atomic_uint32_t IDCount = {1};
+static std::atomic_int32_t IDCount = {1};
 
 namespace tgfx {
 Recordable::Recordable() {
