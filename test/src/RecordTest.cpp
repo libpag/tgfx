@@ -44,7 +44,14 @@ TGFX_TEST(RecordTest, RecordLayer) {
   layer->setAlpha(0.5f);
   layer->setBlendMode(BlendMode::Multiply);
   layer->setPosition(Point{100.0f, 200.0f});
+  // layer 设置position后，应该是下面的值
+  ASSERT_EQ(layer->position().x, 100.0f);
+  ASSERT_EQ(layer->position().y, 200.0f);
   layer->setMatrix(Matrix::MakeScale(1.5f, 1.5f));  // 设置 matrix
+  // 继续设置matrix后，position会被覆盖掉，所以是0了
+  ASSERT_EQ(layer->position().x, 0);
+  ASSERT_EQ(layer->position().y, 0);
+
   layer->setRasterizationScale(2.0f);               // 设置 rasterizationScale
   layer->setVisible(true);
   layer->setShouldRasterize(true);
@@ -81,8 +88,10 @@ TGFX_TEST(RecordTest, RecordLayer) {
   ASSERT_NE(castedReplayLayer, nullptr);
   ASSERT_FLOAT_EQ(castedReplayLayer->alpha(), 0.5f);
   ASSERT_EQ(castedReplayLayer->blendMode(), BlendMode::Multiply);
-  ASSERT_EQ(castedReplayLayer->position().x, 100.0f);
-  ASSERT_EQ(castedReplayLayer->position().y, 200.0f);
+
+  // 这里同时还原设置了position和matrix，所以还原后的position是0
+  ASSERT_EQ(castedReplayLayer->position().x, 0.0f);
+  ASSERT_EQ(castedReplayLayer->position().y, 0.0f);
   ASSERT_EQ(castedReplayLayer->matrix(), Matrix::MakeScale(1.5f, 1.5f));  // 验证 matrix
   ASSERT_FLOAT_EQ(castedReplayLayer->rasterizationScale(), 2.0f);         // 验证 rasterizationScale
   ASSERT_TRUE(castedReplayLayer->visible());
