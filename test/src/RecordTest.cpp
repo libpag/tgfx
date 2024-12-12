@@ -52,7 +52,7 @@ TGFX_TEST(RecordTest, RecordLayer) {
   ASSERT_EQ(layer->position().x, 0);
   ASSERT_EQ(layer->position().y, 0);
 
-  layer->setRasterizationScale(2.0f);               // 设置 rasterizationScale
+  layer->setRasterizationScale(2.0f);  // 设置 rasterizationScale
   layer->setVisible(true);
   layer->setShouldRasterize(true);
 
@@ -75,7 +75,31 @@ TGFX_TEST(RecordTest, RecordLayer) {
   Rect scrollRect = Rect::MakeLTRB(50.0f, 50.0f, 150.0f, 150.0f);
   layer->setScrollRect(scrollRect);
 
-  // ------- 命令序列化 --------
+  // ------- 子层管理 --------
+  auto childLayer1 = Layer::Make();
+  childLayer1->setName("ChildLayer1");
+  // 设置 ChildLayer1 的属性
+  childLayer1->setAlpha(0.8f);
+  childLayer1->setBlendMode(BlendMode::Screen);
+  childLayer1->setVisible(false);
+  childLayer1->setMatrix(Matrix::MakeTrans(10.0f, 20.0f));
+
+  auto childLayer2 = Layer::Make();
+  childLayer2->setName("ChildLayer2");
+  // 设置 ChildLayer2 的属性
+  childLayer2->setAlpha(0.6f);
+  childLayer2->setBlendMode(BlendMode::Overlay);
+  childLayer2->setVisible(true);
+  childLayer2->setMatrix(Matrix::MakeRotate(45.0f));
+
+  // 添加子层
+  ASSERT_TRUE(layer->addChild(childLayer1));
+  ASSERT_TRUE(layer->addChildAt(childLayer2, 0));
+  ASSERT_EQ(layer->children().size(), static_cast<size_t>(2));
+  ASSERT_EQ(layer->children()[0]->name(), "ChildLayer2");
+  ASSERT_EQ(layer->children()[1]->name(), "ChildLayer1");
+
+  // ------- ���令序列化 --------
   auto jsonStr = Recorder::FlushCommands();
   std::cout << jsonStr << std::endl;
   int rootUuid = layer->_uuid;
@@ -97,13 +121,13 @@ TGFX_TEST(RecordTest, RecordLayer) {
   ASSERT_TRUE(castedReplayLayer->visible());
   ASSERT_TRUE(castedReplayLayer->shouldRasterize());
 
-  // 验证额外属性
+  // 验证额��属性
   ASSERT_EQ(castedReplayLayer->name(), "TestLayer");         // 验证 name
   ASSERT_TRUE(castedReplayLayer->allowsEdgeAntialiasing());  // 验证 allowsEdgeAntialiasing
   ASSERT_TRUE(castedReplayLayer->allowsGroupOpacity());      // 验证 allowsGroupOpacity
 
   // 验证 filters
-  // ASSERT_EQ(castedReplayLayer->filters().size(), 2);
+  // ASSERT_EQ(castedReplayLayer->filters().size(), static_cast<size_t>(2));
   // ASSERT_EQ(castedReplayLayer->filters()[0]->type(), LayerFilterType::Blend);
   // ASSERT_EQ(castedReplayLayer->filters()[1]->type(), LayerFilterType::Blur);
 
@@ -113,6 +137,31 @@ TGFX_TEST(RecordTest, RecordLayer) {
 
   // 验证 scrollRect
   ASSERT_EQ(castedReplayLayer->scrollRect(), scrollRect);
+
+  // ------- 验证子层 --------
+  ASSERT_EQ(castedReplayLayer->children().size(), static_cast<size_t>(2));
+  ASSERT_EQ(castedReplayLayer->children()[0]->name(), "ChildLayer2");
+  ASSERT_EQ(castedReplayLayer->children()[1]->name(), "ChildLayer1");
+
+  // ------- 验证子层的进一步属性 --------
+  ASSERT_FLOAT_EQ(castedReplayLayer->children()[0]->alpha(), 0.6f);  // 验证 ChildLayer2 的 alpha
+  ASSERT_EQ(castedReplayLayer->children()[0]->blendMode(),
+            BlendMode::Overlay);                             // 验证 ChildLayer2 的 blendMode
+  ASSERT_TRUE(castedReplayLayer->children()[0]->visible());  // 验证 ChildLayer2 的 visible
+  ASSERT_EQ(castedReplayLayer->children()[0]->matrix(),
+            Matrix::MakeRotate(45.0f));  // 验证 ChildLayer2 的 matrix
+
+  ASSERT_FLOAT_EQ(castedReplayLayer->children()[1]->alpha(), 0.8f);  // 验证 ChildLayer1 的 alpha
+  ASSERT_EQ(castedReplayLayer->children()[1]->blendMode(),
+            BlendMode::Screen);                               // 验证 ChildLayer1 的 blendMode
+  ASSERT_FALSE(castedReplayLayer->children()[1]->visible());  // 验证 ChildLayer1 的 visible
+  ASSERT_EQ(castedReplayLayer->children()[1]->matrix(),
+            Matrix::MakeTrans(10.0f, 20.0f));  // 验证 ChildLayer1 的 matrix
+
+  // 如果子层设置了其他属性，可以继续添加相应的断言
+  // 例如，如果设置了 position，可以验证 position 是否正确
+  // ASSERT_EQ(castedReplayLayer->children()[0]->position().x, expected_x);
+  // ASSERT_EQ(castedReplayLayer->children()[0]->position().y, expected_y);
   
   // 检查是否有遗漏的接口
   // 如果设置了其他属性，如 additional properties, 应进行验证
