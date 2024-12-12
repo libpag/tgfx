@@ -28,6 +28,8 @@ std::string Recorder::FlushCommands() {
 
 void Recorder::Record(std::unique_ptr<Command> command) {
   commands_.push_back(std::move(command));
+}
 
+void Recorder::Replay(std::string , std::map<int, std::shared_ptr<Recordable>> ) {
 }
 }  // namespace tgfx

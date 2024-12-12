@@ -53,7 +53,7 @@ struct Command {
   }
   virtual ~Command() = default;
   virtual CommandType getType() const = 0;
-  virtual void execute(std::map<int, Recordable*> objMap) = 0;
+  virtual void execute(std::map<int, std::shared_ptr<Recordable>> objMap) = 0;
 };
 
 struct CmdSetDefaultAllowsEdgeAntialiasing : Command {
@@ -66,7 +66,7 @@ struct CmdSetDefaultAllowsEdgeAntialiasing : Command {
     return CommandType::SetDefaultAllowsEdgeAntialiasing;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdSetDefaultAllowsGroupOpacity : Command {
@@ -79,7 +79,7 @@ struct CmdSetDefaultAllowsGroupOpacity : Command {
     return CommandType::SetDefaultAllowsGroupOpacity;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdMakeLayer : Command {
@@ -92,7 +92,7 @@ struct CmdMakeLayer : Command {
     return CommandType::MakeLayer;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdSetAlpha : Command {
@@ -106,7 +106,7 @@ struct CmdSetAlpha : Command {
     return CommandType::setAlpha;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdSetBlendMode : Command {
@@ -120,7 +120,7 @@ struct CmdSetBlendMode : Command {
     return CommandType::setBlendMode;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdSetPosition : Command {
@@ -134,7 +134,7 @@ struct CmdSetPosition : Command {
     return CommandType::setPosition;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdSetMatrix : Command {
@@ -148,7 +148,7 @@ struct CmdSetMatrix : Command {
     return CommandType::setMatrix;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdSetVisible : Command {
@@ -162,7 +162,7 @@ struct CmdSetVisible : Command {
     return CommandType::setVisible;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdSetShouldRasterize : Command {
@@ -176,7 +176,7 @@ struct CmdSetShouldRasterize : Command {
     return CommandType::setShouldRasterize;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdSetRasterizationScale : Command {
@@ -190,7 +190,7 @@ struct CmdSetRasterizationScale : Command {
     return CommandType::setRasterizationScale;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdSetAllowsEdgeAntialiasing : Command {
@@ -204,7 +204,7 @@ struct CmdSetAllowsEdgeAntialiasing : Command {
     return CommandType::setAllowsEdgeAntialiasing;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdSetAllowsGroupOpacity : Command {
@@ -218,7 +218,7 @@ struct CmdSetAllowsGroupOpacity : Command {
     return CommandType::setAllowsGroupOpacity;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdSetFilters : Command {
@@ -232,7 +232,7 @@ struct CmdSetFilters : Command {
     return CommandType::setFilters;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdSetMask : Command {
@@ -246,7 +246,7 @@ struct CmdSetMask : Command {
     return CommandType::setMask;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdSetScrollRect : Command {
@@ -260,7 +260,7 @@ struct CmdSetScrollRect : Command {
     return CommandType::setScrollRect;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdAddChildAt : Command {
@@ -275,7 +275,7 @@ struct CmdAddChildAt : Command {
     return CommandType::addChildAt;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdRemoveChildAt : Command {
@@ -289,7 +289,7 @@ struct CmdRemoveChildAt : Command {
     return CommandType::removeChildAt;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdRemoveChildren : Command {
@@ -305,7 +305,7 @@ struct CmdRemoveChildren : Command {
     return CommandType::removeChildren;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdRemoveFromParent : Command {
@@ -318,7 +318,7 @@ struct CmdRemoveFromParent : Command {
     return CommandType::removeFromParent;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdSetChildIndex : Command {
@@ -333,7 +333,7 @@ struct CmdSetChildIndex : Command {
     return CommandType::setChildIndex;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 struct CmdReplaceChild : Command {
@@ -349,7 +349,7 @@ struct CmdReplaceChild : Command {
     return CommandType::replaceChild;
   }
 
-  void execute(std::map<int, Recordable*> objMap) override;
+  void execute(std::map<int, std::shared_ptr<Recordable>> objMap) override;
 };
 
 }  // namespace tgfx
