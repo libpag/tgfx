@@ -19,7 +19,6 @@ void LayerRecorder::MakeLayer(Layer* layer) {
 
 void LayerRecorder::setName(Layer* layer, const std::string& value) {
   Recorder::Record(std::make_unique<CmdSetName>(layer->_uuid, value));
-
 }
 
 void LayerRecorder::setAlpha(Layer* layer, float value) {
