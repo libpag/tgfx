@@ -17,16 +17,20 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "TGFXWindow.h"
-#include <filesystem>
-#if WINVER >= 0x0603  // Windows 8.1
 #include <shellscalingapi.h>
-#endif
+#include <filesystem>
+#include <random>
 
 namespace hello2d {
+
+constexpr int kRectCount = 500;
+
 static constexpr LPCWSTR ClassName = L"TGFXWindow";
 
 TGFXWindow::TGFXWindow() {
   createAppHost();
+
+  fAnimateEnabled = true;
 }
 
 TGFXWindow::~TGFXWindow() {
@@ -37,8 +41,8 @@ bool TGFXWindow::open() {
   destroy();
   WNDCLASS windowClass = RegisterWindowClass();
   auto pixelRatio = getPixelRatio();
-  int initWidth = static_cast<int>(pixelRatio * 800);
-  int initHeight = static_cast<int>(pixelRatio * 600);
+  int initWidth = static_cast<int>(pixelRatio * 1024);
+  int initHeight = static_cast<int>(pixelRatio * 720);
   windowHandle =
       CreateWindowEx(WS_EX_APPWINDOW, windowClass.lpszClassName, L"Hello2D", WS_OVERLAPPEDWINDOW, 0,
                      0, initWidth, initHeight, nullptr, nullptr, windowClass.hInstance, this);
@@ -48,6 +52,10 @@ bool TGFXWindow::open() {
   }
   SetWindowLongPtr(windowHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
   centerAndShow();
+
+  attach();
+  initRects(kRectCount);
+
   return true;
 }
 
@@ -92,8 +100,8 @@ LRESULT TGFXWindow::handleMessage(HWND hwnd, UINT message, WPARAM wparam, LPARAM
       break;
     }
     case WM_LBUTTONDOWN:
-      lastDrawIndex++;
-      ::InvalidateRect(windowHandle, nullptr, TRUE);
+      //lastDrawIndex++;
+      //::InvalidateRect(windowHandle, nullptr, TRUE);
       break;
     default:
       result = DefWindowProc(windowHandle, message, wparam, lparam);
@@ -104,6 +112,8 @@ LRESULT TGFXWindow::handleMessage(HWND hwnd, UINT message, WPARAM wparam, LPARAM
 
 void TGFXWindow::destroy() {
   if (windowHandle) {
+    detach();
+
     DestroyWindow(windowHandle);
     windowHandle = nullptr;
     UnregisterClass(ClassName, nullptr);
@@ -198,47 +208,167 @@ void TGFXWindow::createAppHost() {
   appHost->addTypeface("emoji", typeface);
 }
 
-void TGFXWindow::draw() {
+void TGFXWindow::setTitle(const char* title) const {
+  SetWindowTextA(windowHandle, title);
+}
+
+bool TGFXWindow::attach() {
   if (!tgfxWindow) {
     tgfxWindow = tgfx::EGLWindow::MakeFrom(windowHandle);
   }
   if (tgfxWindow == nullptr) {
+    return false;
+  }
+
+  RECT rect;
+  GetClientRect(windowHandle, &rect);
+  fWidth = static_cast<int>(rect.right - rect.left);
+  fHeight = static_cast<int>(rect.bottom - rect.top);
+  auto pixelRatio = getPixelRatio();
+  auto sizeChanged = appHost->updateScreen(fWidth, fHeight, pixelRatio);
+  if (sizeChanged) {
+    tgfxWindow->invalidSize();
+  }
+
+  fDevice = tgfxWindow->getDevice();
+  if (fDevice == nullptr) {
+    return false;
+  }
+  fContext = fDevice->lockContext();
+  if (fContext == nullptr) {
+    return false;
+  }
+
+  return true;
+}
+
+bool TGFXWindow::detach() {
+  if (!fDevice) return false;
+  fDevice->unlock();
+  return true;
+}
+
+static int frames = 0;
+static long long startMs = 0;
+
+void TGFXWindow::draw() {
+  auto surface = tgfxWindow->getSurface(fContext);
+  if (surface == nullptr) {
+    //fDevice->unlock();
     return;
   }
+
+  auto canvas = surface->getCanvas();
+  canvas->clear();
+  canvas->save();
+
+  drawRects(canvas);
+
+  //auto numDrawers = drawers::Drawer::kRectCount() - 1;
+  //auto index = (lastDrawIndex % numDrawers) + 1;
+  //auto drawer = drawers::Drawer::GetByName("GridBackground");
+  //drawer->draw(canvas, appHost.get());
+  //drawer = drawers::Drawer::GetByIndex(index);
+  //drawer->draw(canvas, appHost.get());
+
+  canvas->restore();
+  fContext->flushAndSubmit();
+  tgfxWindow->present(fContext);
+
+  if (fAnimateEnabled) {
+    auto now = std::chrono::system_clock::now();
+    auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+    auto ms = now_ms.time_since_epoch().count();
+
+    if (frames <= 0) startMs = ms;
+    ++frames;
+
+    auto sec = (ms - startMs) / 1000;
+    if (sec >= 1) {
+      int fps = std::round(frames / sec);
+      std::string str = "Count :" + std::to_string(kRectCount) + ", MS : " + std::to_string(ms) +
+                        ", FPS : " + std::to_string(fps);
+      setTitle(str.c_str());
+
+      frames = 0;
+      startMs = ms;
+    }
+
+    if (animateRects(ms)) {
+      ::InvalidateRect(windowHandle, nullptr, false);
+    }
+  }
+}
+
+void TGFXWindow::drawRects(tgfx::Canvas* canvas) {
+  tgfx::Paint paint1;
+  paint1.setColor(tgfx::Color::Red());
+//  paint1.setStyle(tgfx::PaintStyle::Stroke);
+  paint1.setAntiAlias(false);
+
+  tgfx::Paint paint2;
+  paint2.setColor(tgfx::Color::Green());
+//  paint2.setStyle(tgfx::PaintStyle::Stroke);
+  paint2.setAntiAlias(false);
+
+  tgfx::Paint paint3;
+  paint3.setColor(tgfx::Color::Blue());
+//  paint3.setStyle(tgfx::PaintStyle::Stroke);
+  paint3.setAntiAlias(false);
+
+  int n = 0;
+  for (int i = 0; i < fRects.size(); ++i) {
+    RectData* r = &fRects[i];
+
+    int m = n++;
+    if (m == 0) canvas->drawRect(r->rect, paint1);
+    else if (m == 1)
+      canvas->drawRect(r->rect, paint2);
+    else if (m == 2)
+      canvas->drawRect(r->rect, paint3);
+
+    if (n > 2) n = 0;
+  }
+}
+
+void TGFXWindow::initRects(int count) {
   RECT rect;
   GetClientRect(windowHandle, &rect);
   auto width = static_cast<int>(rect.right - rect.left);
   auto height = static_cast<int>(rect.bottom - rect.top);
-  auto pixelRatio = getPixelRatio();
-  auto sizeChanged = appHost->updateScreen(width, height, pixelRatio);
-  if (sizeChanged) {
-    tgfxWindow->invalidSize();
+
+  fRects.clear();
+
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_real_distribution<> dis(0.0, 1.0);
+
+  for (int i = 0; i < count; ++i) {
+    float x = dis(gen) * width;
+    float y = dis(gen) * height;
+    float size = 10.0 + dis(gen) * 40.0;
+    float speed = 1.0 + dis(gen);
+    tgfx::Rect rect = tgfx::Rect::MakeXYWH(x, y, size, size);
+
+    fRects.push_back(RectData{size, speed, rect});
   }
-  auto device = tgfxWindow->getDevice();
-  if (device == nullptr) {
-    return;
-  }
-  auto context = device->lockContext();
-  if (context == nullptr) {
-    return;
-  }
-  auto surface = tgfxWindow->getSurface(context);
-  if (surface == nullptr) {
-    device->unlock();
-    return;
-  }
-  auto canvas = surface->getCanvas();
-  canvas->clear();
-  canvas->save();
-  auto numDrawers = drawers::Drawer::Count() - 1;
-  auto index = (lastDrawIndex % numDrawers) + 1;
-  auto drawer = drawers::Drawer::GetByName("GridBackground");
-  drawer->draw(canvas, appHost.get());
-  drawer = drawers::Drawer::GetByIndex(index);
-  drawer->draw(canvas, appHost.get());
-  canvas->restore();
-  context->flushAndSubmit();
-  tgfxWindow->present(context);
-  device->unlock();
 }
+
+bool TGFXWindow::animateRects(long long ms) {
+
+  for (int i = 0; i < fRects.size(); ++i) {
+    RectData* r = &fRects[i];
+    float x = r->rect.x();
+
+    x -= r->speed;
+    if (x + r->size < 0) {
+      x = fWidth + r->size;
+    }
+
+    r->rect.setXYWH(x, r->rect.y(), r->size, r->size);
+  }
+
+  return true;
+}
+
 }  // namespace hello2d

@@ -31,12 +31,32 @@
 #include "tgfx/gpu/opengl/egl/EGLWindow.h"
 
 namespace hello2d {
+
+struct RectData {
+  float size;
+  float speed;
+  tgfx::Rect rect;
+};
+
+//--------------------------------------
+
 class TGFXWindow {
  public:
   TGFXWindow();
   virtual ~TGFXWindow();
 
   bool open();
+
+ protected:
+  //---------------
+  bool attach();
+  bool detach();
+
+  void setTitle(const char* title) const;
+  void drawRects(tgfx::Canvas* canvas);
+
+  void initRects(int count);
+  bool animateRects(long long ms);
 
  private:
   HWND windowHandle = nullptr;
@@ -49,10 +69,18 @@ class TGFXWindow {
 
   LRESULT handleMessage(HWND window, UINT message, WPARAM wparam, LPARAM lparam) noexcept;
 
+  void draw();
   void destroy();
   void centerAndShow();
   float getPixelRatio();
   void createAppHost();
-  void draw();
+
+  int fWidth;
+  int fHeight;
+  std::shared_ptr<tgfx::Device> fDevice;
+  tgfx::Context* fContext;
+
+  std::vector<RectData> fRects;
+  bool fAnimateEnabled;
 };
 }  // namespace hello2d
