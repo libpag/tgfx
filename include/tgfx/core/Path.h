@@ -324,6 +324,10 @@ class Path {
    */
   bool getLastPoint(Point* lastPoint) const;
 
+  std::string toJson() const;
+
+  void fromJson(const std::string& dump);
+
  private:
   std::shared_ptr<PathRef> pathRef = nullptr;
 

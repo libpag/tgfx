@@ -110,12 +110,12 @@ std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
       return std::make_unique<CmdMakeShapeLayer>(json.at("id").get<int>());
     case CommandType::setPath: {
       Path path;
-      path.FromJson(json.at("path"));
+      path.fromJson(json.at("path").dump());
       return std::make_unique<CmdSetPath>(json.at("id").get<int>(), path);
     }
     case CommandType::setShape: {
       auto shapeJson = json.at("shape");
-      std::shared_ptr<Shape> shape = Shape::FromJson(shapeJson);
+      std::shared_ptr<Shape> shape = Shape::FromJson(shapeJson.dump());
       return std::make_unique<CmdSetShape>(json.at("id").get<int>(), shape);
     }
     case CommandType::setFillStyle:
