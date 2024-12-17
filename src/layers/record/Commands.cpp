@@ -17,8 +17,9 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Commands.h"
-#include "LayerCmd.h"
 #include <iostream>
+#include "LayerCmd.h"
+#include "ShapeLayerCmd.h"
 
 namespace tgfx {
 
@@ -26,6 +27,7 @@ namespace tgfx {
 std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
   CommandType type = static_cast<CommandType>(json.at("type").get<int>());
   switch (type) {
+    // ------------------- Layer -------------------
     case CommandType::SetDefaultAllowsEdgeAntialiasing:
       return std::make_unique<CmdSetDefaultAllowsEdgeAntialiasing>(json.at("value").get<bool>());
     case CommandType::SetDefaultAllowsGroupOpacity:
@@ -103,6 +105,41 @@ std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
       return std::make_unique<CmdReplaceChild>(json.at("id").get<int>(),
                                                json.at("oldChild_id").get<int>(),
                                                json.at("newChild_id").get<int>());
+    // ------------------- ShapeLayer -------------------
+    case CommandType::MakeShapeLayer:
+      return std::make_unique<CmdMakeShapeLayer>(json.at("id").get<int>());
+    case CommandType::setPath: {
+      Path path;
+      path.FromJson(json.at("path"));
+      return std::make_unique<CmdSetPath>(json.at("id").get<int>(), path);
+    }
+    case CommandType::setShape: {
+      auto shapeJson = json.at("shape");
+      std::shared_ptr<Shape> shape = Shape::FromJson(shapeJson);
+      return std::make_unique<CmdSetShape>(json.at("id").get<int>(), shape);
+    }
+    case CommandType::setFillStyle:
+      return std::make_unique<CmdSetFillStyle>(json.at("id").get<int>(), json.at("styleId").get<int>());
+    case CommandType::setStrokeStyle:
+      return std::make_unique<CmdSetStrokeStyle>(json.at("id").get<int>(), json.at("styleId").get<int>());
+    case CommandType::setLineCap:
+      return std::make_unique<CmdSetLineCap>(json.at("id").get<int>(), static_cast<LineCap>(json.at("cap").get<int>()));
+    case CommandType::setLineJoin:
+      return std::make_unique<CmdSetLineJoin>(json.at("id").get<int>(), static_cast<LineJoin>(json.at("join").get<int>()));
+    case CommandType::setMiterLimit:
+      return std::make_unique<CmdSetMiterLimit>(json.at("id").get<int>(), json.at("limit").get<float>());
+    case CommandType::setLineWidth:
+      return std::make_unique<CmdSetLineWidth>(json.at("id").get<int>(), json.at("width").get<float>());
+    case CommandType::setLineDashPattern:
+      return std::make_unique<CmdSetLineDashPattern>(json.at("id").get<int>(), json.at("pattern").get<std::vector<float>>());
+    case CommandType::setLineDashPhase:
+      return std::make_unique<CmdSetLineDashPhase>(json.at("id").get<int>(), json.at("phase").get<float>());
+    case CommandType::setStrokeStart:
+      return std::make_unique<CmdSetStrokeStart>(json.at("id").get<int>(), json.at("start").get<float>());
+    case CommandType::setStrokeEnd:
+      return std::make_unique<CmdSetStrokeEnd>(json.at("id").get<int>(), json.at("end").get<float>());
+    case CommandType::setStrokeAlign:
+      return std::make_unique<CmdSetStrokeAlign>(json.at("id").get<int>(), static_cast<StrokeAlign>(json.at("align").get<int>()));
     default:
       throw std::invalid_argument("Unknown CommandType");
   }
