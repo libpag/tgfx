@@ -159,4 +159,11 @@ bool Shape::isRRect(RRect*) const {
 bool Shape::isSimplePath(Path*) const {
   return false;
 }
+
+std::string Shape::toJson() const {
+  return "";
+}
+std::shared_ptr<Shape> Shape::FromJson(const std::string& ) {
+  return Shape::MakeFrom(nullptr);
+}
 }  // namespace tgfx

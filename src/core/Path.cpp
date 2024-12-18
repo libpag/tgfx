@@ -583,4 +583,10 @@ bool Path::getLastPoint(Point* lastPoint) const {
   return false;
 };
 
+std::string Path::toJson() const {
+  return "";
+}
+void Path::fromJson(const std::string& ) {
+}
+
 }  // namespace tgfx
