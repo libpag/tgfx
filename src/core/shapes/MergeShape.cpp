@@ -18,7 +18,6 @@
 
 #include "MergeShape.h"
 #include "PathShape.h"
-#include <nlohmann/json.hpp>
 
 namespace tgfx {
 bool MergeShape::isRect(Rect* rect) const {
@@ -63,23 +62,6 @@ Path MergeShape::getPath(float resolutionScale) const {
   auto secondPath = second->getPath(resolutionScale);
   path.addPath(secondPath, pathOp);
   return path;
-}
-
-std::string MergeShape::toJson() const {
-  nlohmann::json jsonObj;
-  jsonObj["type"] = "MergeShape";
-  jsonObj["pathOp"] = static_cast<int>(pathOp);
-  jsonObj["first"] = first->toJson();
-  jsonObj["second"] = second->toJson();
-  return jsonObj.dump();
-}
-
-std::shared_ptr<Shape> MergeShape::FromJson(const std::string& dump) {
-  nlohmann::json jsonObj = nlohmann::json::parse(dump);
-  PathOp pathOp = static_cast<PathOp>(jsonObj["pathOp"].get<int>());
-  auto firstShape = Shape::FromJson(jsonObj["first"].get<std::string>());
-  auto secondShape = Shape::FromJson(jsonObj["second"].get<std::string>());
-  return std::make_shared<MergeShape>(firstShape, secondShape, pathOp);
 }
 
 }  // namespace tgfx

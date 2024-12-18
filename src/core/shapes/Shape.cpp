@@ -25,6 +25,7 @@
 #include "core/shapes/MergeShape.h"
 #include "core/shapes/PathShape.h"
 #include "core/shapes/StrokeShape.h"
+#include "nlohmann/json.hpp"
 
 namespace tgfx {
 std::shared_ptr<Shape> Shape::MakeFrom(Path path) {
@@ -160,13 +161,38 @@ bool Shape::isSimplePath(Path*) const {
   return false;
 }
 
-std::shared_ptr<Shape> Shape::FromJson(const std::string&) {
-  return Shape::MakeFrom(nullptr);
+
+
+
+std::shared_ptr<Shape> Shape::FromJson(const std::string& jsonStr) {
+  // 解析JSON字符串
+  nlohmann::json json = nlohmann::json::parse(jsonStr);
+  std::string type = json.at("type").get<std::string>();
+  std::shared_ptr<Shape> shape;
+
+  // 根据type创建相应的Shape对象
+  if (type == "Path") {
+    Path path;
+    path.fromJson(json.at("path").get<std::string>());
+    shape = std::make_shared<PathShape>(path);
+  } else {
+    // 未知类型
+    return nullptr;
+  }
+  // 配置对象属性
+  shape->configFromJson(json.dump());
+  return shape;
 }
-void Shape::configFromJson(const std::string&) {
+
+void Shape::configFromJson(const std::string& ) {
+  // do nothing
 }
+
 std::string Shape::toJson() const {
-  return "";
+  nlohmann::json json;
+  // 添加类型信息
+  json["type"] = "Shape";
+  return json;
 }
 
 }  // namespace tgfx

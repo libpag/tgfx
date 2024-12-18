@@ -17,6 +17,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "tgfx/core/Path.h"
+#include <nlohmann/json.hpp>
 #include "core/PathRef.h"
 #include "core/utils/MathExtra.h"
 

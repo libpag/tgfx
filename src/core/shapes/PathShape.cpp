@@ -16,6 +16,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <nlohmann/json.hpp>
 #include "PathShape.h"
 #include "core/PathRef.h"
 
@@ -54,11 +55,24 @@ UniqueKey PathShape::getUniqueKey() const {
 }
 
 void PathShape::configFromJson(const std::string& jsonStr) {
+  // 调用父类的配置函数
   Shape::configFromJson(jsonStr);
+  nlohmann::json json = nlohmann::json::parse(jsonStr);
+  // 还原PathShape的属性
+  if (json.contains("path")) {
+    this->path = Path();
+    this->path.fromJson(json.at("path"));
+  }
 }
 
 std::string PathShape::toJson() const {
-  return Shape::toJson();
+  // 获取父类的JSON
+  nlohmann::json json = nlohmann::json::parse(Shape::toJson());
+
+  // 添加PathShape特有的属性
+  json["path"] = this->path.toJson();
+
+  return json.dump();
 }
 
 }  // namespace tgfx

@@ -17,7 +17,6 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "EffectShape.h"
-#include <nlohmann/json.hpp>
 
 namespace tgfx {
 Rect EffectShape::getBounds(float resolutionScale) const {
@@ -29,22 +28,6 @@ Path EffectShape::getPath(float resolutionScale) const {
   auto path = shape->getPath(resolutionScale);
   effect->filterPath(&path);
   return path;
-}
-
-std::string EffectShape::toJson() const {
-  nlohmann::json jsonObj;
-  jsonObj["type"] = "EffectShape";
-  jsonObj["shape"] = shape->toJson();
-  // jsonObj["effect"] = effect->toJson();
-  return jsonObj.dump();
-}
-
-std::shared_ptr<Shape> EffectShape::FromJson(const std::string& dump) {
-  nlohmann::json jsonObj = nlohmann::json::parse(dump);
-  auto shape = Shape::FromJson(jsonObj["shape"].get<std::string>());
-  // auto effect = PathEffect::FromJson(jsonObj["effect"].get<std::string>());
-  // return std::make_shared<EffectShape>(shape, effect);
-  return std::make_shared<EffectShape>(shape, nullptr);
 }
 
 }  // namespace tgfx

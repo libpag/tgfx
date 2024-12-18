@@ -19,7 +19,6 @@
 #include "GlyphShape.h"
 #include "core/GlyphRunList.h"
 #include "core/utils/Log.h"
-#include <nlohmann/json.hpp>
 
 namespace tgfx {
 Rect GlyphShape::getBounds(float resolutionScale) const {
@@ -34,18 +33,4 @@ Path GlyphShape::getPath(float resolutionScale) const {
   }
   return path;
 }
-
-std::string GlyphShape::toJson() const {
-  nlohmann::json jsonObj;
-  jsonObj["type"] = "GlyphShape";
-  // jsonObj["glyphRunList"] = glyphRunList->toJson();
-  return jsonObj.dump();
-}
-
-std::shared_ptr<Shape> GlyphShape::FromJson(const std::string& dump) {
-  nlohmann::json jsonObj = nlohmann::json::parse(dump);
-  // auto glyphRunList = GlyphRunList::FromJson(jsonObj["glyphRunList"].get<std::string>());
-  return std::make_shared<GlyphShape>(nullptr);
-}
-
 }  // namespace tgfx
