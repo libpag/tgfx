@@ -323,10 +323,30 @@ class Path {
    * Returns last point on Path in lastPoint. Returns false if point array is empty.
    */
   bool getLastPoint(Point* lastPoint) const;
+  std::vector<uint8_t> toBinary() const;
+  bool fromBinary(const std::vector<uint8_t>& data);
+  std::vector<uint8_t> serialize() const;
+  bool deserialize(const std::vector<uint8_t>& data);
 
   std::string toJson() const;
 
   void fromJson(const std::string& dump);
+
+    // 定义路径操作的枚举
+  enum class PathCommand : uint8_t {
+      MoveTo = 0x01,
+      LineTo = 0x02,
+      QuadTo = 0x03,
+      CubicTo = 0x04,
+      Close = 0x05,
+      // TODO 检查、补齐其他操作
+  };
+
+    struct SerializedPath {
+      uint8_t version;
+      std::vector<uint8_t> commands;
+      uint32_t checksum; // 使用简单的 CRC32 校验
+  };
 
  private:
   std::shared_ptr<PathRef> pathRef = nullptr;
