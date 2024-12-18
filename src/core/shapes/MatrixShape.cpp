@@ -18,8 +18,10 @@
 
 #include "MatrixShape.h"
 #include "core/utils/UniqueID.h"
+#include <nlohmann/json.hpp>
 
 namespace tgfx {
+
 Rect MatrixShape::getBounds(float resolutionScale) const {
   resolutionScale *= matrix.getMaxScale();
   auto bounds = shape->getBounds(resolutionScale);
@@ -114,6 +116,21 @@ UniqueKey MatrixShape::getUniqueKey() const {
     bytesKey.write(matrix.getSkewY());
   }
   return UniqueKey::Append(shape->getUniqueKey(), bytesKey.data(), bytesKey.size());
+}
+
+std::string MatrixShape::toJson() const {
+  nlohmann::json jsonObj;
+  jsonObj["type"] = "MatrixShape";
+  jsonObj["shape"] = shape->toJson();
+  // jsonObj["matrix"] = matrix.toJson();
+  return jsonObj.dump();
+}
+
+std::shared_ptr<Shape> MatrixShape::FromJson(const std::string& dump) {
+  nlohmann::json jsonObj = nlohmann::json::parse(dump);
+  auto shape = Shape::FromJson(jsonObj["shape"].get<std::string>());
+  // Matrix matrix = Matrix::FromJson(jsonObj["matrix"].get<std::string>());
+  return std::make_shared<MatrixShape>(shape, Matrix::I());
 }
 
 }  // namespace tgfx

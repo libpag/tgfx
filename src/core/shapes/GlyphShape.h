@@ -36,6 +36,9 @@ class GlyphShape : public Shape {
 
   Path getPath(float resolutionScale = 1.0f) const override;
 
+  std::string toJson() const override;
+  static std::shared_ptr<Shape> FromJson(const std::string& dump);
+
  protected:
   Type type() const override {
     return Type::Glyph;

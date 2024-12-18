@@ -21,7 +21,6 @@
 #include "tgfx/core/PathEffect.h"
 #include "tgfx/core/RRect.h"
 #include "tgfx/core/TextBlob.h"
-
 namespace tgfx {
 class UniqueKey;
 
@@ -134,7 +133,7 @@ class Shape {
    */
   virtual Path getPath(float resolutionScale = 1.0f) const;
 
-  std::string toJson();
+  virtual std::string toJson() const;
 
   static std::shared_ptr<Shape> FromJson(const std::string& dump);
 
