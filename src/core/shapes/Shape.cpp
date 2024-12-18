@@ -160,10 +160,13 @@ bool Shape::isSimplePath(Path*) const {
   return false;
 }
 
+std::shared_ptr<Shape> Shape::FromJson(const std::string&) {
+  return Shape::MakeFrom(nullptr);
+}
+void Shape::configFromJson(const std::string&) {
+}
 std::string Shape::toJson() const {
   return "";
 }
-std::shared_ptr<Shape> Shape::FromJson(const std::string& ) {
-  return Shape::MakeFrom(nullptr);
-}
+
 }  // namespace tgfx

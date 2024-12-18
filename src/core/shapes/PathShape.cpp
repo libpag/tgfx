@@ -53,4 +53,12 @@ UniqueKey PathShape::getUniqueKey() const {
   return PathRef::GetUniqueKey(path);
 }
 
+void PathShape::configFromJson(const std::string& jsonStr) {
+  Shape::configFromJson(jsonStr);
+}
+
+std::string PathShape::toJson() const {
+  return Shape::toJson();
+}
+
 }  // namespace tgfx

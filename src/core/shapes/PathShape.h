@@ -43,6 +43,9 @@ class PathShape : public Shape {
 
   Path getPath(float resolutionScale = 1.0f) const override;
 
+  void configFromJson(const std::string& jsonStr) override;
+  std::string toJson() const override;
+
  protected:
   Type type() const override {
     return Type::Path;

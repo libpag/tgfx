@@ -133,9 +133,9 @@ class Shape {
    */
   virtual Path getPath(float resolutionScale = 1.0f) const;
 
+  static std::shared_ptr<Shape> FromJson(const std::string& jsonStr);
+  virtual void configFromJson(const std::string& jsonStr);
   virtual std::string toJson() const;
-
-  static std::shared_ptr<Shape> FromJson(const std::string& dump);
 
  protected:
   enum class Type { Append, Effect, Glyph, Matrix, Merge, Path, Stroke };
