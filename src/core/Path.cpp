@@ -768,10 +768,16 @@ bool Path::deserialize(const std::vector<uint8_t>& data) {
 
   uint32_t calcChecksum = static_cast<uint32_t>(
       crc32(0, serialized.commands.data(), static_cast<uInt>(serialized.commands.size())));
-    if (calcChecksum != serialized.checksum) return false;
+  if (calcChecksum != serialized.checksum) return false;
 
-    // 反序列化
-    return this->fromBinary(serialized.commands);
+  // 反序列化
+  return this->fromBinary(serialized.commands);
+}
+
+std::string Path::toJson() const{
+  return "";
+}
+void Path::fromJson(const std::string& ){
 }
 
 
