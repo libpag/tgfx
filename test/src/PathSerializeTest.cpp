@@ -1,4 +1,4 @@
-
+#include <gtest/gtest.h>
 #include <math.h>
 #include <tgfx/layers/record/Recorder.h>
 #include <vector>
@@ -11,6 +11,7 @@
 #include "core/shapes/PathShape.h"
 #include "core/shapes/StrokeShape.h"
 #include "core/utils/Profiling.h"
+#include "tgfx/core/Path.h"
 #include "tgfx/core/PathEffect.h"
 #include "tgfx/layers/DisplayList.h"
 #include "tgfx/layers/Gradient.h"
@@ -26,44 +27,60 @@
 #include "tgfx/layers/filters/InnerShadowFilter.h"
 #include "utils/TestUtils.h"
 #include "utils/common.h"
-#include "tgfx/core/Path.h"
-#include <gtest/gtest.h>
 
 namespace tgfx {
 TEST(PathTest, SerializeDeserialize) {
-    // 创建并设置一个路径
-    Path originalPath;
-    originalPath.moveTo(0.0f, 0.0f);
-    originalPath.lineTo(100.0f, 0.0f);
-    originalPath.lineTo(100.0f, 100.0f);
-    originalPath.close();
+  // 创建并设置一个路径
+  Path originalPath;
+  originalPath.moveTo(0.0f, 0.0f);
+  originalPath.lineTo(100.0f, 0.0f);
+  originalPath.lineTo(100.0f, 100.0f);
+  originalPath.close();
 
-    // 序列化路径
-    std::vector<uint8_t> serializedData = originalPath.serialize();
+  ContextScope scope;
+  auto context = scope.getContext();
+  ASSERT_TRUE(context != nullptr);
+  auto surface = Surface::Make(context, 400, 400);
+  ASSERT_TRUE(surface != nullptr);
+  auto canvas = surface->getCanvas();
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
 
-    // 反序列化到新路径
-    Path deserializedPath;
-    bool success = deserializedPath.deserialize(serializedData);
-    ASSERT_TRUE(success) << "Deserialization failed";
+  Paint strokePaint;
+  strokePaint.setColor(Color{1.f, 0.f, 0.f, 1.f});
+  strokePaint.setStrokeWidth(2.f);
+  strokePaint.setStyle(PaintStyle::Stroke);
 
-    // 比较原始路径和反序列化后的路径
-    ASSERT_EQ(originalPath, deserializedPath) << "Original and deserialized paths do not match";
+  canvas->drawPath(originalPath, strokePaint);
+  EXPECT_TRUE(Baseline::Compare(surface, "PathTest/SerializeDeserialize1"));
+
+  // 序列化路径
+  std::vector<uint8_t> serializedData = originalPath.serialize();
+
+  // 反序列化到新路径
+  Path deserializedPath;
+  bool success = deserializedPath.deserialize(serializedData);
+  ASSERT_TRUE(success) << "Deserialization failed";
+
+  canvas->drawPath(deserializedPath, strokePaint);
+  EXPECT_TRUE(Baseline::Compare(surface, "PathTest/SerializeDeserialize2"));
+
+  // 比较原始路径和反序列化后的路径
+  ASSERT_EQ(originalPath, deserializedPath) << "Original and deserialized paths do not match";
 }
 
-
 TEST(PathTest, SerializeDeserializeEmptyPath) {
-    // 创建一个空路径
-    Path originalPath;
+  // 创建一个空路径
+  Path originalPath;
 
-    // 序列化路径
-    std::vector<uint8_t> serializedData = originalPath.serialize();
+  // 序列化路径
+  std::vector<uint8_t> serializedData = originalPath.serialize();
 
-    // 反序列化到新路径
-    Path deserializedPath;
-    bool success = deserializedPath.deserialize(serializedData);
-    ASSERT_TRUE(success) << "Deserialization failed for empty path";
+  // 反序列化到新路径
+  Path deserializedPath;
+  bool success = deserializedPath.deserialize(serializedData);
+  ASSERT_TRUE(success) << "Deserialization failed for empty path";
 
-    // 比较原始路径和反序列化后的路径
+  // 比较原始路径和反序列化后的路径
     ASSERT_EQ(originalPath, deserializedPath) << "Original and deserialized empty paths do not match";
 }
 
