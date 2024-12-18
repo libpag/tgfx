@@ -28,7 +28,7 @@ static SkPathDirection ToSkDirection(bool reversed) {
   return reversed ? SkPathDirection::kCCW : SkPathDirection::kCW;
 }
 
-#define DistanceToControlPoint(radStep) (4 * tanf((radStep)*0.25f) / 3)
+#define DistanceToControlPoint(radStep) (4 * tanf((radStep) * 0.25f) / 3)
 
 class PointIterator {
  public:
@@ -584,152 +584,190 @@ bool Path::getLastPoint(Point* lastPoint) const {
   return false;
 };
 
-#include <vector>
 #include <cstdint>
 #include <cstring>
+#include <vector>
 
 std::vector<uint8_t> Path::toBinary() const {
-    std::vector<uint8_t> data;
-    // 使用 SkPath::Iter 代替不存在的 iterator 方法
-    SkPath::Iter iter(pathRef->path, false);
-    SkPath::Verb verb;
-    SkPoint points[4];
-    while ((verb = iter.next(points)) != SkPath::kDone_Verb) {
-        switch (verb) {
-            case SkPath::kMove_Verb:
-                data.push_back(static_cast<uint8_t>(PathCommand::MoveTo));
-                // 修改类型转换为 const uint8_t*
-                const uint8_t* move = reinterpret_cast<const uint8_t*>(points[0].x);
-                data.insert(data.end(), move, move + sizeof(float) * 2);
-                break;
-            case SkPath::kLine_Verb:
-                data.push_back(static_cast<uint8_t>(PathCommand::LineTo));
-                const uint8_t* line = reinterpret_cast<const uint8_t*>(points[1].x);
-                data.insert(data.end(), line, line + sizeof(float) * 2);
-                break;
-            case SkPath::kQuad_Verb:
-                data.push_back(static_cast<uint8_t>(PathCommand::QuadTo));
-                for (int i = 1; i <= 2; ++i) {
-                    const uint8_t* quad = reinterpret_cast<const uint8_t*>(points[i].x);
-                    data.insert(data.end(), quad, quad + sizeof(float) * 2);
-                }
-                break;
-            case SkPath::kCubic_Verb:
-                data.push_back(static_cast<uint8_t>(PathCommand::CubicTo));
-                for (int i = 1; i <= 3; ++i) {
-                    const uint8_t* cubic = reinterpret_cast<const uint8_t*>(points[i].x);
-                    data.insert(data.end(), cubic, cubic + sizeof(float) * 2);
-                }
-                break;
-            case SkPath::kClose_Verb:
-                data.push_back(static_cast<uint8_t>(PathCommand::Close));
-                break;
-            // 处理其他操作...
+  std::vector<uint8_t> data;
+  // 使用 SkPath::Iter 代替不存在的 iterator 方法
+  SkPath::Iter iter(pathRef->path, false);
+  SkPath::Verb verb;
+  SkPoint points[4];
+  while ((verb = iter.next(points)) != SkPath::kDone_Verb) {
+    switch (verb) {
+      case SkPath::kMove_Verb:
+        data.push_back(static_cast<uint8_t>(PathCommand::MoveTo));
+        // 修改：调用成员函数获取 x 和 y
+        {
+          float x = points[0].x();
+          float y = points[0].y();
+          uint8_t moveBytes[sizeof(float) * 2];
+          std::memcpy(moveBytes, &x, sizeof(float));
+          std::memcpy(moveBytes + sizeof(float), &y, sizeof(float));
+          data.insert(data.end(), moveBytes, moveBytes + sizeof(float) * 2);
         }
+        break;
+      case SkPath::kLine_Verb:
+        data.push_back(static_cast<uint8_t>(PathCommand::LineTo));
+        {
+          float x = points[1].x();
+          float y = points[1].y();
+          uint8_t lineBytes[sizeof(float) * 2];
+          std::memcpy(lineBytes, &x, sizeof(float));
+          std::memcpy(lineBytes + sizeof(float), &y, sizeof(float));
+          data.insert(data.end(), lineBytes, lineBytes + sizeof(float) * 2);
+        }
+        break;
+      case SkPath::kQuad_Verb:
+        data.push_back(static_cast<uint8_t>(PathCommand::QuadTo));
+        for (int i = 1; i <= 2; ++i) {
+          float cx = points[i].x();
+          float cy = points[i].y();
+          uint8_t quadBytes[sizeof(float) * 2];
+          std::memcpy(quadBytes, &cx, sizeof(float));
+          std::memcpy(quadBytes + sizeof(float), &cy, sizeof(float));
+          data.insert(data.end(), quadBytes, quadBytes + sizeof(float) * 2);
+        }
+        break;
+      case SkPath::kCubic_Verb:
+        data.push_back(static_cast<uint8_t>(PathCommand::CubicTo));
+        for (int i = 1; i <= 3; ++i) {
+          float cx = points[i].x();
+          float cy = points[i].y();
+          uint8_t cubicBytes[sizeof(float) * 2];
+          std::memcpy(cubicBytes, &cx, sizeof(float));
+          std::memcpy(cubicBytes + sizeof(float), &cy, sizeof(float));
+          data.insert(data.end(), cubicBytes, cubicBytes + sizeof(float) * 2);
+        }
+        break;
+      case SkPath::kConic_Verb:
+        data.push_back(static_cast<uint8_t>(PathCommand::ConicTo));
+        {
+          float cx = points[1].x();
+          float cy = points[1].y();
+          float weight = iter.conicWeight();
+          uint8_t conicBytes[sizeof(float) * 3];
+          std::memcpy(conicBytes, &cx, sizeof(float));
+          std::memcpy(conicBytes + sizeof(float), &cy, sizeof(float));
+          std::memcpy(conicBytes + sizeof(float) * 2, &weight, sizeof(float));
+          data.insert(data.end(), conicBytes, conicBytes + sizeof(float) * 3);
+        }
+        break;
+      case SkPath::kClose_Verb:
+        data.push_back(static_cast<uint8_t>(PathCommand::Close));
+        break;
+      default:
+        // 未处理的枚举值
+        break;
     }
+  }
 
-    return data;
+  return data;
 }
 
 bool Path::fromBinary(const std::vector<uint8_t>& data) {
-    size_t index = 0;
-    while (index < data.size()) {
-        PathCommand cmd = static_cast<PathCommand>(data[index++]);
-        switch (cmd) {
-            case PathCommand::MoveTo: {
-                if (index + sizeof(float) * 2 > data.size()) return false;
-                float x, y;
-                std::memcpy(&x, &data[index], sizeof(float));
-                std::memcpy(&y, &data[index + sizeof(float)], sizeof(float));
-                this->moveTo(x, y);
-                index += sizeof(float) * 2;
-                break;
-            }
-            case PathCommand::LineTo: {
-                if (index + sizeof(float) * 2 > data.size()) return false;
-                float x, y;
-                std::memcpy(&x, &data[index], sizeof(float));
-                std::memcpy(&y, &data[index + sizeof(float)], sizeof(float));
-                this->lineTo(x, y);
-                index += sizeof(float) * 2;
-                break;
-            }
-            case PathCommand::QuadTo: {
-                if (index + sizeof(float) * 4 > data.size()) return false;
-                float cx, cy, x, y;
-                std::memcpy(&cx, &data[index], sizeof(float));
-                std::memcpy(&cy, &data[index + sizeof(float)], sizeof(float));
-                std::memcpy(&x, &data[index + sizeof(float) * 2], sizeof(float));
-                std::memcpy(&y, &data[index + sizeof(float) * 3], sizeof(float));
-                this->quadTo(Point{cx, cy}, Point{x, y});
-                index += sizeof(float) * 4;
-                break;
-            }
-            case PathCommand::CubicTo: {
-                if (index + sizeof(float) * 6 > data.size()) return false;
-                float cx1, cy1, cx2, cy2, x, y;
-                std::memcpy(&cx1, &data[index], sizeof(float));
-                std::memcpy(&cy1, &data[index + sizeof(float)], sizeof(float));
-                std::memcpy(&cx2, &data[index + sizeof(float) * 2], sizeof(float));
-                std::memcpy(&cy2, &data[index + sizeof(float) * 3], sizeof(float));
-                std::memcpy(&x, &data[index + sizeof(float) * 4], sizeof(float));
-                std::memcpy(&y, &data[index + sizeof(float) * 5], sizeof(float));
-                this->cubicTo(Point{cx1, cy1}, Point{cx2, cy2}, Point{x, y});
-                index += sizeof(float) * 6;
-                break;
-            }
-            case PathCommand::Close:
-                this->close();
-                break;
-            // 处理其他操作...
-            default:
-                return false; // 未知命令
-        }
+  size_t index = 0;
+  while (index < data.size()) {
+    PathCommand cmd = static_cast<PathCommand>(data[index++]);
+    switch (cmd) {
+      case PathCommand::MoveTo: {
+        if (index + sizeof(float) * 2 > data.size()) return false;
+        float x, y;
+        std::memcpy(&x, &data[index], sizeof(float));
+        std::memcpy(&y, &data[index + sizeof(float)], sizeof(float));
+        this->moveTo(x, y);
+        index += sizeof(float) * 2;
+        break;
+      }
+      case PathCommand::LineTo: {
+        if (index + sizeof(float) * 2 > data.size()) return false;
+        float x, y;
+        std::memcpy(&x, &data[index], sizeof(float));
+        std::memcpy(&y, &data[index + sizeof(float)], sizeof(float));
+        this->lineTo(x, y);
+        index += sizeof(float) * 2;
+        break;
+      }
+      case PathCommand::QuadTo: {
+        if (index + sizeof(float) * 4 > data.size()) return false;
+        float cx, cy, x, y;
+        std::memcpy(&cx, &data[index], sizeof(float));
+        std::memcpy(&cy, &data[index + sizeof(float)], sizeof(float));
+        std::memcpy(&x, &data[index + sizeof(float) * 2], sizeof(float));
+        std::memcpy(&y, &data[index + sizeof(float) * 3], sizeof(float));
+        this->quadTo(Point{cx, cy}, Point{x, y});
+        index += sizeof(float) * 4;
+        break;
+      }
+      case PathCommand::CubicTo: {
+        if (index + sizeof(float) * 6 > data.size()) return false;
+        float cx1, cy1, cx2, cy2, x, y;
+        std::memcpy(&cx1, &data[index], sizeof(float));
+        std::memcpy(&cy1, &data[index + sizeof(float)], sizeof(float));
+        std::memcpy(&cx2, &data[index + sizeof(float) * 2], sizeof(float));
+        std::memcpy(&cy2, &data[index + sizeof(float) * 3], sizeof(float));
+        std::memcpy(&x, &data[index + sizeof(float) * 4], sizeof(float));
+        std::memcpy(&y, &data[index + sizeof(float) * 5], sizeof(float));
+        this->cubicTo(Point{cx1, cy1}, Point{cx2, cy2}, Point{x, y});
+        index += sizeof(float) * 6;
+        break;
+      }
+      case PathCommand::Close:
+        this->close();
+        break;
+      // 处理其他操作...
+      default:
+        return false;  // 未知命令
     }
-    return true;
+  }
+  return true;
 }
 
-#include <cstdint>
-#include <vector>
-#include <cstring>
 #include <zlib.h>
+#include <cstdint>
+#include <cstring>
+#include <vector>
 
 // 序列化
 std::vector<uint8_t> Path::serialize() const {
-    SerializedPath serialized;
-    serialized.version = 1;
-    serialized.commands = this->toBinary();
+  SerializedPath serialized;
+  serialized.version = 1;
+  serialized.commands = this->toBinary();
 
-    // 计算校验和
-    serialized.checksum = crc32(0, serialized.commands.data(), serialized.commands.size());
+  // 计算校验和
+  serialized.checksum = static_cast<uint32_t>(
+      crc32(0, serialized.commands.data(), static_cast<uInt>(serialized.commands.size())));
 
-    // 将结构体转为字节流
-    std::vector<uint8_t> data;
-    data.push_back(serialized.version);
-    data.insert(data.end(), serialized.commands.begin(), serialized.commands.end());
+  // 将结构体转为字节流
+  std::vector<uint8_t> data;
+  data.push_back(serialized.version);
+  data.insert(data.end(), serialized.commands.begin(), serialized.commands.end());
 
-    // 添加校验和
-    uint8_t checksumBytes[4];
-    std::memcpy(checksumBytes, &serialized.checksum, 4);
-    data.insert(data.end(), checksumBytes, checksumBytes + 4);
+  // 添加校验和
+  uint8_t checksumBytes[4];
+  std::memcpy(checksumBytes, &serialized.checksum, 4);
+  data.insert(data.end(), checksumBytes, checksumBytes + 4);
 
-    // 可选：压缩数据
-    // ...
+  // 可选：压缩数据
+  // ...
 
-    return data;
+  return data;
 }
 
 // 反序列化
 bool Path::deserialize(const std::vector<uint8_t>& data) {
-    if (data.size() < 5) return false; // 至少版本 + 校验和
+  if (data.size() < 5) return false;  // 至少版本 + 校验和
 
-    SerializedPath serialized;
-    serialized.version = data[0];
-    serialized.commands.assign(data.begin() + 1, data.end() - 4);
+  SerializedPath serialized;
+  serialized.version = data[0];
+  serialized.commands.assign(data.begin() + 1, data.end() - 4);
 
-    // 校验和
-    std::memcpy(&serialized.checksum, &data[data.size() - 4], 4);
-    uint32_t calcChecksum = crc32(0, serialized.commands.data(), serialized.commands.size());
+  // 校验和
+  std::memcpy(&serialized.checksum, &data[data.size() - 4], 4);
+
+  uint32_t calcChecksum = static_cast<uint32_t>(
+      crc32(0, serialized.commands.data(), static_cast<uInt>(serialized.commands.size())));
     if (calcChecksum != serialized.checksum) return false;
 
     // 反序列化

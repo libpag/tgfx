@@ -43,6 +43,8 @@
 #include "tgfx/layers/filters/InnerShadowFilter.h"
 #include "utils/TestUtils.h"
 #include "utils/common.h"
+#include "tgfx/core/Path.h"
+#include <gtest/gtest.h>
 
 namespace tgfx {
 
@@ -347,5 +349,45 @@ TGFX_TEST(RecordTest, AppendShapeJson) {
     ASSERT_EQ(parsedAppend->shapes[0]->type(), Shape::Type::Path);
     ASSERT_EQ(parsedAppend->shapes[1]->type(), Shape::Type::Path);
 }
+
+namespace test {
+
+TEST(PathTest, SerializeDeserialize) {
+    // 创建并设置一个路径
+    Path originalPath;
+    originalPath.moveTo(0.0f, 0.0f);
+    originalPath.lineTo(100.0f, 0.0f);
+    originalPath.lineTo(100.0f, 100.0f);
+    originalPath.close();
+
+    // 序列化路径
+    std::vector<uint8_t> serializedData = originalPath.serialize();
+
+    // 反序列化到新路径
+    Path deserializedPath;
+    bool success = deserializedPath.deserialize(serializedData);
+    ASSERT_TRUE(success) << "Deserialization failed";
+
+    // 比较原始路径和反序列化后的路径
+    ASSERT_EQ(originalPath, deserializedPath) << "Original and deserialized paths do not match";
+}
+
+TEST(PathTest, SerializeDeserializeEmptyPath) {
+    // 创建一个空路径
+    Path originalPath;
+
+    // 序列化路径
+    std::vector<uint8_t> serializedData = originalPath.serialize();
+
+    // 反序列化到新路径
+    Path deserializedPath;
+    bool success = deserializedPath.deserialize(serializedData);
+    ASSERT_TRUE(success) << "Deserialization failed for empty path";
+
+    // 比较原始路径和反序列化后的路径
+    ASSERT_EQ(originalPath, deserializedPath) << "Original and deserialized empty paths do not match";
+}
+
+}  // namespace test
 
 }  // namespace tgfx
