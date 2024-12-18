@@ -339,7 +339,6 @@ class Path {
     QuadTo = 0x03,
     CubicTo = 0x04,
     Close = 0x05,
-    ConicTo = 0x06,
   };
 
   struct SerializedPath {

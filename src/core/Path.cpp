@@ -642,17 +642,6 @@ std::vector<uint8_t> Path::toBinary() const {
         }
         break;
       case SkPath::kConic_Verb:
-        data.push_back(static_cast<uint8_t>(PathCommand::ConicTo));
-        {
-          float cx = points[1].x();
-          float cy = points[1].y();
-          float weight = iter.conicWeight();
-          uint8_t conicBytes[sizeof(float) * 3];
-          std::memcpy(conicBytes, &cx, sizeof(float));
-          std::memcpy(conicBytes + sizeof(float), &cy, sizeof(float));
-          std::memcpy(conicBytes + sizeof(float) * 2, &weight, sizeof(float));
-          data.insert(data.end(), conicBytes, conicBytes + sizeof(float) * 3);
-        }
         break;
       case SkPath::kClose_Verb:
         data.push_back(static_cast<uint8_t>(PathCommand::Close));
