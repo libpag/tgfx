@@ -725,30 +725,29 @@ bool Path::fromBinary(const std::vector<uint8_t>& data) {
   return true;
 }
 
-#include <zlib.h>
 #include <cstdint>
 #include <cstring>
 #include <vector>
 
-// 序列化
+// 修改 serialize 方法，移除 crc32 checksum 逻辑
 std::vector<uint8_t> Path::serialize() const {
   SerializedPath serialized;
   serialized.version = 1;
   serialized.commands = this->toBinary();
 
-  // 计算校验和
-  serialized.checksum = static_cast<uint32_t>(
-      crc32(0, serialized.commands.data(), static_cast<uInt>(serialized.commands.size())));
+  // 移除 checksum 计算
+  // serialized.checksum = static_cast<uint32_t>(
+  //     crc32(0, serialized.commands.data(), static_cast<uInt>(serialized.commands.size())));
 
   // 将结构体转为字节流
   std::vector<uint8_t> data;
   data.push_back(serialized.version);
   data.insert(data.end(), serialized.commands.begin(), serialized.commands.end());
 
-  // 添加校验和
-  uint8_t checksumBytes[4];
-  std::memcpy(checksumBytes, &serialized.checksum, 4);
-  data.insert(data.end(), checksumBytes, checksumBytes + 4);
+  // 移除添加校验和代码
+  // uint8_t checksumBytes[4];
+  // std::memcpy(checksumBytes, &serialized.checksum, 4);
+  // data.insert(data.end(), checksumBytes, checksumBytes + 4);
 
   // 可选：压缩数据
   // ...
@@ -756,20 +755,22 @@ std::vector<uint8_t> Path::serialize() const {
   return data;
 }
 
-// 反序列化
+// 修改 deserialize 方法，移除 checksum 校验逻辑
 bool Path::deserialize(const std::vector<uint8_t>& data) {
-  if (data.size() < 5) return false;  // 至少版本 + 校验和
+  if (data.size() < 1) return false;  // 调整最小数据大小
 
   SerializedPath serialized;
   serialized.version = data[0];
-  serialized.commands.assign(data.begin() + 1, data.end() - 4);
+  serialized.commands.assign(data.begin() + 1, data.end());
 
-  // 校验和
+  // 移除校验和读取和验证
+  /*
   std::memcpy(&serialized.checksum, &data[data.size() - 4], 4);
 
   uint32_t calcChecksum = static_cast<uint32_t>(
       crc32(0, serialized.commands.data(), static_cast<uInt>(serialized.commands.size())));
   if (calcChecksum != serialized.checksum) return false;
+  */
 
   // 反序列化
   return this->fromBinary(serialized.commands);
