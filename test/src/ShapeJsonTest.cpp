@@ -56,10 +56,9 @@ TGFX_TEST(ShapeJsonTest, PathShapeJson) {
   auto surface = Surface::Make(context, 400, 400);
   auto canvas = surface->getCanvas();
 
-  Paint strokePaint;
-  strokePaint.setColor(Color{1.f, 0.f, 0.f, 1.f});
-  strokePaint.setStrokeWidth(2.f);
-  strokePaint.setStyle(PaintStyle::Stroke);
+  Paint paint;
+  paint.setColor(Color{1.f, 0.f, 0.f, 1.f});
+  paint.setStyle(PaintStyle::Fill);
   // -----------------------------------------------------
 
   // 创建 PathShape 并测试序列化
@@ -69,7 +68,7 @@ TGFX_TEST(ShapeJsonTest, PathShapeJson) {
   // -----------------------------------------------------
 
   canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
-  canvas->drawShape(pathShape, strokePaint);
+  canvas->drawShape(pathShape, paint);
   EXPECT_TRUE(Baseline::Compare(surface, "ShapeJsonTest/PathShapeJson1"));
 
   // -----------------------------------------------------
@@ -79,7 +78,7 @@ TGFX_TEST(ShapeJsonTest, PathShapeJson) {
   ASSERT_EQ(parsedPathShape->type(), Shape::Type::Path);
 
   canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
-  canvas->drawShape(parsedPathShape, strokePaint);
+  canvas->drawShape(parsedPathShape, paint);
   EXPECT_TRUE(Baseline::Compare(surface, "ShapeJsonTest/PathShapeJson2"));
 
   device->unlock();
@@ -93,6 +92,21 @@ TGFX_TEST(ShapeJsonTest, StrokeShapeJson) {
   Stroke stroke;
   stroke.width = 5.0f;
   auto strokeShape = std::make_shared<StrokeShape>(baseShape, stroke);
+
+  // 添加 Baseline::Compare 前置逻辑
+  auto device = GLDevice::Make();
+  auto context = device->lockContext();
+  auto surface = Surface::Make(context, 400, 400);
+  auto canvas = surface->getCanvas();
+
+  Paint paint;
+  paint.setColor(Color{1.f, 0.f, 0.f, 1.f});
+  paint.setStyle(PaintStyle::Fill);
+
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
+  canvas->drawShape(strokeShape, paint);
+  EXPECT_TRUE(Baseline::Compare(surface, "ShapeJsonTest/StrokeShapeJson1"));
+
   std::string strokeJson = strokeShape->toJson();
   auto parsedStrokeShape = Shape::FromJson(strokeJson);
   ASSERT_NE(parsedStrokeShape, nullptr);
@@ -103,6 +117,13 @@ TGFX_TEST(ShapeJsonTest, StrokeShapeJson) {
   // 验证 内部 Shape
   ASSERT_EQ(std::static_pointer_cast<StrokeShape>(parsedStrokeShape)->shape->type(),
             Shape::Type::Path);
+
+  // 添加反序列化后的绘制逻辑
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
+  canvas->drawShape(parsedStrokeShape, paint);
+  EXPECT_TRUE(Baseline::Compare(surface, "ShapeJsonTest/StrokeShapeJson2"));
+
+  device->unlock();
 }
 
 // 添加 MergeShape 的单元测试
@@ -112,6 +133,20 @@ TGFX_TEST(ShapeJsonTest, MergeShapeJson) {
   auto baseShape = std::make_shared<PathShape>(path3);
   auto secondShape = std::make_shared<PathShape>(path3);
   auto mergeShape = std::make_shared<MergeShape>(baseShape, secondShape, PathOp::Union);
+  // 添加 Baseline::Compare 前置逻辑
+  auto device = GLDevice::Make();
+  auto context = device->lockContext();
+  auto surface = Surface::Make(context, 400, 400);
+  auto canvas = surface->getCanvas();
+
+  Paint paint;
+  paint.setColor(Color{1.f, 0.f, 0.f, 1.f});
+  paint.setStyle(PaintStyle::Fill);
+
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
+  canvas->drawShape(mergeShape, paint);
+  EXPECT_TRUE(Baseline::Compare(surface, "ShapeJsonTest/MergeShapeJson1"));
+
   std::string mergeJson = mergeShape->toJson();
   auto parsedMergeShape = Shape::FromJson(mergeJson);
   ASSERT_NE(parsedMergeShape, nullptr);
@@ -121,6 +156,13 @@ TGFX_TEST(ShapeJsonTest, MergeShapeJson) {
   ASSERT_EQ(parsedMerge->pathOp, PathOp::Union);
   ASSERT_EQ(parsedMerge->first->type(), Shape::Type::Path);
   ASSERT_EQ(parsedMerge->second->type(), Shape::Type::Path);
+
+  // 添加反序列化后的绘制逻辑
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
+  canvas->drawShape(parsedMergeShape, paint);
+  EXPECT_TRUE(Baseline::Compare(surface, "ShapeJsonTest/MergeShapeJson2"));
+
+  device->unlock();
 }
 
 // 添加 MatrixShape 的单元测试
@@ -130,6 +172,20 @@ TGFX_TEST(ShapeJsonTest, MatrixShapeJson) {
   auto baseShape = std::make_shared<PathShape>(path2);
   Matrix matrix = Matrix::MakeScale(2.0f, 2.0f);
   auto matrixShape = std::make_shared<MatrixShape>(baseShape, matrix);
+  // 添加 Baseline::Compare 前置逻辑
+  auto device = GLDevice::Make();
+  auto context = device->lockContext();
+  auto surface = Surface::Make(context, 400, 400);
+  auto canvas = surface->getCanvas();
+
+  Paint paint;
+  paint.setColor(Color{1.f, 0.f, 0.f, 1.f});
+  paint.setStyle(PaintStyle::Fill);
+
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
+  canvas->drawShape(matrixShape, paint);
+  EXPECT_TRUE(Baseline::Compare(surface, "ShapeJsonTest/MatrixShapeJson1"));
+
   std::string matrixJson = matrixShape->toJson();
   auto parsedMatrixShape = Shape::FromJson(matrixJson);
   ASSERT_NE(parsedMatrixShape, nullptr);
@@ -138,6 +194,13 @@ TGFX_TEST(ShapeJsonTest, MatrixShapeJson) {
   auto parsedMatrix = std::static_pointer_cast<MatrixShape>(parsedMatrixShape);
   ASSERT_EQ(parsedMatrix->matrix, matrix);
   ASSERT_EQ(parsedMatrix->shape->type(), Shape::Type::Path);
+
+  // 添加反序列化后的绘制逻辑
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
+  canvas->drawShape(parsedMatrixShape, paint);
+  EXPECT_TRUE(Baseline::Compare(surface, "ShapeJsonTest/MatrixShapeJson2"));
+
+  device->unlock();
 }
 
 // 添加 GlyphShape 的单元测试
@@ -148,6 +211,21 @@ TGFX_TEST(ShapeJsonTest, GlyphShapeJson) {
   // 假设 GlyphRunList 有添加 glyph 的方法
   // glyphRunList->addGlyph(...);
   auto glyphShape = std::make_shared<GlyphShape>(glyphRunList);
+
+  // 添加 Baseline::Compare 前置逻辑
+  auto device = GLDevice::Make();
+  auto context = device->lockContext();
+  auto surface = Surface::Make(context, 400, 400);
+  auto canvas = surface->getCanvas();
+
+  Paint paint;
+  paint.setColor(Color{1.f, 0.f, 0.f, 1.f});
+  paint.setStyle(PaintStyle::Fill);
+
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
+  canvas->drawShape(glyphShape, paint);
+  EXPECT_TRUE(Baseline::Compare(surface, "ShapeJsonTest/GlyphShapeJson1"));
+
   std::string glyphJson = glyphShape->toJson();
   auto parsedGlyphShape = Shape::FromJson(glyphJson);
   ASSERT_NE(parsedGlyphShape, nullptr);
@@ -155,6 +233,13 @@ TGFX_TEST(ShapeJsonTest, GlyphShapeJson) {
   // 验证 GlyphRunList
   auto parsedGlyph = std::static_pointer_cast<GlyphShape>(parsedGlyphShape)->glyphRunList;
   ASSERT_EQ(glyphRunList, parsedGlyph);
+
+  // 添加反序列化后的绘制逻辑
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
+  canvas->drawShape(parsedGlyphShape, paint);
+  EXPECT_TRUE(Baseline::Compare(surface, "ShapeJsonTest/GlyphShapeJson2"));
+
+  device->unlock();
 }
 
 // 添加 EffectShape 的单元测试
@@ -164,6 +249,21 @@ TGFX_TEST(ShapeJsonTest, EffectShapeJson) {
   auto baseShape = std::make_shared<PathShape>(path2);
   std::shared_ptr<PathEffect> pathEffect = PathEffect::MakeCorner(0);
   auto effectShape = std::make_shared<EffectShape>(baseShape, pathEffect);
+
+  // 添加 Baseline::Compare 前置逻辑
+  auto device = GLDevice::Make();
+  auto context = device->lockContext();
+  auto surface = Surface::Make(context, 400, 400);
+  auto canvas = surface->getCanvas();
+
+  Paint paint;
+  paint.setColor(Color{1.f, 0.f, 0.f, 1.f});
+  paint.setStyle(PaintStyle::Fill);
+
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
+  canvas->drawShape(effectShape, paint);
+  EXPECT_TRUE(Baseline::Compare(surface, "ShapeJsonTest/EffectShapeJson1"));
+
   std::string effectJson = effectShape->toJson();
   auto parsedEffectShape = Shape::FromJson(effectJson);
   ASSERT_NE(parsedEffectShape, nullptr);
@@ -172,25 +272,55 @@ TGFX_TEST(ShapeJsonTest, EffectShapeJson) {
   auto parsedEffect = std::static_pointer_cast<EffectShape>(parsedEffectShape);
   ASSERT_EQ(parsedEffect->effect, pathEffect);
   ASSERT_EQ(parsedEffect->shape->type(), Shape::Type::Path);
+
+  // 添加反序列化后的绘制逻辑
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
+  canvas->drawShape(parsedEffectShape, paint);
+  EXPECT_TRUE(Baseline::Compare(surface, "ShapeJsonTest/EffectShapeJson2"));
+
+  device->unlock();
 }
 
 // 添加 AppendShape 的单元测试
 TGFX_TEST(ShapeJsonTest, AppendShapeJson) {
   // 创建 AppendShape 并测试序列化
-    Path path2;
-    auto baseShape = std::make_shared<PathShape>(path2);
-    auto secondShape = std::make_shared<PathShape>(path2);
-    std::vector<std::shared_ptr<Shape>> shapes = {baseShape, secondShape};
-    auto appendShape = std::make_shared<AppendShape>(std::move(shapes));
-    std::string appendJson = appendShape->toJson();
-    auto parsedAppendShape = Shape::FromJson(appendJson);
-    ASSERT_NE(parsedAppendShape, nullptr);
-    ASSERT_EQ(parsedAppendShape->type(), Shape::Type::Append);
-    // 验证 Append 属性
-    auto parsedAppend = std::static_pointer_cast<AppendShape>(parsedAppendShape);
+  Path path2;
+  auto baseShape = std::make_shared<PathShape>(path2);
+  auto secondShape = std::make_shared<PathShape>(path2);
+  std::vector<std::shared_ptr<Shape>> shapes = {baseShape, secondShape};
+  auto appendShape = std::make_shared<AppendShape>(std::move(shapes));
+
+  // 添加 Baseline::Compare 前置逻辑
+  auto device = GLDevice::Make();
+  auto context = device->lockContext();
+  auto surface = Surface::Make(context, 400, 400);
+  auto canvas = surface->getCanvas();
+
+  Paint paint;
+  paint.setColor(Color{1.f, 0.f, 0.f, 1.f});
+  paint.setStyle(PaintStyle::Fill);
+
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
+  canvas->drawShape(appendShape, paint);
+  EXPECT_TRUE(Baseline::Compare(surface, "ShapeJsonTest/AppendShapeJson1"));
+
+  std::string appendJson = appendShape->toJson();
+  auto parsedAppendShape = Shape::FromJson(appendJson);
+  ASSERT_NE(parsedAppendShape, nullptr);
+  ASSERT_EQ(parsedAppendShape->type(), Shape::Type::Append);
+  // 验证 Append 属性
+  auto parsedAppend = std::static_pointer_cast<AppendShape>(parsedAppendShape);
     ASSERT_EQ(parsedAppend->shapes.size(), 2u);
     ASSERT_EQ(parsedAppend->shapes[0]->type(), Shape::Type::Path);
     ASSERT_EQ(parsedAppend->shapes[1]->type(), Shape::Type::Path);
+
+
+  // 添加反序列化后的绘制逻辑
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
+  canvas->drawShape(parsedAppendShape, paint);
+  EXPECT_TRUE(Baseline::Compare(surface, "ShapeJsonTest/AppendShapeJson2"));
+
+  device->unlock();
 }
 
 
