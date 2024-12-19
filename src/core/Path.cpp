@@ -20,6 +20,7 @@
 #include <nlohmann/json.hpp>
 #include "core/PathRef.h"
 #include "core/utils/MathExtra.h"
+#include <arpa/inet.h> // 添加用于字节序转换的头文件
 
 namespace tgfx {
 using namespace pk;
@@ -588,6 +589,7 @@ bool Path::getLastPoint(Point* lastPoint) const {
 #include <cstring>
 #include <vector>
 
+// 修改 toBinary 方法中的浮点数复制
 std::vector<uint8_t> Path::toBinary() const {
   std::vector<uint8_t> data;
   // 使用 SkPath::Iter 代替不存在的 iterator 方法
@@ -598,14 +600,12 @@ std::vector<uint8_t> Path::toBinary() const {
     switch (verb) {
       case SkPath::kMove_Verb:
         data.push_back(static_cast<uint8_t>(PathCommand::MoveTo));
-        // 修改：调用成员函数获取 x 和 y
+        // 直接复制浮点数的字节
         {
           float x = points[0].x();
           float y = points[0].y();
-          uint8_t moveBytes[sizeof(float) * 2];
-          std::memcpy(moveBytes, &x, sizeof(float));
-          std::memcpy(moveBytes + sizeof(float), &y, sizeof(float));
-          data.insert(data.end(), moveBytes, moveBytes + sizeof(float) * 2);
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&x), reinterpret_cast<uint8_t*>(&x) + sizeof(float));
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&y), reinterpret_cast<uint8_t*>(&y) + sizeof(float));
         }
         break;
       case SkPath::kLine_Verb:
@@ -613,10 +613,8 @@ std::vector<uint8_t> Path::toBinary() const {
         {
           float x = points[1].x();
           float y = points[1].y();
-          uint8_t lineBytes[sizeof(float) * 2];
-          std::memcpy(lineBytes, &x, sizeof(float));
-          std::memcpy(lineBytes + sizeof(float), &y, sizeof(float));
-          data.insert(data.end(), lineBytes, lineBytes + sizeof(float) * 2);
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&x), reinterpret_cast<uint8_t*>(&x) + sizeof(float));
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&y), reinterpret_cast<uint8_t*>(&y) + sizeof(float));
         }
         break;
       case SkPath::kQuad_Verb:
@@ -624,10 +622,8 @@ std::vector<uint8_t> Path::toBinary() const {
         for (int i = 1; i <= 2; ++i) {
           float cx = points[i].x();
           float cy = points[i].y();
-          uint8_t quadBytes[sizeof(float) * 2];
-          std::memcpy(quadBytes, &cx, sizeof(float));
-          std::memcpy(quadBytes + sizeof(float), &cy, sizeof(float));
-          data.insert(data.end(), quadBytes, quadBytes + sizeof(float) * 2);
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&cx), reinterpret_cast<uint8_t*>(&cx) + sizeof(float));
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&cy), reinterpret_cast<uint8_t*>(&cy) + sizeof(float));
         }
         break;
       case SkPath::kCubic_Verb:
@@ -635,10 +631,8 @@ std::vector<uint8_t> Path::toBinary() const {
         for (int i = 1; i <= 3; ++i) {
           float cx = points[i].x();
           float cy = points[i].y();
-          uint8_t cubicBytes[sizeof(float) * 2];
-          std::memcpy(cubicBytes, &cx, sizeof(float));
-          std::memcpy(cubicBytes + sizeof(float), &cy, sizeof(float));
-          data.insert(data.end(), cubicBytes, cubicBytes + sizeof(float) * 2);
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&cx), reinterpret_cast<uint8_t*>(&cx) + sizeof(float));
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&cy), reinterpret_cast<uint8_t*>(&cy) + sizeof(float));
         }
         break;
       case SkPath::kConic_Verb:
@@ -655,6 +649,7 @@ std::vector<uint8_t> Path::toBinary() const {
   return data;
 }
 
+// 修改 fromBinary 方法中的浮点数解析
 bool Path::fromBinary(const std::vector<uint8_t>& data) {
   size_t index = 0;
   while (index < data.size()) {

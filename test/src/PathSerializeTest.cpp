@@ -37,8 +37,9 @@ TEST(PathTest, SerializeDeserialize) {
   originalPath.lineTo(100.0f, 100.0f);
   originalPath.close();
 
-  ContextScope scope;
-  auto context = scope.getContext();
+  // -----------------------------------------------------
+  auto  device = GLDevice::Make();
+  auto context = device->lockContext();
   ASSERT_TRUE(context != nullptr);
   auto surface = Surface::Make(context, 400, 400);
   ASSERT_TRUE(surface != nullptr);
@@ -52,17 +53,28 @@ TEST(PathTest, SerializeDeserialize) {
 
   canvas->drawPath(originalPath, strokePaint);
   EXPECT_TRUE(Baseline::Compare(surface, "PathTest/SerializeDeserialize1"));
-
   // 序列化路径
   std::vector<uint8_t> serializedData = originalPath.serialize();
-
+  device->unlock();
+  device = nullptr;
+  // -----------------------------------------------------
   // 反序列化到新路径
   Path deserializedPath;
   bool success = deserializedPath.deserialize(serializedData);
   ASSERT_TRUE(success) << "Deserialization failed";
 
-  canvas->drawPath(deserializedPath, strokePaint);
-  EXPECT_TRUE(Baseline::Compare(surface, "PathTest/SerializeDeserialize2"));
+  // -----------------------------------------------------
+  auto  newDevice = GLDevice::Make();
+  auto newContext = newDevice->lockContext();
+  ASSERT_TRUE(newContext != nullptr);
+  auto newSurface = Surface::Make(newContext, 400, 400);
+  ASSERT_TRUE(newSurface != nullptr);
+  auto newCanvas = newSurface->getCanvas();
+  newCanvas->clearRect(Rect::MakeWH(newSurface->width(), newSurface->height()), Color::White());
+  newCanvas->drawPath(deserializedPath, strokePaint);
+  EXPECT_TRUE(Baseline::Compare(newSurface, "PathTest/SerializeDeserialize2"));
+  newDevice->unlock();
+  newDevice = nullptr;
 
   // 比较原始路径和反序列化后的路径
   ASSERT_EQ(originalPath, deserializedPath) << "Original and deserialized paths do not match";
