@@ -161,30 +161,54 @@ bool Shape::isSimplePath(Path*) const {
   return false;
 }
 
-
-
-
 std::shared_ptr<Shape> Shape::FromJson(const std::string& jsonStr) {
   // 解析JSON字符串
   nlohmann::json json = nlohmann::json::parse(jsonStr);
-  int type = json.at("type").get<int>();
+  Type type = static_cast<Type>(json.at("type").get<int>());
   std::shared_ptr<Shape> shape;
+  switch (type) {
 
-  // 根据type创建相应的Shape对象
-  if (type == static_cast<int>(Type::Path)) {
-    Path path;
-    path.fromJson(json.at("path").get<std::string>());
-    shape = std::make_shared<PathShape>(path);
-  } else {
-    // 未知类型
-    return nullptr;
+    case Type::Append:
+      break;
+    case Type::Effect:
+      break;
+    case Type::Glyph:
+      break;
+    case Type::Matrix:
+      break;
+    case Type::Merge:
+      break;
+    case Type::Path: {
+      Path path;
+      path.fromJson(json.at("path").get<std::string>());
+      shape = std::make_shared<PathShape>(path);
+      break;
+    }
+
+    case Type::Stroke: {
+      Stroke stroke;
+      // 解析 stroke
+      if (json.contains("stroke")) {
+        stroke.width = json["stroke"].value("width", 1.0f);
+        stroke.cap = static_cast<LineCap>(json["stroke"].value("cap", 0));
+        stroke.join = static_cast<LineJoin>(json["stroke"].value("join", 0));
+        stroke.miterLimit = json["stroke"].value("miterLimit", 4.0f);
+      }
+      std::shared_ptr<Shape> inShape;
+      // 解析 shape
+      if (json.contains("shape")) {
+        inShape = Shape::FromJson(json["shape"].get<std::string>());
+      }
+      shape = std::make_shared<StrokeShape>(std::move(inShape), stroke);
+      break;
+    }
   }
   // 配置对象属性
   shape->configFromJson(json.dump());
   return shape;
 }
 
-void Shape::configFromJson(const std::string& ) {
+void Shape::configFromJson(const std::string&) {
   // do nothing
 }
 

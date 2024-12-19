@@ -19,6 +19,7 @@
 #include "StrokeShape.h"
 #include "core/shapes/PathShape.h"
 #include "core/utils/UniqueID.h"
+#include "nlohmann/json.hpp"  // 添加 JSON 库的包含
 
 namespace tgfx {
 Rect StrokeShape::getBounds(float resolutionScale) const {
@@ -86,5 +87,28 @@ UniqueKey StrokeShape::getUniqueKey() const {
     bytesKey.write(stroke.miterLimit);
   }
   return UniqueKey::Append(shape->getUniqueKey(), bytesKey.data(), bytesKey.size());
+}
+
+void StrokeShape::configFromJson(const std::string& ) {
+  // do nothing
+}
+
+std::string StrokeShape::toJson() const {
+  nlohmann::json json = nlohmann::json::parse(Shape::toJson());
+
+  // 序列化 stroke
+  json["stroke"]["width"] = stroke.width;
+  json["stroke"]["cap"] = static_cast<int>(stroke.cap);
+  json["stroke"]["join"] = static_cast<int>(stroke.join);
+  json["stroke"]["miterLimit"] = stroke.miterLimit;
+
+  // 序列化 shape
+  if (shape != nullptr) {
+    json["shape"] = shape->toJson();
+  } else {
+    json["shape"] = nullptr;
+  }
+
+  return json.dump();
 }
 }  // namespace tgfx
