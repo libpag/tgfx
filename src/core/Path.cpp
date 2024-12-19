@@ -592,6 +592,10 @@ bool Path::getLastPoint(Point* lastPoint) const {
 
 // 修改 toBinary 方法中的浮点数复制
 std::vector<uint8_t> Path::toBinary() const {
+  if (!pathRef) {
+    // pathRef 为空，返回空数据
+    return {};
+  }
   std::vector<uint8_t> data;
   // 使用 SkPath::Iter 代替不存在的 iterator 方法
   SkPath::Iter iter(pathRef->path, false);
@@ -660,6 +664,10 @@ std::vector<uint8_t> Path::toBinary() const {
 
 // 修改 fromBinary 方法中的浮点数解析
 bool Path::fromBinary(const std::vector<uint8_t>& data) {
+  if (!pathRef) {
+    // 如果 pathRef 为空，初始化它
+    pathRef = std::make_shared<PathRef>();
+  }
   size_t index = 0;
   while (index < data.size()) {
     PathCommand cmd = static_cast<PathCommand>(data[index++]);
@@ -783,7 +791,17 @@ std::string Path::toJson() const {
 
 void Path::fromJson(const std::string& jsonString) {
   nlohmann::json j = nlohmann::json::parse(jsonString);
-  std::string hexString = j["data"];
+  std::string hexString;
+  if (j.contains("data") && j["data"].is_string()) {
+    hexString = j["data"];
+    if (hexString.size() % 2 != 0) {
+      std::cout << "Invalid hex string" << std::endl;
+      return;
+    }
+  } else {
+    std::cout << "Invalid JSON data" << std::endl;
+    return;
+  }
   if (hexString.size() % 2 != 0) {
     std::cout << "Invalid hex string" << std::endl;
     return;

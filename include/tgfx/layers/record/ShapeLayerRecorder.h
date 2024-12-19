@@ -27,53 +27,53 @@ enum class LineJoin;
 class Path;
 class Shape;
 class ShapeStyle;
-class ShaperLayer;
+class ShapeLayer;
 
 class ShapeLayerRecorder {
  public:
  private:
   // 录制创建 ShapeLayer
-  static void MakeShapeLayer(ShaperLayer* layer);
+  static void MakeShapeLayer(ShapeLayer* layer);
 
   // 录制设置路径
-  static void setPath(ShaperLayer* layer, Path path);
+  static void setPath(ShapeLayer* layer, Path path);
 
   // 录制设置形状
-  static void setShape(ShaperLayer* layer, std::shared_ptr<Shape> shape);
+  static void setShape(ShapeLayer* layer, std::shared_ptr<Shape> shape);
 
   // 录制设置填充样式
-  static void setFillStyle(ShaperLayer* layer, std::shared_ptr<ShapeStyle> style);
+  static void setFillStyle(ShapeLayer* layer, std::shared_ptr<ShapeStyle> style);
 
   // 录制设置描边样式
-  static void setStrokeStyle(ShaperLayer* layer, std::shared_ptr<ShapeStyle> style);
+  static void setStrokeStyle(ShapeLayer* layer, std::shared_ptr<ShapeStyle> style);
 
   // 录制设置线帽样式
-  static void setLineCap(ShaperLayer* layer, LineCap cap);
+  static void setLineCap(ShapeLayer* layer, LineCap cap);
 
   // 录制设置线连接样式
-  static void setLineJoin(ShaperLayer* layer, LineJoin join);
+  static void setLineJoin(ShapeLayer* layer, LineJoin join);
 
   // 录制设置斜接限制
-  static void setMiterLimit(ShaperLayer* layer, float limit);
+  static void setMiterLimit(ShapeLayer* layer, float limit);
 
   // 录制设置线宽
-  static void setLineWidth(ShaperLayer* layer, float width);
+  static void setLineWidth(ShapeLayer* layer, float width);
 
   // 录制设置虚线模式
-  static void setLineDashPattern(ShaperLayer* layer, const std::vector<float>& pattern);
+  static void setLineDashPattern(ShapeLayer* layer, const std::vector<float>& pattern);
 
   // 录制设置虚线相位
-  static void setLineDashPhase(ShaperLayer* layer, float phase);
+  static void setLineDashPhase(ShapeLayer* layer, float phase);
 
   // 录制设置描边起始点
-  static void setStrokeStart(ShaperLayer* layer, float start);
+  static void setStrokeStart(ShapeLayer* layer, float start);
 
   // 录制设置描边结束点
-  static void setStrokeEnd(ShaperLayer* layer, float end);
+  static void setStrokeEnd(ShapeLayer* layer, float end);
 
   // 录制设置描边对齐方式
-  static void setStrokeAlign(ShaperLayer* layer, StrokeAlign align);
+  static void setStrokeAlign(ShapeLayer* layer, StrokeAlign align);
 
-  friend class ShaperLayer;
+  friend class ShapeLayer;
 };
 }  // namespace tgfx

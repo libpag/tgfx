@@ -31,7 +31,7 @@
 
 
 // 添加日志宏定义
-#define ENABLE_METHOD_LOGGING 1
+#define ENABLE_METHOD_LOGGING 0
 
 #if ENABLE_METHOD_LOGGING
 #define LOG_METHOD(message) std::cout << "[ffjiefan]" << this->TypeToString() << ": " << message << std::endl

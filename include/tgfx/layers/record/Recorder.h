@@ -35,5 +35,6 @@ class Recorder {
   static std::vector<std::unique_ptr<Command>> commands_;
 
   friend class LayerRecorder;
+  friend class ShapeLayerRecorder;
 };
 }  // namespace tgfx

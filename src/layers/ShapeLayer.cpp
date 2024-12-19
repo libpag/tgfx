@@ -17,6 +17,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "tgfx/layers/ShapeLayer.h"
+#include <tgfx/layers/record/ShapeLayerRecorder.h>
 #include "core/utils/Profiling.h"
 #include "layers/contents/ShapeContent.h"
 #include "tgfx/core/PathEffect.h"
@@ -27,6 +28,7 @@ std::shared_ptr<ShapeLayer> ShapeLayer::Make() {
   TRACE_EVENT;
   auto layer = std::shared_ptr<ShapeLayer>(new ShapeLayer());
   layer->weakThis = layer;
+  ShapeLayerRecorder::MakeShapeLayer(layer.get());
   return layer;
 }
 
@@ -48,6 +50,7 @@ void ShapeLayer::setPath(Path path) {
   }
   _shape = Shape::MakeFrom(std::move(path));
   invalidateContent();
+  ShapeLayerRecorder::setPath(this, path);
 }
 
 void ShapeLayer::setShape(std::shared_ptr<Shape> value) {
@@ -56,6 +59,7 @@ void ShapeLayer::setShape(std::shared_ptr<Shape> value) {
   }
   _shape = std::move(value);
   invalidateContent();
+  ShapeLayerRecorder::setShape(this, _shape);
 }
 
 void ShapeLayer::setFillStyle(std::shared_ptr<ShapeStyle> style) {
@@ -66,6 +70,7 @@ void ShapeLayer::setFillStyle(std::shared_ptr<ShapeStyle> style) {
   _fillStyle = std::move(style);
   attachProperty(_fillStyle.get());
   invalidateContent();
+  ShapeLayerRecorder::setFillStyle(this, _fillStyle);
 }
 
 void ShapeLayer::setStrokeStyle(std::shared_ptr<ShapeStyle> style) {
@@ -76,6 +81,7 @@ void ShapeLayer::setStrokeStyle(std::shared_ptr<ShapeStyle> style) {
   _strokeStyle = std::move(style);
   attachProperty(_strokeStyle.get());
   invalidateContent();
+  ShapeLayerRecorder::setStrokeStyle(this, _strokeStyle);
 }
 
 void ShapeLayer::setLineCap(LineCap cap) {
@@ -84,6 +90,7 @@ void ShapeLayer::setLineCap(LineCap cap) {
   }
   stroke.cap = cap;
   invalidateContent();
+  ShapeLayerRecorder::setLineCap(this, cap);
 }
 
 void ShapeLayer::setLineJoin(LineJoin join) {
@@ -92,6 +99,7 @@ void ShapeLayer::setLineJoin(LineJoin join) {
   }
   stroke.join = join;
   invalidateContent();
+  ShapeLayerRecorder::setLineJoin(this, join);
 }
 
 void ShapeLayer::setMiterLimit(float limit) {
@@ -100,6 +108,7 @@ void ShapeLayer::setMiterLimit(float limit) {
   }
   stroke.miterLimit = limit;
   invalidateContent();
+  ShapeLayerRecorder::setMiterLimit(this, limit);
 }
 
 void ShapeLayer::setLineWidth(float width) {
@@ -108,6 +117,7 @@ void ShapeLayer::setLineWidth(float width) {
   }
   stroke.width = width;
   invalidateContent();
+  ShapeLayerRecorder::setLineWidth(this, width);
 }
 
 void ShapeLayer::setLineDashPattern(const std::vector<float>& pattern) {
@@ -117,6 +127,7 @@ void ShapeLayer::setLineDashPattern(const std::vector<float>& pattern) {
   }
   _lineDashPattern = pattern;
   invalidateContent();
+  ShapeLayerRecorder::setLineDashPattern(this, pattern);
 }
 
 void ShapeLayer::setLineDashPhase(float phase) {
@@ -125,6 +136,7 @@ void ShapeLayer::setLineDashPhase(float phase) {
   }
   _lineDashPhase = phase;
   invalidateContent();
+  ShapeLayerRecorder::setLineDashPhase(this, phase);
 }
 
 void ShapeLayer::setStrokeStart(float start) {
@@ -139,6 +151,7 @@ void ShapeLayer::setStrokeStart(float start) {
   }
   _strokeStart = start;
   invalidateContent();
+  ShapeLayerRecorder::setStrokeStart(this, start);
 }
 
 void ShapeLayer::setStrokeEnd(float end) {
@@ -153,6 +166,7 @@ void ShapeLayer::setStrokeEnd(float end) {
   }
   _strokeEnd = end;
   invalidateContent();
+  ShapeLayerRecorder::setStrokeEnd(this, end);
 }
 
 void ShapeLayer::setStrokeAlign(StrokeAlign align) {
@@ -161,6 +175,7 @@ void ShapeLayer::setStrokeAlign(StrokeAlign align) {
   }
   _strokeAlign = align;
   invalidateContent();
+  ShapeLayerRecorder::setStrokeAlign(this, align);
 }
 
 ShapeLayer::~ShapeLayer() {
