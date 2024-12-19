@@ -71,17 +71,14 @@ class ShapeJsonTestFixture : public ::testing::Test {
     device->unlock();
   }
 
-  std::string currentMd5() {
-    return Baseline::GetSurfaceMD5(surface);
-  }
-
-  void clearAndDraw(const std::shared_ptr<Shape>& shape, const std::string& baseline) {
+  std::string clearAndDraw(const std::shared_ptr<Shape>& shape, const std::string& baseline) {
     canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
     canvas->drawShape(shape, paint);
     std::cout << "baseline: " << baseline << std::endl;
 // 保存绘制结果
 #define GENERATOR_BASELINE_IMAGES = 1;
     Baseline::Compare(surface, baseline);
+    return Baseline::GetSurfaceMD5(surface);
   }
 };
 
@@ -92,16 +89,14 @@ TEST_F(ShapeJsonTestFixture, PathShapeJson) {
   path.addRect(Rect::MakeLTRB(0.0f, 0.0f, 100.0f, 100.0f));
   auto pathShape = std::make_shared<PathShape>(std::move(path));
 
-  clearAndDraw(pathShape, "ShapeJsonTest/PathShapeJson1");
-  auto md5 = currentMd5();
+  auto md5 = clearAndDraw(pathShape, "ShapeJsonTest/PathShapeJson1");
 
   std::string pathJson = pathShape->toJson();
   auto parsedPathShape = Shape::FromJson(pathJson);
   ASSERT_NE(parsedPathShape, nullptr);
   ASSERT_EQ(parsedPathShape->type(), Shape::Type::Path);
 
-  clearAndDraw(parsedPathShape, "ShapeJsonTest/PathShapeJson2");
-  auto newMd5 = currentMd5();
+  auto newMd5 = clearAndDraw(parsedPathShape, "ShapeJsonTest/PathShapeJson2");
 
   ASSERT_EQ(md5, newMd5);
 }
@@ -114,7 +109,7 @@ TEST_F(ShapeJsonTestFixture, StrokeShapeJson) {
   stroke.width = 5.0f;
   auto strokeShape = std::make_shared<StrokeShape>(baseShape, stroke);
 
-  clearAndDraw(strokeShape, "ShapeJsonTest/StrokeShapeJson1");
+  auto md5 = clearAndDraw(strokeShape, "ShapeJsonTest/StrokeShapeJson1");
 
   std::string strokeJson = strokeShape->toJson();
   auto parsedStrokeShape = Shape::FromJson(strokeJson);
@@ -127,7 +122,9 @@ TEST_F(ShapeJsonTestFixture, StrokeShapeJson) {
   ASSERT_EQ(std::static_pointer_cast<StrokeShape>(parsedStrokeShape)->shape->type(),
             Shape::Type::Path);
 
-  clearAndDraw(parsedStrokeShape, "ShapeJsonTest/StrokeShapeJson2");
+  auto newMd5 = clearAndDraw(parsedStrokeShape, "ShapeJsonTest/StrokeShapeJson2");
+
+  ASSERT_EQ(md5, newMd5);
 }
 
 // 添加 MergeShape 的单元测试
@@ -137,7 +134,7 @@ TEST_F(ShapeJsonTestFixture, MergeShapeJson) {
   auto secondShape = std::make_shared<PathShape>(path3);
   auto mergeShape = std::make_shared<MergeShape>(baseShape, secondShape, PathOp::Union);
 
-  clearAndDraw(mergeShape, "ShapeJsonTest/MergeShapeJson1");
+  auto md5 = clearAndDraw(mergeShape, "ShapeJsonTest/MergeShapeJson1");
 
   std::string mergeJson = mergeShape->toJson();
   auto parsedMergeShape = Shape::FromJson(mergeJson);
@@ -149,7 +146,9 @@ TEST_F(ShapeJsonTestFixture, MergeShapeJson) {
   ASSERT_EQ(parsedMerge->first->type(), Shape::Type::Path);
   ASSERT_EQ(parsedMerge->second->type(), Shape::Type::Path);
 
-  clearAndDraw(parsedMergeShape, "ShapeJsonTest/MergeShapeJson2");
+  auto newMd5 = clearAndDraw(parsedMergeShape, "ShapeJsonTest/MergeShapeJson2");
+
+  ASSERT_EQ(md5, newMd5);
 }
 
 // 添加 MatrixShape 的单元测试
@@ -159,7 +158,7 @@ TEST_F(ShapeJsonTestFixture, MatrixShapeJson) {
   Matrix matrix = Matrix::MakeScale(2.0f, 2.0f);
   auto matrixShape = std::make_shared<MatrixShape>(baseShape, matrix);
 
-  clearAndDraw(matrixShape, "ShapeJsonTest/MatrixShapeJson1");
+  auto md5 = clearAndDraw(matrixShape, "ShapeJsonTest/MatrixShapeJson1");
 
   std::string matrixJson = matrixShape->toJson();
   auto parsedMatrixShape = Shape::FromJson(matrixJson);
@@ -170,7 +169,9 @@ TEST_F(ShapeJsonTestFixture, MatrixShapeJson) {
   ASSERT_EQ(parsedMatrix->matrix, matrix);
   ASSERT_EQ(parsedMatrix->shape->type(), Shape::Type::Path);
 
-  clearAndDraw(parsedMatrixShape, "ShapeJsonTest/MatrixShapeJson2");
+  auto newMd5 = clearAndDraw(parsedMatrixShape, "ShapeJsonTest/MatrixShapeJson2");
+
+  ASSERT_EQ(md5, newMd5);
 }
 
 // 添加 GlyphShape 的单元测试
@@ -181,7 +182,7 @@ TEST_F(ShapeJsonTestFixture, GlyphShapeJson) {
   // glyphRunList->addGlyph(...);
   auto glyphShape = std::make_shared<GlyphShape>(glyphRunList);
 
-  clearAndDraw(glyphShape, "ShapeJsonTest/GlyphShapeJson1");
+  auto md5 = clearAndDraw(glyphShape, "ShapeJsonTest/GlyphShapeJson1");
 
   std::string glyphJson = glyphShape->toJson();
   auto parsedGlyphShape = Shape::FromJson(glyphJson);
@@ -191,7 +192,9 @@ TEST_F(ShapeJsonTestFixture, GlyphShapeJson) {
   auto parsedGlyph = std::static_pointer_cast<GlyphShape>(parsedGlyphShape)->glyphRunList;
   ASSERT_EQ(glyphRunList, parsedGlyph);
 
-  clearAndDraw(parsedGlyphShape, "ShapeJsonTest/GlyphShapeJson2");
+  auto newMd5 = clearAndDraw(parsedGlyphShape, "ShapeJsonTest/GlyphShapeJson2");
+
+  ASSERT_EQ(md5, newMd5);
 }
 
 // 添加 EffectShape 的单元测试
@@ -201,7 +204,7 @@ TEST_F(ShapeJsonTestFixture, EffectShapeJson) {
   std::shared_ptr<PathEffect> pathEffect = PathEffect::MakeCorner(0);
   auto effectShape = std::make_shared<EffectShape>(baseShape, pathEffect);
 
-  clearAndDraw(effectShape, "ShapeJsonTest/EffectShapeJson1");
+  auto md5 = clearAndDraw(effectShape, "ShapeJsonTest/EffectShapeJson1");
 
   std::string effectJson = effectShape->toJson();
   auto parsedEffectShape = Shape::FromJson(effectJson);
@@ -212,7 +215,9 @@ TEST_F(ShapeJsonTestFixture, EffectShapeJson) {
   ASSERT_EQ(parsedEffect->effect, pathEffect);
   ASSERT_EQ(parsedEffect->shape->type(), Shape::Type::Path);
 
-  clearAndDraw(parsedEffectShape, "ShapeJsonTest/EffectShapeJson2");
+  auto newMd5 = clearAndDraw(parsedEffectShape, "ShapeJsonTest/EffectShapeJson2");
+
+  ASSERT_EQ(md5, newMd5);
 }
 
 // 添加 AppendShape 的单元测试
@@ -223,7 +228,7 @@ TEST_F(ShapeJsonTestFixture, AppendShapeJson) {
   std::vector<std::shared_ptr<Shape>> shapes = {baseShape, secondShape};
   auto appendShape = std::make_shared<AppendShape>(std::move(shapes));
 
-  clearAndDraw(appendShape, "ShapeJsonTest/AppendShapeJson1");
+  auto md5 = clearAndDraw(appendShape, "ShapeJsonTest/AppendShapeJson1");
 
   std::string appendJson = appendShape->toJson();
   auto parsedAppendShape = Shape::FromJson(appendJson);
@@ -233,9 +238,9 @@ TEST_F(ShapeJsonTestFixture, AppendShapeJson) {
   auto parsedAppend = std::static_pointer_cast<AppendShape>(parsedAppendShape);
   ASSERT_EQ(parsedAppend->shapes.size(), 2u);
   ASSERT_EQ(parsedAppend->shapes[0]->type(), Shape::Type::Path);
-    ASSERT_EQ(parsedAppend->shapes[1]->type(), Shape::Type::Path);
-
-    clearAndDraw(parsedAppendShape, "ShapeJsonTest/AppendShapeJson2");
+  ASSERT_EQ(parsedAppend->shapes[1]->type(), Shape::Type::Path);
+  auto newMd5 = clearAndDraw(parsedAppendShape, "ShapeJsonTest/AppendShapeJson2");
+  ASSERT_EQ(md5, newMd5);
 }
 
 }  // namespace tgfx
