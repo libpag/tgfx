@@ -263,4 +263,16 @@ void Baseline::TearDown() {
 #endif
   RemoveEmptyFolder(OUT_ROOT);
 }
+
+std::string Baseline::GetSurfaceMD5(const std::shared_ptr<Surface>& surface) {
+  if (surface == nullptr) {
+    return "";
+  }
+  Bitmap bitmap(surface->width(), surface->height(), false, false);
+  Pixmap pixmap(bitmap);
+  if (!surface->readPixels(pixmap.info(), pixmap.writablePixels())) {
+    return "";
+  }
+  return DumpMD5(pixmap.pixels(), pixmap.byteSize());
+}
 }  // namespace tgfx

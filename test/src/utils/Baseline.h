@@ -35,6 +35,8 @@ class Baseline {
 
   static bool Compare(std::shared_ptr<Data> data, const std::string& key);
 
+  static std::string GetSurfaceMD5(const std::shared_ptr<Surface>& surface);
+
  private:
   static void SetUp();
 
