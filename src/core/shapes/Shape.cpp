@@ -167,11 +167,11 @@ bool Shape::isSimplePath(Path*) const {
 std::shared_ptr<Shape> Shape::FromJson(const std::string& jsonStr) {
   // 解析JSON字符串
   nlohmann::json json = nlohmann::json::parse(jsonStr);
-  std::string type = json.at("type").get<std::string>();
+  int type = json.at("type").get<int>();
   std::shared_ptr<Shape> shape;
 
   // 根据type创建相应的Shape对象
-  if (type == "Path") {
+  if (type == static_cast<int>(Type::Path)) {
     Path path;
     path.fromJson(json.at("path").get<std::string>());
     shape = std::make_shared<PathShape>(path);
@@ -191,8 +191,8 @@ void Shape::configFromJson(const std::string& ) {
 std::string Shape::toJson() const {
   nlohmann::json json;
   // 添加类型信息
-  json["type"] = "Shape";
-  return json;
+  json["type"] = type();
+  return json.dump();
 }
 
 }  // namespace tgfx

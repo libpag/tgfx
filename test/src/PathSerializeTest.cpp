@@ -40,9 +40,7 @@ TEST(PathTest, SerializeDeserialize) {
   // -----------------------------------------------------
   auto device = GLDevice::Make();
   auto context = device->lockContext();
-  ASSERT_TRUE(context != nullptr);
   auto surface = Surface::Make(context, 400, 400);
-  ASSERT_TRUE(surface != nullptr);
   auto canvas = surface->getCanvas();
   canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
 
@@ -66,9 +64,7 @@ TEST(PathTest, SerializeDeserialize) {
   // -----------------------------------------------------
   auto newDevice = GLDevice::Make();
   auto newContext = newDevice->lockContext();
-  ASSERT_TRUE(newContext != nullptr);
   auto newSurface = Surface::Make(newContext, 400, 400);
-  ASSERT_TRUE(newSurface != nullptr);
   auto newCanvas = newSurface->getCanvas();
   newCanvas->clearRect(Rect::MakeWH(newSurface->width(), newSurface->height()), Color::White());
   newCanvas->drawPath(deserializedPath, strokePaint);

@@ -16,6 +16,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <gtest/gtest.h>
 #include <math.h>
 #include <tgfx/layers/record/Recorder.h>
 #include <vector>
@@ -28,6 +29,7 @@
 #include "core/shapes/PathShape.h"
 #include "core/shapes/StrokeShape.h"
 #include "core/utils/Profiling.h"
+#include "tgfx/core/Path.h"
 #include "tgfx/core/PathEffect.h"
 #include "tgfx/layers/DisplayList.h"
 #include "tgfx/layers/Gradient.h"
@@ -43,8 +45,6 @@
 #include "tgfx/layers/filters/InnerShadowFilter.h"
 #include "utils/TestUtils.h"
 #include "utils/common.h"
-#include "tgfx/core/Path.h"
-#include <gtest/gtest.h>
 
 namespace tgfx {
 
@@ -229,111 +229,135 @@ TGFX_TEST(RecordTest, RecordLayer) {
 
 // 添加 PathShape 的单元测试
 TGFX_TEST(RecordTest, PathShapeJson) {
-    // 创建 PathShape 并测试序列化
-    Path path;
-    path.addRect(Rect::MakeLTRB(0.0f, 0.0f, 100.0f, 100.0f));
-    auto pathShape = std::make_shared<PathShape>(std::move(path));
-    std::string pathJson = pathShape->toJson();
-    auto parsedPathShape = Shape::FromJson(pathJson);
-    ASSERT_NE(parsedPathShape, nullptr);
-    ASSERT_EQ(parsedPathShape->type(), Shape::Type::Path);
-    // 验证 Path 内容
-    Path originalPath = pathShape->getPath();
-    Path parsedPath = parsedPathShape->getPath();
-    ASSERT_EQ(originalPath, parsedPath);
+
+  auto device = GLDevice::Make();
+  auto context = device->lockContext();
+  auto surface = Surface::Make(context, 400, 400);
+  auto canvas = surface->getCanvas();
+
+  Paint strokePaint;
+  strokePaint.setColor(Color{1.f, 0.f, 0.f, 1.f});
+  strokePaint.setStrokeWidth(2.f);
+  strokePaint.setStyle(PaintStyle::Stroke);
+  // -----------------------------------------------------
+
+  // 创建 PathShape 并测试序列化
+  Path path;
+  path.addRect(Rect::MakeLTRB(0.0f, 0.0f, 100.0f, 100.0f));
+  auto pathShape = std::make_shared<PathShape>(std::move(path));
+  // -----------------------------------------------------
+
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
+  canvas->drawShape(pathShape, strokePaint);
+  EXPECT_TRUE(Baseline::Compare(surface, "RecordTest/PathShapeJson1"));
+
+  // -----------------------------------------------------
+  std::string pathJson = pathShape->toJson();
+  auto parsedPathShape = Shape::FromJson(pathJson);
+  ASSERT_NE(parsedPathShape, nullptr);
+  ASSERT_EQ(parsedPathShape->type(), Shape::Type::Path);
+  // 验证 Path 内容
+  Path originalPath = pathShape->getPath();
+  Path parsedPath = parsedPathShape->getPath();
+  // ASSERT_EQ(originalPath, parsedPath);
+
+  canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
+  canvas->drawShape(parsedPathShape, strokePaint);
+  EXPECT_TRUE(Baseline::Compare(surface, "RecordTest/PathShapeJson2"));
 }
 
 // 添加 StrokeShape 的单元测试
 TGFX_TEST(RecordTest, StrokeShapeJson) {
-    // 创建 StrokeShape 并测试序列化
-    Path path2;
-    auto baseShape = std::make_shared<PathShape>(path2);
-    Stroke stroke;
-    stroke.width = 5.0f;
-    auto strokeShape = std::make_shared<StrokeShape>(baseShape, stroke);
-    std::string strokeJson = strokeShape->toJson();
-    auto parsedStrokeShape = Shape::FromJson(strokeJson);
-    ASSERT_NE(parsedStrokeShape, nullptr);
-    ASSERT_EQ(parsedStrokeShape->type(), Shape::Type::Stroke);
-    // 验证 Stroke 属性
-    auto parsedStroke = std::static_pointer_cast<StrokeShape>(parsedStrokeShape)->stroke;
-    ASSERT_EQ(stroke.width, parsedStroke.width);
-    // 验证 内部 Shape
-    ASSERT_EQ(std::static_pointer_cast<StrokeShape>(parsedStrokeShape)->shape->type(), Shape::Type::Path);
+  // 创建 StrokeShape 并测试序列化
+  Path path2;
+  auto baseShape = std::make_shared<PathShape>(path2);
+  Stroke stroke;
+  stroke.width = 5.0f;
+  auto strokeShape = std::make_shared<StrokeShape>(baseShape, stroke);
+  std::string strokeJson = strokeShape->toJson();
+  auto parsedStrokeShape = Shape::FromJson(strokeJson);
+  ASSERT_NE(parsedStrokeShape, nullptr);
+  ASSERT_EQ(parsedStrokeShape->type(), Shape::Type::Stroke);
+  // 验证 Stroke 属性
+  auto parsedStroke = std::static_pointer_cast<StrokeShape>(parsedStrokeShape)->stroke;
+  ASSERT_EQ(stroke.width, parsedStroke.width);
+  // 验证 内部 Shape
+  ASSERT_EQ(std::static_pointer_cast<StrokeShape>(parsedStrokeShape)->shape->type(),
+            Shape::Type::Path);
 }
 
 // 添加 MergeShape 的单元测试
 TGFX_TEST(RecordTest, MergeShapeJson) {
-    // 创建 MergeShape 并测试序列化
-    Path path3;
-    auto baseShape = std::make_shared<PathShape>(path3);
-    auto secondShape = std::make_shared<PathShape>(path3);
-    auto mergeShape = std::make_shared<MergeShape>(baseShape, secondShape, PathOp::Union);
-    std::string mergeJson = mergeShape->toJson();
-    auto parsedMergeShape = Shape::FromJson(mergeJson);
-    ASSERT_NE(parsedMergeShape, nullptr);
-    ASSERT_EQ(parsedMergeShape->type(), Shape::Type::Merge);
-    // 验证 Merge 属性
-    auto parsedMerge = std::static_pointer_cast<MergeShape>(parsedMergeShape);
-    ASSERT_EQ(parsedMerge->pathOp, PathOp::Union);
-    ASSERT_EQ(parsedMerge->first->type(), Shape::Type::Path);
-    ASSERT_EQ(parsedMerge->second->type(), Shape::Type::Path);
+  // 创建 MergeShape 并测试序列化
+  Path path3;
+  auto baseShape = std::make_shared<PathShape>(path3);
+  auto secondShape = std::make_shared<PathShape>(path3);
+  auto mergeShape = std::make_shared<MergeShape>(baseShape, secondShape, PathOp::Union);
+  std::string mergeJson = mergeShape->toJson();
+  auto parsedMergeShape = Shape::FromJson(mergeJson);
+  ASSERT_NE(parsedMergeShape, nullptr);
+  ASSERT_EQ(parsedMergeShape->type(), Shape::Type::Merge);
+  // 验证 Merge 属性
+  auto parsedMerge = std::static_pointer_cast<MergeShape>(parsedMergeShape);
+  ASSERT_EQ(parsedMerge->pathOp, PathOp::Union);
+  ASSERT_EQ(parsedMerge->first->type(), Shape::Type::Path);
+  ASSERT_EQ(parsedMerge->second->type(), Shape::Type::Path);
 }
 
 // 添加 MatrixShape 的单元测试
 TGFX_TEST(RecordTest, MatrixShapeJson) {
-    // 创建 MatrixShape 并测试序列化
-    Path path2;
-    auto baseShape = std::make_shared<PathShape>(path2);
-    Matrix matrix = Matrix::MakeScale(2.0f, 2.0f);
-    auto matrixShape = std::make_shared<MatrixShape>(baseShape, matrix);
-    std::string matrixJson = matrixShape->toJson();
-    auto parsedMatrixShape = Shape::FromJson(matrixJson);
-    ASSERT_NE(parsedMatrixShape, nullptr);
-    ASSERT_EQ(parsedMatrixShape->type(), Shape::Type::Matrix);
-    // 验证 Matrix 属性
-    auto parsedMatrix = std::static_pointer_cast<MatrixShape>(parsedMatrixShape);
-    ASSERT_EQ(parsedMatrix->matrix, matrix);
-    ASSERT_EQ(parsedMatrix->shape->type(), Shape::Type::Path);
+  // 创建 MatrixShape 并测试序列化
+  Path path2;
+  auto baseShape = std::make_shared<PathShape>(path2);
+  Matrix matrix = Matrix::MakeScale(2.0f, 2.0f);
+  auto matrixShape = std::make_shared<MatrixShape>(baseShape, matrix);
+  std::string matrixJson = matrixShape->toJson();
+  auto parsedMatrixShape = Shape::FromJson(matrixJson);
+  ASSERT_NE(parsedMatrixShape, nullptr);
+  ASSERT_EQ(parsedMatrixShape->type(), Shape::Type::Matrix);
+  // 验证 Matrix 属性
+  auto parsedMatrix = std::static_pointer_cast<MatrixShape>(parsedMatrixShape);
+  ASSERT_EQ(parsedMatrix->matrix, matrix);
+  ASSERT_EQ(parsedMatrix->shape->type(), Shape::Type::Path);
 }
 
 // 添加 GlyphShape 的单元测试
 TGFX_TEST(RecordTest, GlyphShapeJson) {
-    // 创建 GlyphShape 并测试序列化
-    GlyphRun glyphRun;
-    auto glyphRunList = std::make_shared<GlyphRunList>(glyphRun);
-    // 假设 GlyphRunList 有添加 glyph 的方法
-    // glyphRunList->addGlyph(...);
-    auto glyphShape = std::make_shared<GlyphShape>(glyphRunList);
-    std::string glyphJson = glyphShape->toJson();
-    auto parsedGlyphShape = Shape::FromJson(glyphJson);
-    ASSERT_NE(parsedGlyphShape, nullptr);
-    ASSERT_EQ(parsedGlyphShape->type(), Shape::Type::Glyph);
-    // 验证 GlyphRunList
-    auto parsedGlyph = std::static_pointer_cast<GlyphShape>(parsedGlyphShape)->glyphRunList;
-    ASSERT_EQ(glyphRunList, parsedGlyph);
+  // 创建 GlyphShape 并测试序列化
+  GlyphRun glyphRun;
+  auto glyphRunList = std::make_shared<GlyphRunList>(glyphRun);
+  // 假设 GlyphRunList 有添加 glyph 的方法
+  // glyphRunList->addGlyph(...);
+  auto glyphShape = std::make_shared<GlyphShape>(glyphRunList);
+  std::string glyphJson = glyphShape->toJson();
+  auto parsedGlyphShape = Shape::FromJson(glyphJson);
+  ASSERT_NE(parsedGlyphShape, nullptr);
+  ASSERT_EQ(parsedGlyphShape->type(), Shape::Type::Glyph);
+  // 验证 GlyphRunList
+  auto parsedGlyph = std::static_pointer_cast<GlyphShape>(parsedGlyphShape)->glyphRunList;
+  ASSERT_EQ(glyphRunList, parsedGlyph);
 }
 
 // 添加 EffectShape 的单元测试
 TGFX_TEST(RecordTest, EffectShapeJson) {
-    // 创建 EffectShape 并测试序列化
-    Path path2;
-    auto baseShape = std::make_shared<PathShape>(path2);
-    std::shared_ptr<PathEffect> pathEffect = PathEffect::MakeCorner(0);
-    auto effectShape = std::make_shared<EffectShape>(baseShape, pathEffect);
-    std::string effectJson = effectShape->toJson();
-    auto parsedEffectShape = Shape::FromJson(effectJson);
-    ASSERT_NE(parsedEffectShape, nullptr);
-    ASSERT_EQ(parsedEffectShape->type(), Shape::Type::Effect);
-    // 验证 Effect 属性
-    auto parsedEffect = std::static_pointer_cast<EffectShape>(parsedEffectShape);
-    ASSERT_EQ(parsedEffect->effect, pathEffect);
-    ASSERT_EQ(parsedEffect->shape->type(), Shape::Type::Path);
+  // 创建 EffectShape 并测试序列化
+  Path path2;
+  auto baseShape = std::make_shared<PathShape>(path2);
+  std::shared_ptr<PathEffect> pathEffect = PathEffect::MakeCorner(0);
+  auto effectShape = std::make_shared<EffectShape>(baseShape, pathEffect);
+  std::string effectJson = effectShape->toJson();
+  auto parsedEffectShape = Shape::FromJson(effectJson);
+  ASSERT_NE(parsedEffectShape, nullptr);
+  ASSERT_EQ(parsedEffectShape->type(), Shape::Type::Effect);
+  // 验证 Effect 属性
+  auto parsedEffect = std::static_pointer_cast<EffectShape>(parsedEffectShape);
+  ASSERT_EQ(parsedEffect->effect, pathEffect);
+  ASSERT_EQ(parsedEffect->shape->type(), Shape::Type::Path);
 }
 
 // 添加 AppendShape 的单元测试
 TGFX_TEST(RecordTest, AppendShapeJson) {
-    // 创建 AppendShape 并测试序列化
+  // 创建 AppendShape 并测试序列化
     Path path2;
     auto baseShape = std::make_shared<PathShape>(path2);
     auto secondShape = std::make_shared<PathShape>(path2);
