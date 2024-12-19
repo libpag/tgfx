@@ -103,8 +103,9 @@ TEST_F(ShapeJsonTestFixture, PathShapeJson) {
 
 // 添加 StrokeShape 的单元测试
 TEST_F(ShapeJsonTestFixture, StrokeShapeJson) {
-  Path path2;
-  auto baseShape = std::make_shared<PathShape>(path2);
+  Path path;
+  path.addRect(Rect::MakeLTRB(0.0f, 0.0f, 100.0f, 100.0f));
+  auto baseShape = std::make_shared<PathShape>(path);
   Stroke stroke;
   stroke.width = 5.0f;
   auto strokeShape = std::make_shared<StrokeShape>(baseShape, stroke);
@@ -129,9 +130,9 @@ TEST_F(ShapeJsonTestFixture, StrokeShapeJson) {
 
 // 添加 MergeShape 的单元测试
 TEST_F(ShapeJsonTestFixture, MergeShapeJson) {
-  Path path3;
-  auto baseShape = std::make_shared<PathShape>(path3);
-  auto secondShape = std::make_shared<PathShape>(path3);
+  Path path;
+  auto baseShape = std::make_shared<PathShape>(path);
+  auto secondShape = std::make_shared<PathShape>(path);
   auto mergeShape = std::make_shared<MergeShape>(baseShape, secondShape, PathOp::Union);
 
   auto md5 = clearAndDraw(mergeShape, "ShapeJsonTest/MergeShapeJson1");
@@ -153,10 +154,10 @@ TEST_F(ShapeJsonTestFixture, MergeShapeJson) {
 
 // 添加 MatrixShape 的单元测试
 TEST_F(ShapeJsonTestFixture, MatrixShapeJson) {
-  Path path2;
-  auto baseShape = std::make_shared<PathShape>(path2);
-  Matrix matrix = Matrix::MakeScale(2.0f, 2.0f);
-  auto matrixShape = std::make_shared<MatrixShape>(baseShape, matrix);
+  Path path;
+  auto baseShape = std::make_shared<PathShape>(path);
+  const Matrix scaleMatrix = Matrix::MakeScale(2.0f, 2.0f);
+  auto matrixShape = std::make_shared<MatrixShape>(baseShape, scaleMatrix);
 
   auto md5 = clearAndDraw(matrixShape, "ShapeJsonTest/MatrixShapeJson1");
 
@@ -166,7 +167,7 @@ TEST_F(ShapeJsonTestFixture, MatrixShapeJson) {
   ASSERT_EQ(parsedMatrixShape->type(), Shape::Type::Matrix);
   // 验证 Matrix 属性
   auto parsedMatrix = std::static_pointer_cast<MatrixShape>(parsedMatrixShape);
-  ASSERT_EQ(parsedMatrix->matrix, matrix);
+  ASSERT_EQ(parsedMatrix->matrix, scaleMatrix);
   ASSERT_EQ(parsedMatrix->shape->type(), Shape::Type::Path);
 
   auto newMd5 = clearAndDraw(parsedMatrixShape, "ShapeJsonTest/MatrixShapeJson2");
@@ -199,10 +200,10 @@ TEST_F(ShapeJsonTestFixture, GlyphShapeJson) {
 
 // 添加 EffectShape 的单元测试
 TEST_F(ShapeJsonTestFixture, EffectShapeJson) {
-  Path path2;
-  auto baseShape = std::make_shared<PathShape>(path2);
-  std::shared_ptr<PathEffect> pathEffect = PathEffect::MakeCorner(0);
-  auto effectShape = std::make_shared<EffectShape>(baseShape, pathEffect);
+  Path path;
+  auto baseShape = std::make_shared<PathShape>(path);
+  const std::shared_ptr<PathEffect> cornerEffect = PathEffect::MakeCorner(0);
+  auto effectShape = std::make_shared<EffectShape>(baseShape, cornerEffect);
 
   auto md5 = clearAndDraw(effectShape, "ShapeJsonTest/EffectShapeJson1");
 
@@ -212,7 +213,7 @@ TEST_F(ShapeJsonTestFixture, EffectShapeJson) {
   ASSERT_EQ(parsedEffectShape->type(), Shape::Type::Effect);
   // 验证 Effect 属性
   auto parsedEffect = std::static_pointer_cast<EffectShape>(parsedEffectShape);
-  ASSERT_EQ(parsedEffect->effect, pathEffect);
+  ASSERT_EQ(parsedEffect->effect, cornerEffect);
   ASSERT_EQ(parsedEffect->shape->type(), Shape::Type::Path);
 
   auto newMd5 = clearAndDraw(parsedEffectShape, "ShapeJsonTest/EffectShapeJson2");
@@ -222,9 +223,9 @@ TEST_F(ShapeJsonTestFixture, EffectShapeJson) {
 
 // 添加 AppendShape 的单元测试
 TEST_F(ShapeJsonTestFixture, AppendShapeJson) {
-  Path path2;
-  auto baseShape = std::make_shared<PathShape>(path2);
-  auto secondShape = std::make_shared<PathShape>(path2);
+  Path path;
+  auto baseShape = std::make_shared<PathShape>(path);
+  auto secondShape = std::make_shared<PathShape>(path);
   std::vector<std::shared_ptr<Shape>> shapes = {baseShape, secondShape};
   auto appendShape = std::make_shared<AppendShape>(std::move(shapes));
 
