@@ -38,7 +38,7 @@ TEST(PathTest, SerializeDeserialize) {
   originalPath.close();
 
   // -----------------------------------------------------
-  auto  device = GLDevice::Make();
+  auto device = GLDevice::Make();
   auto context = device->lockContext();
   ASSERT_TRUE(context != nullptr);
   auto surface = Surface::Make(context, 400, 400);
@@ -53,18 +53,18 @@ TEST(PathTest, SerializeDeserialize) {
 
   canvas->drawPath(originalPath, strokePaint);
   EXPECT_TRUE(Baseline::Compare(surface, "PathTest/SerializeDeserialize1"));
-  // 序列化路径
-  std::vector<uint8_t> serializedData = originalPath.serialize();
   device->unlock();
   device = nullptr;
   // -----------------------------------------------------
+  // 序列化路径
+  auto jsonStr = originalPath.toJson();
+  std::cout << jsonStr << std::endl;
   // 反序列化到新路径
   Path deserializedPath;
-  bool success = deserializedPath.deserialize(serializedData);
-  ASSERT_TRUE(success) << "Deserialization failed";
+  deserializedPath.fromJson(jsonStr);
 
   // -----------------------------------------------------
-  auto  newDevice = GLDevice::Make();
+  auto newDevice = GLDevice::Make();
   auto newContext = newDevice->lockContext();
   ASSERT_TRUE(newContext != nullptr);
   auto newSurface = Surface::Make(newContext, 400, 400);

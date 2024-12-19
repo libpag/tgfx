@@ -17,10 +17,11 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "tgfx/core/Path.h"
+#include <arpa/inet.h>  // 添加用于字节序转换的头文件
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include "core/PathRef.h"
 #include "core/utils/MathExtra.h"
-#include <arpa/inet.h> // 添加用于字节序转换的头文件
 
 namespace tgfx {
 using namespace pk;
@@ -604,8 +605,10 @@ std::vector<uint8_t> Path::toBinary() const {
         {
           float x = points[0].x();
           float y = points[0].y();
-          data.insert(data.end(), reinterpret_cast<uint8_t*>(&x), reinterpret_cast<uint8_t*>(&x) + sizeof(float));
-          data.insert(data.end(), reinterpret_cast<uint8_t*>(&y), reinterpret_cast<uint8_t*>(&y) + sizeof(float));
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&x),
+                      reinterpret_cast<uint8_t*>(&x) + sizeof(float));
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&y),
+                      reinterpret_cast<uint8_t*>(&y) + sizeof(float));
         }
         break;
       case SkPath::kLine_Verb:
@@ -613,8 +616,10 @@ std::vector<uint8_t> Path::toBinary() const {
         {
           float x = points[1].x();
           float y = points[1].y();
-          data.insert(data.end(), reinterpret_cast<uint8_t*>(&x), reinterpret_cast<uint8_t*>(&x) + sizeof(float));
-          data.insert(data.end(), reinterpret_cast<uint8_t*>(&y), reinterpret_cast<uint8_t*>(&y) + sizeof(float));
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&x),
+                      reinterpret_cast<uint8_t*>(&x) + sizeof(float));
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&y),
+                      reinterpret_cast<uint8_t*>(&y) + sizeof(float));
         }
         break;
       case SkPath::kQuad_Verb:
@@ -622,8 +627,10 @@ std::vector<uint8_t> Path::toBinary() const {
         for (int i = 1; i <= 2; ++i) {
           float cx = points[i].x();
           float cy = points[i].y();
-          data.insert(data.end(), reinterpret_cast<uint8_t*>(&cx), reinterpret_cast<uint8_t*>(&cx) + sizeof(float));
-          data.insert(data.end(), reinterpret_cast<uint8_t*>(&cy), reinterpret_cast<uint8_t*>(&cy) + sizeof(float));
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&cx),
+                      reinterpret_cast<uint8_t*>(&cx) + sizeof(float));
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&cy),
+                      reinterpret_cast<uint8_t*>(&cy) + sizeof(float));
         }
         break;
       case SkPath::kCubic_Verb:
@@ -631,8 +638,10 @@ std::vector<uint8_t> Path::toBinary() const {
         for (int i = 1; i <= 3; ++i) {
           float cx = points[i].x();
           float cy = points[i].y();
-          data.insert(data.end(), reinterpret_cast<uint8_t*>(&cx), reinterpret_cast<uint8_t*>(&cx) + sizeof(float));
-          data.insert(data.end(), reinterpret_cast<uint8_t*>(&cy), reinterpret_cast<uint8_t*>(&cy) + sizeof(float));
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&cx),
+                      reinterpret_cast<uint8_t*>(&cx) + sizeof(float));
+          data.insert(data.end(), reinterpret_cast<uint8_t*>(&cy),
+                      reinterpret_cast<uint8_t*>(&cy) + sizeof(float));
         }
         break;
       case SkPath::kConic_Verb:
@@ -758,11 +767,48 @@ bool Path::deserialize(const std::vector<uint8_t>& data) {
   return this->fromBinary(serialized.commands);
 }
 
-std::string Path::toJson() const{
-  return "";
-}
-void Path::fromJson(const std::string& ){
+std::string Path::toJson() const {
+  auto binaryData = this->serialize();
+  std::string hexString;
+  hexString.reserve(binaryData.size() * 2);
+  const char hexDigits[] = "0123456789ABCDEF";
+  for (uint8_t byte : binaryData) {
+    hexString += hexDigits[byte >> 4];
+    hexString += hexDigits[byte & 0xF];
+  }
+  nlohmann::json j;
+  j["data"] = hexString;
+  return j.dump();
 }
 
+void Path::fromJson(const std::string& jsonString) {
+  nlohmann::json j = nlohmann::json::parse(jsonString);
+  std::string hexString = j["data"];
+  if (hexString.size() % 2 != 0) {
+    std::cout << "Invalid hex string" << std::endl;
+    return;
+  }
+  std::vector<uint8_t> binaryData;
+  binaryData.reserve(hexString.size() / 2);
+  for (size_t i = 0; i < hexString.size(); i += 2) {
+    uint8_t byte = 0;
+    for (size_t k = 0; k < 2; ++k) {
+      byte <<= 4;
+      if (hexString[i + k] >= '0' && hexString[i + k] <= '9') {
+        byte |= (hexString[i + k] - '0');
+      } else if (hexString[i + k] >= 'A' && hexString[i + k] <= 'F') {
+        byte |= (hexString[i + k] - 'A' + 10);
+      } else if (hexString[i + k] >= 'a' && hexString[i + k] <= 'f') {
+        byte |= (hexString[i + k] - 'a' + 10);
+      } else {
+        // 打印log
+        std::cout << "Invalid character: " << hexString[i + k] << std::endl;
+        return; // 无效字符
+      }
+    }
+    binaryData.push_back(byte);
+    }
+    this->deserialize(binaryData);
+}
 
 }  // namespace tgfx
