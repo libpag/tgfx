@@ -256,14 +256,12 @@ TGFX_TEST(RecordTest, PathShapeJson) {
   auto parsedPathShape = Shape::FromJson(pathJson);
   ASSERT_NE(parsedPathShape, nullptr);
   ASSERT_EQ(parsedPathShape->type(), Shape::Type::Path);
-  // 验证 Path 内容
-  Path originalPath = pathShape->getPath();
-  Path parsedPath = parsedPathShape->getPath();
-  // ASSERT_EQ(originalPath, parsedPath);
 
   canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());
   canvas->drawShape(parsedPathShape, strokePaint);
   EXPECT_TRUE(Baseline::Compare(surface, "RecordTest/PathShapeJson2"));
+
+  device->unlock();
 }
 
 // 添加 StrokeShape 的单元测试
