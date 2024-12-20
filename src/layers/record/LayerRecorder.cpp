@@ -93,8 +93,14 @@ void LayerRecorder::setChildIndex(Layer* layer, const std::shared_ptr<Layer>& ch
   Recorder::Record(std::make_unique<CmdSetChildIndex>(layer->_uuid, child->_uuid, index));
 }
 
-void LayerRecorder::replaceChild(Layer* layer, const std::shared_ptr<Layer>& old_child, const std::shared_ptr<Layer>& new_child) {
-  Recorder::Record(std::make_unique<CmdReplaceChild>(layer->_uuid, old_child->_uuid, new_child->_uuid));
+void LayerRecorder::replaceChild(Layer* layer, const std::shared_ptr<Layer>& old_child,
+                                 const std::shared_ptr<Layer>& new_child) {
+  Recorder::Record(
+      std::make_unique<CmdReplaceChild>(layer->_uuid, old_child->_uuid, new_child->_uuid));
+}
+
+void LayerRecorder::Remove(int uuid) {
+  Recorder::Remove(uuid);
 }
 
 }  // namespace tgfx

@@ -53,6 +53,7 @@ class LayerRecorder {
   static void setChildIndex(Layer* layer, const std::shared_ptr<Layer>& child, int index);
   static void replaceChild(Layer* layer, const std::shared_ptr<Layer>& old_child,
                            const std::shared_ptr<Layer>& new_child);
+  static void Remove(int uuid);
 
   friend class Layer;
 };

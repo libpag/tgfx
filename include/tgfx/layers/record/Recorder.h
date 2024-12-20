@@ -32,6 +32,7 @@ class Recorder {
 
  private:
   static void Record(std::unique_ptr<Command> command);
+  static void Remove(int uuid);
   static std::vector<std::unique_ptr<Command>> commands_;
 
   friend class LayerRecorder;

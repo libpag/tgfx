@@ -85,6 +85,7 @@ Layer::~Layer() {
     _mask->maskOwner = nullptr;
   }
   removeChildren();
+  LayerRecorder::Remove(_uuid);
 }
 
 Layer::Layer() {
