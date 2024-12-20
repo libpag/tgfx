@@ -588,7 +588,6 @@ bool Path::getLastPoint(Point* lastPoint) const {
 
 #include <cstdint>
 #include <cstring>
-#include <vector>
 
 // 修改 toBinary 方法中的浮点数复制
 std::vector<uint8_t> Path::toBinary() const {
@@ -725,15 +724,14 @@ bool Path::fromBinary(const std::vector<uint8_t>& data) {
   return true;
 }
 
-#include <cstdint>
-#include <cstring>
-#include <vector>
-
 // 修改 serialize 方法，移除 crc32 checksum 逻辑
 std::vector<uint8_t> Path::serialize() const {
   SerializedPath serialized;
   serialized.version = 1;
   serialized.commands = this->toBinary();
+  if (serialized.commands.empty()) {
+    return {};
+  }
 
   // 移除 checksum 计算
   // serialized.checksum = static_cast<uint32_t>(
@@ -744,13 +742,6 @@ std::vector<uint8_t> Path::serialize() const {
   data.push_back(serialized.version);
   data.insert(data.end(), serialized.commands.begin(), serialized.commands.end());
 
-  // 移除添加校验和代码
-  // uint8_t checksumBytes[4];
-  // std::memcpy(checksumBytes, &serialized.checksum, 4);
-  // data.insert(data.end(), checksumBytes, checksumBytes + 4);
-
-  // 可选：压缩数据
-  // ...
 
   return data;
 }
