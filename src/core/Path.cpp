@@ -778,56 +778,53 @@ bool Path::deserialize(const std::vector<uint8_t>& data) {
 
 std::string Path::toJson() const {
   auto binaryData = this->serialize();
-  std::string hexString;
-  hexString.reserve(binaryData.size() * 2);
-  const char hexDigits[] = "0123456789ABCDEF";
-  for (uint8_t byte : binaryData) {
-    hexString += hexDigits[byte >> 4];
-    hexString += hexDigits[byte & 0xF];
-  }
   nlohmann::json j;
-  j["data"] = hexString;
+  if (!binaryData.empty()) {
+    std::string hexString;
+    hexString.reserve(binaryData.size() * 2);
+    const char hexDigits[] = "0123456789ABCDEF";
+    for (uint8_t byte : binaryData) {
+      hexString += hexDigits[byte >> 4];
+      hexString += hexDigits[byte & 0xF];
+    }
+    j["data"] = hexString;
+  }
   return j.dump();
 }
 
 void Path::fromJson(const std::string& jsonString) {
   nlohmann::json j = nlohmann::json::parse(jsonString);
-  std::string hexString;
   if (j.contains("data") && j["data"].is_string()) {
-    hexString = j["data"];
+    std::string hexString = j["data"];
+    if (hexString.empty()) {
+      // 不添加 data 字段
+      return;
+    }
     if (hexString.size() % 2 != 0) {
       std::cout << "Invalid hex string" << std::endl;
       return;
     }
-  } else {
-    std::cout << "Invalid JSON data" << std::endl;
-    return;
-  }
-  if (hexString.size() % 2 != 0) {
-    std::cout << "Invalid hex string" << std::endl;
-    return;
-  }
-  std::vector<uint8_t> binaryData;
-  binaryData.reserve(hexString.size() / 2);
-  for (size_t i = 0; i < hexString.size(); i += 2) {
-    uint8_t byte = 0;
-    for (size_t k = 0; k < 2; ++k) {
-      byte <<= 4;
-      if (hexString[i + k] >= '0' && hexString[i + k] <= '9') {
-        byte |= (hexString[i + k] - '0');
-      } else if (hexString[i + k] >= 'A' && hexString[i + k] <= 'F') {
-        byte |= (hexString[i + k] - 'A' + 10);
-      } else if (hexString[i + k] >= 'a' && hexString[i + k] <= 'f') {
-        byte |= (hexString[i + k] - 'a' + 10);
-      } else {
-        // 打印log
-        std::cout << "Invalid character: " << hexString[i + k] << std::endl;
-        return; // 无效字符
+    std::vector<uint8_t> binaryData;
+    binaryData.reserve(hexString.size() / 2);
+    for (size_t i = 0; i < hexString.size(); i += 2) {
+      uint8_t byte = 0;
+      for (size_t k = 0; k < 2; ++k) {
+        byte <<= 4;
+        if (hexString[i + k] >= '0' && hexString[i + k] <= '9') {
+          byte |= (hexString[i + k] - '0');
+        } else if (hexString[i + k] >= 'A' && hexString[i + k] <= 'F') {
+          byte |= (hexString[i + k] - 'A' + 10);
+        } else if (hexString[i + k] >= 'a' && hexString[i + k] <= 'f') {
+          byte |= (hexString[i + k] - 'a' + 10);
+        } else {
+          std::cout << "Invalid character: " << hexString[i + k] << std::endl;
+          return; // 无效字符
+        }
       }
-    }
-    binaryData.push_back(byte);
+      binaryData.push_back(byte);
     }
     this->deserialize(binaryData);
+  }
 }
 
 }  // namespace tgfx
