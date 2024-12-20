@@ -18,6 +18,7 @@
 
 #include <gtest/gtest.h>
 #include <math.h>
+#include <tgfx/layers/ImageLayer.h>
 #include <tgfx/layers/record/Recorder.h>
 #include <vector>
 #include "core/Records.h"
@@ -219,5 +220,127 @@ TGFX_TEST(RecordTest, RecordLayer) {
   // ���果设置了其他属性，如 additional properties, 应进行验证
 }
 
+TGFX_TEST(RecordTest, RecordShapeLayer) {
+  auto shapeLayer = ShapeLayer::Make();
+  shapeLayer->setAlpha(0.75f);
+  shapeLayer->setBlendMode(BlendMode::Overlay);
+  shapeLayer->setPosition(Point{50.0f, 100.0f});
+  shapeLayer->setMatrix(Matrix::MakeScale(2.0f, 2.0f));
+  shapeLayer->setRasterizationScale(1.5f);
+  shapeLayer->setVisible(true);
+  shapeLayer->setShouldRasterize(false);
+  shapeLayer->setName("TestShapeLayer");
+  shapeLayer->setAllowsEdgeAntialiasing(false);
+  shapeLayer->setAllowsGroupOpacity(true);
+
+  Path shapePath;
+  shapePath.addRect(Rect::MakeLTRB(0.0f, 0.0f, 100.0f, 100.0f));
+  shapeLayer->setPath(shapePath);
+  auto fillStyle = SolidColor::Make();
+  fillStyle->setColor(Color::FromRGBA(255, 0, 255, 0));
+  shapeLayer->setFillStyle(fillStyle);
+
+  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(11));
+  
+  auto jsonStr = Recorder::FlushCommands();
+  std::cout << jsonStr << std::endl;
+  int shapeUuid = shapeLayer->_uuid;
+
+  std::map<int, std::shared_ptr<Recordable>> objMap;
+  Recorder::Replay(jsonStr, objMap);
+  auto replayLayer = objMap[shapeUuid];
+  auto castedReplayLayer = std::static_pointer_cast<ShapeLayer>(replayLayer);
+  ASSERT_NE(castedReplayLayer, nullptr);
+  ASSERT_FLOAT_EQ(castedReplayLayer->alpha(), 0.75f);
+  ASSERT_EQ(castedReplayLayer->blendMode(), BlendMode::Overlay);
+  ASSERT_NE(castedReplayLayer->fillStyle(), nullptr);
+  auto solidColor = std::static_pointer_cast<SolidColor>(castedReplayLayer->fillStyle());
+  // ASSERT_EQ(solidColor->color(), Color::FromRGBA(255, 0, 255, 0));
+
+  // ...更多属性断言...
+}
+
+TGFX_TEST(RecordTest, RecordSolidLayer) {
+  auto solidLayer = SolidLayer::Make();
+  solidLayer->setAlpha(0.6f);
+  solidLayer->setBlendMode(BlendMode::Screen);
+  solidLayer->setPosition(Point{150.0f, 250.0f});
+  solidLayer->setMatrix(Matrix::MakeRotate(30.0f));
+  solidLayer->setRasterizationScale(2.0f);
+  solidLayer->setVisible(true);
+  solidLayer->setShouldRasterize(true);
+  solidLayer->setName("TestSolidLayer");
+  solidLayer->setAllowsEdgeAntialiasing(true);
+  solidLayer->setAllowsGroupOpacity(false);
+
+  solidLayer->setWidth(100.0f);
+  solidLayer->setHeight(200.0f);
+  solidLayer->setRadiusX(10.0f);
+  solidLayer->setRadiusY(20.0f);
+  solidLayer->setColor(Color::FromRGBA(128, 128, 128, 255));
+
+  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(7));
+  
+  auto jsonStr = Recorder::FlushCommands();
+  std::cout << jsonStr << std::endl;
+  int solidUuid = solidLayer->_uuid;
+
+  std::map<int, std::shared_ptr<Recordable>> objMap;
+  Recorder::Replay(jsonStr, objMap);
+  auto replayLayer = objMap[solidUuid];
+  auto castedReplayLayer = std::static_pointer_cast<SolidLayer>(replayLayer);
+  ASSERT_NE(castedReplayLayer, nullptr);
+  ASSERT_FLOAT_EQ(castedReplayLayer->alpha(), 0.6f);
+  ASSERT_EQ(castedReplayLayer->blendMode(), BlendMode::Screen);
+  // ...更多属性断言...
+  ASSERT_FLOAT_EQ(castedReplayLayer->width(), 100.0f);
+  ASSERT_FLOAT_EQ(castedReplayLayer->height(), 200.0f);
+  ASSERT_FLOAT_EQ(castedReplayLayer->radiusX(), 10.0f);
+  ASSERT_FLOAT_EQ(castedReplayLayer->radiusY(), 20.0f);
+  ASSERT_EQ(castedReplayLayer->color(), Color::FromRGBA(128, 128, 128, 255));
+
+  // ...更多属性断言...
+}
+
+TGFX_TEST(RecordTest, RecordImageLayer) {
+  auto imageLayer = ImageLayer::Make();
+  imageLayer->setAlpha(0.9f);
+  imageLayer->setBlendMode(BlendMode::Multiply);
+  imageLayer->setPosition(Point{300.0f, 400.0f});
+  imageLayer->setMatrix(Matrix::MakeTrans(50.0f, 50.0f));
+  imageLayer->setRasterizationScale(1.0f);
+  imageLayer->setVisible(true);
+  imageLayer->setShouldRasterize(false);
+  imageLayer->setName("TestImageLayer");
+  imageLayer->setAllowsEdgeAntialiasing(true);
+  imageLayer->setAllowsGroupOpacity(true);
+
+  imageLayer->setSampling(SamplingOptions(FilterMode::Nearest, MipmapMode::None));
+  auto image = MakeImage("resources/apitest/rotation.jpg");
+  imageLayer->setImage(image);
+
+  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(10));
+  
+  auto jsonStr = Recorder::FlushCommands();
+  std::cout << jsonStr << std::endl;
+  int imageUuid = imageLayer->_uuid;
+
+  std::map<int, std::shared_ptr<Recordable>> objMap;
+  Recorder::Replay(jsonStr, objMap);
+  auto replayLayer = objMap[imageUuid];
+  auto castedReplayLayer = std::static_pointer_cast<ImageLayer>(replayLayer);
+  ASSERT_NE(castedReplayLayer, nullptr);
+  ASSERT_FLOAT_EQ(castedReplayLayer->alpha(), 0.9f);
+  ASSERT_EQ(castedReplayLayer->blendMode(), BlendMode::Multiply);
+  // ...更多属性断言...
+  ASSERT_EQ(castedReplayLayer->sampling(), SamplingOptions(FilterMode::Nearest, MipmapMode::None));
+  ASSERT_NE(castedReplayLayer->image(), nullptr);
+  // 如果 Image 有更多属性，可以继续添加断言
+  // 例如：
+  // ASSERT_EQ(castedReplayLayer->image()->width(), expectedWidth);
+  // ASSERT_EQ(castedReplayLayer->image()->height(), expectedHeight);
+
+  // ...更多属性断言...
+}
 
 }  // namespace tgfx
