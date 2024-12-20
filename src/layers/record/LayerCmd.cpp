@@ -431,6 +431,11 @@ void CmdAddChildAt::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) 
   std::cout << "CmdAddChildAt: Parent Layer Type: " << parentLayer->TypeToString() << std::endl;
   auto childLayer = std::static_pointer_cast<Layer>(childIt->second);
   std::cout << "CmdAddChildAt: Child Layer Type: " << childLayer->TypeToString() << std::endl;
+  if (_index > static_cast<int> (parentLayer->children().size())) {
+    // 如果 index 超出范围，那说明前面有逻辑漏掉了，这样插入位置就不对了
+    std::cerr << "异常: CmdAddChildAt::execute, index 超出范围。" << std::endl;
+    return;
+  }
   parentLayer->addChildAt(childLayer, _index);
 }
 
