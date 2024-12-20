@@ -50,13 +50,21 @@ std::string Recorder::FlushCommands() {
 }
 
 void Recorder::Record(std::unique_ptr<Command> command) {
+  // 从后往前找，找到可以合并的命令
+  for (auto it = commands_.rbegin(); it != commands_.rend(); ++it) {
+    // 如果可以合并，结束循环
+    if ((*it)->merge(*command)) {
+      return;
+    }
+  }
+  // 不能合并再添加到 commands_ 中
   commands_.push_back(std::move(command));
 }
 
 void Recorder::Remove(int uuid) {
   // 从 commands_ 中移除 uuid 对应的命令
-  commands_.erase(std::remove_if(commands_.begin(), commands_.end(), [uuid](const auto& cmd) {
-    return cmd->_id == uuid;
+  commands_.erase(std::remove_if(commands_.begin(), commands_.end(),
+                                 [uuid](const auto& cmd) { return cmd->_id == uuid;
   }), commands_.end());
 }
 

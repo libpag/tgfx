@@ -24,7 +24,7 @@ namespace tgfx {
 
 bool CmdMakeShapeLayer::doMerge(const Command&) {
   // 正常不可能make同一个对象(相同id、相同type）多次，可能上游出现错误了，打印一下
-  std::cerr << "异常: CmdMakeShapeLayer::doMerge" << std::endl;
+  std::cerr << "异常: CmdMakeShapeLayer::doMerge, id = " << _id << std::endl;
   // 返回true，不需要重复make
   return true;
 }

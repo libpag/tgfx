@@ -20,6 +20,7 @@
 #include <math.h>
 #include <tgfx/layers/record/Recorder.h>
 #include <vector>
+#include "core/Records.h"
 #include "core/utils/Profiling.h"
 #include "tgfx/core/Path.h"
 #include "tgfx/layers/Gradient.h"
@@ -49,9 +50,16 @@ TGFX_TEST(RecordTest, RecordLayer) {
   rootLayer->setShouldRasterize(true);
 
   // 设置其他属性
-  rootLayer->setName("TestLayer");             // 设置 name
+  rootLayer->setName("xxx");             // 设置 name
   rootLayer->setAllowsEdgeAntialiasing(true);  // 设置 allowsEdgeAntialiasing
   rootLayer->setAllowsGroupOpacity(true);      // 设置 allowsGroupOpacity
+
+  // 应该是9条命令
+  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(9));
+  rootLayer->setName("TestLayer");             // 设置 name
+  // 再次设置name，命令应该被合并，还是9条
+  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(9));
+
 
   // 设置 filters
   // auto blendFilter = std::make_shared<BlendFilter>(BlendMode::Overlay);

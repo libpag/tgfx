@@ -26,13 +26,18 @@ bool CmdSetDefaultAllowsEdgeAntialiasing::doMerge(const Command& other) {
   return true;
 }
 bool CmdSetDefaultAllowsGroupOpacity::doMerge(const Command& other) {
-  return Command::doMerge(other);
+  _value = static_cast<const CmdSetDefaultAllowsGroupOpacity&>(other)._value;
+  return true;
 }
-bool CmdMakeLayer::doMerge(const Command& other) {
-  return Command::doMerge(other);
+bool CmdMakeLayer::doMerge(const Command& ) {
+  // 正常不可能make同一个对象(相同id、相同type）多次，可能上游出现错误了，打印一下
+  std::cerr << "异常: CmdMakeLayer::doMerge, id = " << _id << std::endl;
+  // 返回true，不需要重复make
+  return true;
 }
 bool CmdSetName::doMerge(const Command& other) {
-  return Command::doMerge(other);
+  _name = static_cast<const CmdSetName&>(other)._name;
+  return true;
 }
 bool CmdSetAlpha::doMerge(const Command& other) {
   _alpha = static_cast<const CmdSetAlpha&>(other)._alpha;
@@ -71,13 +76,16 @@ bool CmdSetAllowsGroupOpacity::doMerge(const Command& other) {
   return true;
 }
 bool CmdSetFilters::doMerge(const Command& other) {
-  return Command::doMerge(other);
+  _filter_ids = static_cast<const CmdSetFilters&>(other)._filter_ids;
+  return true;
 }
 bool CmdSetMask::doMerge(const Command& other) {
-  return Command::doMerge(other);
+  _mask_id = static_cast<const CmdSetMask&>(other)._mask_id;
+  return true;
 }
 bool CmdSetScrollRect::doMerge(const Command& other) {
-  return Command::doMerge(other);
+  _rect = static_cast<const CmdSetScrollRect&>(other)._rect;
+  return true;
 }
 bool CmdAddChildAt::doMerge(const Command& other) {
   return Command::doMerge(other);
@@ -98,7 +106,7 @@ bool CmdReplaceChild::doMerge(const Command& other) {
   return Command::doMerge(other);
 }
 
-void CmdSetDefaultAllowsEdgeAntialiasing::execute(std::map<int, std::shared_ptr<Recordable>>& ) {
+void CmdSetDefaultAllowsEdgeAntialiasing::execute(std::map<int, std::shared_ptr<Recordable>>&) {
   Layer::SetDefaultAllowsEdgeAntialiasing(_value);
 }
 
@@ -106,7 +114,7 @@ nlohmann::json CmdSetDefaultAllowsEdgeAntialiasing::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}, {"value", _value}};
 }
 
-void CmdSetDefaultAllowsGroupOpacity::execute(std::map<int, std::shared_ptr<Recordable>>& ) {
+void CmdSetDefaultAllowsGroupOpacity::execute(std::map<int, std::shared_ptr<Recordable>>&) {
   Layer::SetDefaultAllowsGroupOpacity(_value);
 }
 
@@ -348,7 +356,8 @@ void CmdSetMask::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
     std::cerr << "异常: objMap[" << _mask_id << "] 是空指针。" << std::endl;
     return;
   }
-  std::static_pointer_cast<Layer>(it->second)->setMask(std::static_pointer_cast<Layer>(maskIt->second));
+  std::static_pointer_cast<Layer>(it->second)
+      ->setMask(std::static_pointer_cast<Layer>(maskIt->second));
 }
 
 nlohmann::json CmdSetMask::toJson() const {
