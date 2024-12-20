@@ -35,6 +35,9 @@ void Recorder::Replay(std::string jsonStr, std::map<int, std::shared_ptr<Recorda
 }
 
 std::string Recorder::FlushCommands() {
+  if (commands_.empty()) {
+    return "";
+  }
   // 将 commands_ 转换为 json
   nlohmann::json jsonArray = nlohmann::json::array();
   for (const auto& cmd : commands_) {

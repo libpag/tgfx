@@ -37,7 +37,6 @@ std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
       return std::make_unique<CmdMakeLayer>(id);
     case CommandType::setName: {
       auto name = json.at("name").get<std::string>();
-      std::cout << "json: " << json.dump(4) << "\n\n name  " << name << std::endl;
       return std::make_unique<CmdSetName>(id, name);
     }
     case CommandType::setAlpha:
