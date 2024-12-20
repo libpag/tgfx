@@ -26,28 +26,29 @@ namespace tgfx {
 
 std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
   CommandType type = static_cast<CommandType>(json.at("type").get<int>());
+  int id = json.at("id").get<int>();  // 提取 _id
   switch (type) {
     // ------------------- Layer -------------------
     case CommandType::SetDefaultAllowsEdgeAntialiasing:
-      return std::make_unique<CmdSetDefaultAllowsEdgeAntialiasing>(json.at("value").get<bool>());
+      return std::make_unique<CmdSetDefaultAllowsEdgeAntialiasing>(id, json.at("value").get<bool>());
     case CommandType::SetDefaultAllowsGroupOpacity:
-      return std::make_unique<CmdSetDefaultAllowsGroupOpacity>(json.at("value").get<bool>());
+      return std::make_unique<CmdSetDefaultAllowsGroupOpacity>(id, json.at("value").get<bool>());
     case CommandType::MakeLayer:
-      return std::make_unique<CmdMakeLayer>(json.at("id").get<int>());
+      return std::make_unique<CmdMakeLayer>(id);
     case CommandType::setName: {
       auto name = json.at("name").get<std::string>();
       std::cout << "json: " << json.dump(4) << "\n\n name  " << name << std::endl;
-      return std::make_unique<CmdSetName>(json.at("id").get<int>(), name);
+      return std::make_unique<CmdSetName>(id, name);
     }
     case CommandType::setAlpha:
-      return std::make_unique<CmdSetAlpha>(json.at("id").get<int>(), json.at("alpha").get<float>());
+      return std::make_unique<CmdSetAlpha>(id, json.at("alpha").get<float>());
     case CommandType::setBlendMode:
       return std::make_unique<CmdSetBlendMode>(
-          json.at("id").get<int>(), static_cast<BlendMode>(json.at("blendMode").get<int>()));
+          id, static_cast<BlendMode>(json.at("blendMode").get<int>()));
     case CommandType::setPosition: {
       auto pos = json.at("position");
       Point position = Point::Make(pos[0].get<float>(), pos[1].get<float>());
-      return std::make_unique<CmdSetPosition>(json.at("id").get<int>(), position);
+      return std::make_unique<CmdSetPosition>(id, position);
     }
     case CommandType::setMatrix: {
       auto mat = json.at("matrix");
@@ -58,88 +59,79 @@ std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
                                       mat[4].get<float>(),  // scaleY
                                       mat[5].get<float>()   // transY
       );
-      return std::make_unique<CmdSetMatrix>(json.at("id").get<int>(), matrix);
+      return std::make_unique<CmdSetMatrix>(id, matrix);
     }
     case CommandType::setVisible:
-      return std::make_unique<CmdSetVisible>(json.at("id").get<int>(),
-                                             json.at("visible").get<bool>());
+      return std::make_unique<CmdSetVisible>(id, json.at("visible").get<bool>());
     case CommandType::setShouldRasterize:
-      return std::make_unique<CmdSetShouldRasterize>(json.at("id").get<int>(),
-                                                     json.at("shouldRasterize").get<bool>());
+      return std::make_unique<CmdSetShouldRasterize>(id, json.at("shouldRasterize").get<bool>());
     case CommandType::setRasterizationScale:
-      return std::make_unique<CmdSetRasterizationScale>(json.at("id").get<int>(),
-                                                        json.at("scale").get<float>());
+      return std::make_unique<CmdSetRasterizationScale>(id, json.at("scale").get<float>());
     case CommandType::setAllowsEdgeAntialiasing:
-      return std::make_unique<CmdSetAllowsEdgeAntialiasing>(json.at("id").get<int>(),
-                                                            json.at("allows").get<bool>());
+      return std::make_unique<CmdSetAllowsEdgeAntialiasing>(id, json.at("allows").get<bool>());
     case CommandType::setAllowsGroupOpacity:
-      return std::make_unique<CmdSetAllowsGroupOpacity>(json.at("id").get<int>(),
-                                                        json.at("allows").get<bool>());
+      return std::make_unique<CmdSetAllowsGroupOpacity>(id, json.at("allows").get<bool>());
     case CommandType::setFilters:
-      return std::make_unique<CmdSetFilters>(json.at("id").get<int>(),
-                                             json.at("filter_ids").get<std::vector<int>>());
+      return std::make_unique<CmdSetFilters>(id, json.at("filter_ids").get<std::vector<int>>());
     case CommandType::setMask:
-      return std::make_unique<CmdSetMask>(json.at("id").get<int>(), json.at("mask_id").get<int>());
+      return std::make_unique<CmdSetMask>(id, json.at("mask_id").get<int>());
     case CommandType::setScrollRect: {
       auto rect = json.at("rect");
       Rect r = Rect::MakeXYWH(rect[0].get<float>(), rect[1].get<float>(), rect[2].get<float>(),
                               rect[3].get<float>());
-      return std::make_unique<CmdSetScrollRect>(json.at("id").get<int>(), r);
+      return std::make_unique<CmdSetScrollRect>(id, r);
     }
     case CommandType::addChildAt:
       return std::make_unique<CmdAddChildAt>(
-          json.at("id").get<int>(), json.at("child_id").get<int>(), json.at("index").get<int>());
+          id, json.at("child_id").get<int>(), json.at("index").get<int>());
     case CommandType::removeChildAt:
-      return std::make_unique<CmdRemoveChildAt>(json.at("id").get<int>(),
-                                                json.at("index").get<int>());
+      return std::make_unique<CmdRemoveChildAt>(id, json.at("index").get<int>());
     case CommandType::removeChildren:
-      return std::make_unique<CmdRemoveChildren>(json.at("id").get<int>(),
-                                                 json.at("beginIndex").get<int>(),
+      return std::make_unique<CmdRemoveChildren>(id, json.at("beginIndex").get<int>(),
                                                  json.at("endIndex").get<int>());
     case CommandType::removeFromParent:
-      return std::make_unique<CmdRemoveFromParent>(json.at("id").get<int>());
+      return std::make_unique<CmdRemoveFromParent>(id);
     case CommandType::setChildIndex:
       return std::make_unique<CmdSetChildIndex>(
-          json.at("id").get<int>(), json.at("child_id").get<int>(), json.at("index").get<int>());
+          id, json.at("child_id").get<int>(), json.at("index").get<int>());
     case CommandType::replaceChild:
-      return std::make_unique<CmdReplaceChild>(json.at("id").get<int>(),
-                                               json.at("oldChild_id").get<int>(),
+      return std::make_unique<CmdReplaceChild>(id, json.at("oldChild_id").get<int>(),
                                                json.at("newChild_id").get<int>());
     // ------------------- ShapeLayer -------------------
     case CommandType::MakeShapeLayer:
-      return std::make_unique<CmdMakeShapeLayer>(json.at("id").get<int>());
+      return std::make_unique<CmdMakeShapeLayer>(id);
     case CommandType::setPath: {
       Path path;
       path.fromJson(json.at("path").dump());
-      return std::make_unique<CmdSetPath>(json.at("id").get<int>(), path);
+      return std::make_unique<CmdSetPath>(id, path);
     }
     case CommandType::setShape: {
       auto shapeJson = json.at("shape");
       std::shared_ptr<Shape> shape = Shape::FromJson(shapeJson.dump());
-      return std::make_unique<CmdSetShape>(json.at("id").get<int>(), shape);
+      return std::make_unique<CmdSetShape>(id, shape);
     }
     case CommandType::setFillStyle:
-      return std::make_unique<CmdSetFillStyle>(json.at("id").get<int>(), json.at("styleId").get<int>());
+      return std::make_unique<CmdSetFillStyle>(id, json.at("styleId").get<int>());
     case CommandType::setStrokeStyle:
-      return std::make_unique<CmdSetStrokeStyle>(json.at("id").get<int>(), json.at("styleId").get<int>());
+      return std::make_unique<CmdSetStrokeStyle>(id, json.at("styleId").get<int>());
     case CommandType::setLineCap:
-      return std::make_unique<CmdSetLineCap>(json.at("id").get<int>(), static_cast<LineCap>(json.at("cap").get<int>()));
+      return std::make_unique<CmdSetLineCap>(id, static_cast<LineCap>(json.at("cap").get<int>()));
     case CommandType::setLineJoin:
-      return std::make_unique<CmdSetLineJoin>(json.at("id").get<int>(), static_cast<LineJoin>(json.at("join").get<int>()));
+      return std::make_unique<CmdSetLineJoin>(id, static_cast<LineJoin>(json.at("join").get<int>()));
     case CommandType::setMiterLimit:
-      return std::make_unique<CmdSetMiterLimit>(json.at("id").get<int>(), json.at("limit").get<float>());
+      return std::make_unique<CmdSetMiterLimit>(id, json.at("limit").get<float>());
     case CommandType::setLineWidth:
-      return std::make_unique<CmdSetLineWidth>(json.at("id").get<int>(), json.at("width").get<float>());
+      return std::make_unique<CmdSetLineWidth>(id, json.at("width").get<float>());
     case CommandType::setLineDashPattern:
-      return std::make_unique<CmdSetLineDashPattern>(json.at("id").get<int>(), json.at("pattern").get<std::vector<float>>());
+      return std::make_unique<CmdSetLineDashPattern>(id, json.at("pattern").get<std::vector<float>>());
     case CommandType::setLineDashPhase:
-      return std::make_unique<CmdSetLineDashPhase>(json.at("id").get<int>(), json.at("phase").get<float>());
+      return std::make_unique<CmdSetLineDashPhase>(id, json.at("phase").get<float>());
     case CommandType::setStrokeStart:
-      return std::make_unique<CmdSetStrokeStart>(json.at("id").get<int>(), json.at("start").get<float>());
+      return std::make_unique<CmdSetStrokeStart>(id, json.at("start").get<float>());
     case CommandType::setStrokeEnd:
-      return std::make_unique<CmdSetStrokeEnd>(json.at("id").get<int>(), json.at("end").get<float>());
+      return std::make_unique<CmdSetStrokeEnd>(id, json.at("end").get<float>());
     case CommandType::setStrokeAlign:
-      return std::make_unique<CmdSetStrokeAlign>(json.at("id").get<int>(), static_cast<StrokeAlign>(json.at("align").get<int>()));
+      return std::make_unique<CmdSetStrokeAlign>(id, static_cast<StrokeAlign>(json.at("align").get<int>()));
     default:
       throw std::invalid_argument("Unknown CommandType");
   }

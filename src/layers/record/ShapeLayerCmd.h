@@ -30,9 +30,7 @@ namespace tgfx {
 // ------------------------ ShapeLayer begin ------------------------
 
 struct CmdMakeShapeLayer : Command {
-  int _id;
-
-  explicit CmdMakeShapeLayer(int id) : _id(id) {}
+  explicit CmdMakeShapeLayer(int id) : Command(id) {}
 
   CommandType getType() const override {
     return CommandType::MakeShapeLayer;
@@ -43,10 +41,9 @@ struct CmdMakeShapeLayer : Command {
 };
 
 struct CmdSetPath : Command {
-  int _id;
   Path _path;
 
-  CmdSetPath(int id, const Path& path) : _id(id), _path(path) {}
+  CmdSetPath(int id, const Path& path) : Command(id), _path(path) {}
 
   CommandType getType() const override {
     return CommandType::setPath;
@@ -57,10 +54,9 @@ struct CmdSetPath : Command {
 };
 
 struct CmdSetShape : Command {
-  int _id;
   std::shared_ptr<Shape> _shape;
 
-  CmdSetShape(int id, const std::shared_ptr<Shape>& shape) : _id(id), _shape(shape) {}
+  CmdSetShape(int id, const std::shared_ptr<Shape>& shape) : Command(id), _shape(shape) {}
 
   CommandType getType() const override {
     return CommandType::setShape;
@@ -71,10 +67,9 @@ struct CmdSetShape : Command {
 };
 
 struct CmdSetFillStyle : Command {
-  int _id;
   int _styleId;
 
-  CmdSetFillStyle(int id, int styleId) : _id(id), _styleId(styleId) {}
+  CmdSetFillStyle(int id, int styleId) : Command(id), _styleId(styleId) {}
 
   CommandType getType() const override {
     return CommandType::setFillStyle;
@@ -85,10 +80,9 @@ struct CmdSetFillStyle : Command {
 };
 
 struct CmdSetStrokeStyle : Command {
-  int _id;
   int _styleId;
 
-  CmdSetStrokeStyle(int id, int styleId) : _id(id), _styleId(styleId) {}
+  CmdSetStrokeStyle(int id, int styleId) : Command(id), _styleId(styleId) {}
 
   CommandType getType() const override {
     return CommandType::setStrokeStyle;
@@ -99,10 +93,9 @@ struct CmdSetStrokeStyle : Command {
 };
 
 struct CmdSetLineCap : Command {
-  int _id;
   LineCap _cap;
 
-  CmdSetLineCap(int id, LineCap cap) : _id(id), _cap(cap) {}
+  CmdSetLineCap(int id, LineCap cap) : Command(id), _cap(cap) {}
 
   CommandType getType() const override {
     return CommandType::setLineCap;
@@ -113,10 +106,9 @@ struct CmdSetLineCap : Command {
 };
 
 struct CmdSetLineJoin : Command {
-  int _id;
   LineJoin _join;
 
-  CmdSetLineJoin(int id, LineJoin join) : _id(id), _join(join) {}
+  CmdSetLineJoin(int id, LineJoin join) : Command(id), _join(join) {}
 
   CommandType getType() const override {
     return CommandType::setLineJoin;
@@ -127,10 +119,9 @@ struct CmdSetLineJoin : Command {
 };
 
 struct CmdSetMiterLimit : Command {
-  int _id;
   float _limit;
 
-  CmdSetMiterLimit(int id, float limit) : _id(id), _limit(limit) {}
+  CmdSetMiterLimit(int id, float limit) : Command(id), _limit(limit) {}
 
   CommandType getType() const override {
     return CommandType::setMiterLimit;
@@ -141,10 +132,9 @@ struct CmdSetMiterLimit : Command {
 };
 
 struct CmdSetLineWidth : Command {
-  int _id;
   float _width;
 
-  CmdSetLineWidth(int id, float width) : _id(id), _width(width) {}
+  CmdSetLineWidth(int id, float width) : Command(id), _width(width) {}
 
   CommandType getType() const override {
     return CommandType::setLineWidth;
@@ -155,10 +145,9 @@ struct CmdSetLineWidth : Command {
 };
 
 struct CmdSetLineDashPattern : Command {
-  int _id;
   std::vector<float> _pattern;
 
-  CmdSetLineDashPattern(int id, const std::vector<float>& pattern) : _id(id), _pattern(pattern) {}
+  CmdSetLineDashPattern(int id, const std::vector<float>& pattern) : Command(id), _pattern(pattern) {}
 
   CommandType getType() const override {
     return CommandType::setLineDashPattern;
@@ -169,10 +158,9 @@ struct CmdSetLineDashPattern : Command {
 };
 
 struct CmdSetLineDashPhase : Command {
-  int _id;
   float _phase;
 
-  CmdSetLineDashPhase(int id, float phase) : _id(id), _phase(phase) {}
+  CmdSetLineDashPhase(int id, float phase) : Command(id), _phase(phase) {}
 
   CommandType getType() const override {
     return CommandType::setLineDashPhase;
@@ -183,10 +171,9 @@ struct CmdSetLineDashPhase : Command {
 };
 
 struct CmdSetStrokeStart : Command {
-  int _id;
   float _start;
 
-  CmdSetStrokeStart(int id, float start) : _id(id), _start(start) {}
+  CmdSetStrokeStart(int id, float start) : Command(id), _start(start) {}
 
   CommandType getType() const override {
     return CommandType::setStrokeStart;
@@ -197,10 +184,9 @@ struct CmdSetStrokeStart : Command {
 };
 
 struct CmdSetStrokeEnd : Command {
-  int _id;
   float _end;
 
-  CmdSetStrokeEnd(int id, float end) : _id(id), _end(end) {}
+  CmdSetStrokeEnd(int id, float end) : Command(id), _end(end) {}
 
   CommandType getType() const override {
     return CommandType::setStrokeEnd;
@@ -211,10 +197,9 @@ struct CmdSetStrokeEnd : Command {
 };
 
 struct CmdSetStrokeAlign : Command {
-  int _id;
   StrokeAlign _align;
 
-  CmdSetStrokeAlign(int id, StrokeAlign align) : _id(id), _align(align) {}
+  CmdSetStrokeAlign(int id, StrokeAlign align) : Command(id), _align(align) {}
 
   CommandType getType() const override {
     return CommandType::setStrokeAlign;

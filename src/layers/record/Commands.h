@@ -64,9 +64,11 @@ enum class CommandType {
 };
 
 struct Command {
+  int _id;  // 新增 _id 属性
+
+  Command(int id) : _id(id) {}  // 修改构造函数
+
   static std::unique_ptr<Command> MakeFrom(const nlohmann::json& json);
-  explicit Command() {
-  }
   virtual ~Command() = default;
   virtual CommandType getType() const = 0;
   virtual void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) = 0;

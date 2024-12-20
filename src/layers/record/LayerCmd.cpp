@@ -21,20 +21,20 @@
 
 namespace tgfx {
 
-void CmdSetDefaultAllowsEdgeAntialiasing::execute(std::map<int, std::shared_ptr<Recordable>>&) {
+void CmdSetDefaultAllowsEdgeAntialiasing::execute(std::map<int, std::shared_ptr<Recordable>>& ) {
   Layer::SetDefaultAllowsEdgeAntialiasing(_value);
 }
 
 nlohmann::json CmdSetDefaultAllowsEdgeAntialiasing::toJson() const {
-  return {{"type", static_cast<int>(getType())}, {"value", _value}};
+  return {{"type", static_cast<int>(getType())}, {"id", _id}, {"value", _value}};
 }
 
-void CmdSetDefaultAllowsGroupOpacity::execute(std::map<int, std::shared_ptr<Recordable>>&) {
+void CmdSetDefaultAllowsGroupOpacity::execute(std::map<int, std::shared_ptr<Recordable>>& ) {
   Layer::SetDefaultAllowsGroupOpacity(_value);
 }
 
 nlohmann::json CmdSetDefaultAllowsGroupOpacity::toJson() const {
-  return {{"type", static_cast<int>(getType())}, {"value", _value}};
+  return {{"type", static_cast<int>(getType())}, {"id", _id}, {"value", _value}};
 }
 
 void CmdMakeLayer::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {

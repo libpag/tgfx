@@ -53,7 +53,7 @@ void Recorder::Record(std::unique_ptr<Command> command) {
 void Recorder::Remove(int uuid) {
   // 从 commands_ 中移除 uuid 对应的命令
   commands_.erase(std::remove_if(commands_.begin(), commands_.end(), [uuid](const auto& cmd) {
-    return cmd->id() == uuid;
+    return cmd->_id == uuid;
   }), commands_.end());
 }
 

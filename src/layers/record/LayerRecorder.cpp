@@ -6,11 +6,11 @@
 namespace tgfx {
 
 void LayerRecorder::SetDefaultAllowsEdgeAntialiasing(bool value) {
-  Recorder::Record(std::make_unique<CmdSetDefaultAllowsEdgeAntialiasing>(value));
+  Recorder::Record(std::make_unique<CmdSetDefaultAllowsEdgeAntialiasing>(-1, value));
 }
 
 void LayerRecorder::SetDefaultAllowsGroupOpacity(bool value) {
-  Recorder::Record(std::make_unique<CmdSetDefaultAllowsGroupOpacity>(value));
+  Recorder::Record(std::make_unique<CmdSetDefaultAllowsGroupOpacity>(-1, value));
 }
 
 void LayerRecorder::MakeLayer(Layer* layer) {
