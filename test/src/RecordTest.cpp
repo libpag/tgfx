@@ -279,7 +279,7 @@ TGFX_TEST(RecordTest, RecordSolidLayer) {
   solidLayer->setRadiusY(20.0f);
   solidLayer->setColor(Color::FromRGBA(128, 128, 128, 255));
 
-  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(7));
+  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(13));
   
   auto jsonStr = Recorder::FlushCommands();
   std::cout << jsonStr << std::endl;

@@ -20,9 +20,28 @@
 #include <iostream>
 #include "LayerCmd.h"
 #include "ShapeLayerCmd.h"
+#include "SolidLayerCmd.h"
+#include "tgfx/core/Color.h"
 
 namespace tgfx {
 
+nlohmann::json Command::ColorToJson(const Color& color) {
+  return {
+    {"red", color.red},
+    {"green", color.green},
+    {"blue", color.blue},
+    {"alpha", color.alpha}
+  };
+}
+
+Color Command::JsonToColor(const nlohmann::json& json) {
+  return Color{
+    json.value("red", 0.0f),
+    json.value("green", 0.0f),
+    json.value("blue", 0.0f),
+    json.value("alpha", 1.0f)
+  };
+}
 
 std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
   CommandType type = static_cast<CommandType>(json.at("type").get<int>());
@@ -135,6 +154,20 @@ std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
     case CommandType::setStrokeAlign:
       return std::make_unique<CmdSetStrokeAlign>(
           id, static_cast<StrokeAlign>(json.at("align").get<int>()));
+    // ------------------- SolidLayerRecorder -------------------
+    case CommandType::MakeSolidLayer:
+      return std::make_unique<CmdMakeSolidLayer>(id);
+    case CommandType::setWidth:
+      return std::make_unique<CmdSetWidth>(id, json.at("width").get<float>());
+    case CommandType::setHeight:
+      return std::make_unique<CmdSetHeight>(id, json.at("height").get<float>());
+    case CommandType::setRadiusX:
+      return std::make_unique<CmdSetRadiusX>(id, json.at("radiusX").get<float>());
+    case CommandType::setRadiusY:
+      return std::make_unique<CmdSetRadiusY>(id, json.at("radiusY").get<float>());
+    case CommandType::setColor:
+      return std::make_unique<CmdSetColor>(id, Command::JsonToColor(json.at("color")));
+    // TODO 补齐其他类型
     default:
       throw std::invalid_argument("Unknown CommandType");
   }

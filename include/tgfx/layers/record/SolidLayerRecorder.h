@@ -17,26 +17,35 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-#include <map>
 #include <string>
-#include "Recordable.h"
 
 namespace tgfx {
 
-struct Command;
+class SolidLayer;
+struct Color;
 
-class Recorder {
+class SolidLayerRecorder {
  public:
-  static void Replay(std::string jsonStr, std::map<int, std::shared_ptr<Recordable>>& objMap);
-  static std::string FlushCommands();
-
  private:
-  static void Record(std::unique_ptr<Command> command);
-  static void Remove(int uuid);
-  static std::vector<std::unique_ptr<Command>> commands_;
+  
+  // 录制创建 SolidLayer
+  static void MakeSolidLayer(SolidLayer* layer);
 
-  friend class LayerRecorder;
-  friend class ShapeLayerRecorder;
-  friend class SolidLayerRecorder;
+  // 录制设置宽度
+  static void setWidth(SolidLayer* layer, float width);
+
+  // 录制设置高度
+  static void setHeight(SolidLayer* layer, float height);
+
+  // 录制设置X轴半径
+  static void setRadiusX(SolidLayer* layer, float radiusX);
+
+  // 录制设置Y轴半径
+  static void setRadiusY(SolidLayer* layer, float radiusY);
+
+  // 录制设置颜色
+  static void setColor(SolidLayer* layer, const Color& color);
+
+  friend class SolidLayer;
 };
 }  // namespace tgfx

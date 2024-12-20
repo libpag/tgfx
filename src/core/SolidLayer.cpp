@@ -17,6 +17,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "tgfx/layers/SolidLayer.h"
+#include <tgfx/layers/record/SolidLayerRecorder.h>
 #include "layers/contents/ShapeContent.h"
 #include "layers/contents/SolidContent.h"
 
@@ -25,6 +26,7 @@ std::shared_ptr<SolidLayer> SolidLayer::Make() {
   TRACE_EVENT;
   auto layer = std::shared_ptr<SolidLayer>(new SolidLayer());
   layer->weakThis = layer;
+  SolidLayerRecorder::MakeSolidLayer(layer.get());
   return layer;
 }
 
@@ -37,6 +39,7 @@ void SolidLayer::setWidth(float width) {
   }
   _width = width;
   invalidateContent();
+  SolidLayerRecorder::setWidth(this, width);
 }
 
 void SolidLayer::setHeight(float height) {
@@ -48,6 +51,7 @@ void SolidLayer::setHeight(float height) {
   }
   _height = height;
   invalidateContent();
+  SolidLayerRecorder::setHeight(this, height);
 }
 
 void SolidLayer::setRadiusX(float radiusX) {
@@ -56,6 +60,7 @@ void SolidLayer::setRadiusX(float radiusX) {
   }
   _radiusX = radiusX;
   invalidateContent();
+  SolidLayerRecorder::setRadiusX(this, radiusX);
 }
 
 void SolidLayer::setRadiusY(float radiusY) {
@@ -64,6 +69,7 @@ void SolidLayer::setRadiusY(float radiusY) {
   }
   _radiusY = radiusY;
   invalidateContent();
+  SolidLayerRecorder::setRadiusY(this, radiusY);
 }
 
 void SolidLayer::setColor(const Color& color) {
@@ -72,6 +78,7 @@ void SolidLayer::setColor(const Color& color) {
   }
   _color = color;
   invalidateContent();
+  SolidLayerRecorder::setColor(this, color);
 }
 
 std::unique_ptr<LayerContent> SolidLayer::onUpdateContent() {

@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <tgfx/core/Color.h>
 #include <tgfx/layers/record/Recordable.h>
 #include <nlohmann/json.hpp>
 
@@ -60,13 +61,22 @@ enum class CommandType {
   setLineDashPhase,
   setStrokeStart,
   setStrokeEnd,
-  setStrokeAlign
+  setStrokeAlign,
+  // SolidLayerRecorder
+  MakeSolidLayer,
+  setWidth,
+  setHeight,
+  setRadiusX,
+  setRadiusY,
+  setColor,
+
 };
 
 struct Command {
   int _id;  // 新增 _id 属性
 
-  Command(int id) : _id(id) {}  // 修改构造函数
+  Command(int id) : _id(id) {
+  }  // 修改构造函数
 
   static std::unique_ptr<Command> MakeFrom(const nlohmann::json& json);
   virtual ~Command() = default;
@@ -76,6 +86,22 @@ struct Command {
 
   virtual void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) = 0;
   virtual nlohmann::json toJson() const = 0;
+
+  // ------------------------ 静态工具方法 begin ------------------------
+  /**
+   * 将 Color 对象转换为 JSON。
+   * @param color 要转换的 Color 对象。
+   * @return 转换后的 JSON 对象。
+   */
+  static nlohmann::json ColorToJson(const Color& color);
+
+  /**
+   * 从 JSON 创建一个 Color 对象。
+   * @param json 包含颜色信息的 JSON 对象。
+   * @return 创建的 Color 对象。
+   */
+  static Color JsonToColor(const nlohmann::json& json);
+  // ------------------------ 静态工具方法 end ------------------------
 };
 
 }  // namespace tgfx

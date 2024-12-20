@@ -17,26 +17,9 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-#include <map>
-#include <string>
-#include "Recordable.h"
 
 namespace tgfx {
 
-struct Command;
 
-class Recorder {
- public:
-  static void Replay(std::string jsonStr, std::map<int, std::shared_ptr<Recordable>>& objMap);
-  static std::string FlushCommands();
 
- private:
-  static void Record(std::unique_ptr<Command> command);
-  static void Remove(int uuid);
-  static std::vector<std::unique_ptr<Command>> commands_;
-
-  friend class LayerRecorder;
-  friend class ShapeLayerRecorder;
-  friend class SolidLayerRecorder;
-};
 }  // namespace tgfx
