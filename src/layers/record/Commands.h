@@ -71,6 +71,9 @@ struct Command {
   static std::unique_ptr<Command> MakeFrom(const nlohmann::json& json);
   virtual ~Command() = default;
   virtual CommandType getType() const = 0;
+  bool merge(const Command& other);
+  virtual bool doMerge(const Command& other);
+
   virtual void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) = 0;
   virtual nlohmann::json toJson() const = 0;
 };

@@ -38,6 +38,7 @@ struct CmdMakeShapeLayer : Command {
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
+  bool doMerge(const Command& other) override;
 };
 
 struct CmdSetPath : Command {
@@ -51,6 +52,7 @@ struct CmdSetPath : Command {
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
+  bool doMerge(const Command& other) override;
 };
 
 struct CmdSetShape : Command {
@@ -64,6 +66,7 @@ struct CmdSetShape : Command {
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
+  bool doMerge(const Command& other) override;
 };
 
 struct CmdSetFillStyle : Command {
@@ -77,6 +80,7 @@ struct CmdSetFillStyle : Command {
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
+  bool doMerge(const Command& other) override;
 };
 
 struct CmdSetStrokeStyle : Command {
@@ -90,6 +94,7 @@ struct CmdSetStrokeStyle : Command {
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
+  bool doMerge(const Command& other) override;
 };
 
 struct CmdSetLineCap : Command {
@@ -103,6 +108,7 @@ struct CmdSetLineCap : Command {
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
+  bool doMerge(const Command& other) override;
 };
 
 struct CmdSetLineJoin : Command {
@@ -116,6 +122,7 @@ struct CmdSetLineJoin : Command {
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
+  bool doMerge(const Command& other) override;
 };
 
 struct CmdSetMiterLimit : Command {
@@ -129,6 +136,7 @@ struct CmdSetMiterLimit : Command {
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
+  bool doMerge(const Command& other) override;
 };
 
 struct CmdSetLineWidth : Command {
@@ -142,6 +150,7 @@ struct CmdSetLineWidth : Command {
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
+  bool doMerge(const Command& other) override;
 };
 
 struct CmdSetLineDashPattern : Command {
@@ -155,6 +164,7 @@ struct CmdSetLineDashPattern : Command {
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
+  bool doMerge(const Command& other) override;
 };
 
 struct CmdSetLineDashPhase : Command {
@@ -168,6 +178,7 @@ struct CmdSetLineDashPhase : Command {
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
+  bool doMerge(const Command& other) override;
 };
 
 struct CmdSetStrokeStart : Command {
@@ -181,6 +192,7 @@ struct CmdSetStrokeStart : Command {
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
+  bool doMerge(const Command& other) override;
 };
 
 struct CmdSetStrokeEnd : Command {
@@ -194,6 +206,7 @@ struct CmdSetStrokeEnd : Command {
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
+  bool doMerge(const Command& other) override;
 };
 
 struct CmdSetStrokeAlign : Command {
@@ -207,6 +220,7 @@ struct CmdSetStrokeAlign : Command {
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
+  bool doMerge(const Command& other) override;
 };
 
 }  // namespace tgfx

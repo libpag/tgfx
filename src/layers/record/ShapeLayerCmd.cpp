@@ -17,11 +17,69 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "ShapeLayerCmd.h"
+#include <iostream>
 #include "tgfx/layers/ShapeLayer.h"
 
 namespace tgfx {
 
-// TODO 实现下面的函数
+bool CmdMakeShapeLayer::doMerge(const Command&) {
+  // 正常不可能make同一个对象(相同id、相同type）多次，可能上游出现错误了，打印一下
+  std::cerr << "异常: CmdMakeShapeLayer::doMerge" << std::endl;
+  // 返回true，不需要重复make
+  return true;
+}
+bool CmdSetPath::doMerge(const Command& other) {
+  _path = static_cast<const CmdSetPath&>(other)._path;
+  return true;
+}
+bool CmdSetShape::doMerge(const Command& other) {
+  _shape = static_cast<const CmdSetShape&>(other)._shape;
+  return true;
+}
+bool CmdSetFillStyle::doMerge(const Command& other) {
+  _styleId = static_cast<const CmdSetFillStyle&>(other)._styleId;
+  return true;
+}
+bool CmdSetStrokeStyle::doMerge(const Command& other) {
+  _styleId = static_cast<const CmdSetStrokeStyle&>(other)._styleId;
+  return true;
+}
+bool CmdSetLineCap::doMerge(const Command& other) {
+  _cap = static_cast<const CmdSetLineCap&>(other)._cap;
+  return true;
+}
+bool CmdSetLineJoin::doMerge(const Command& other) {
+  _join = static_cast<const CmdSetLineJoin&>(other)._join;
+  return true;
+}
+bool CmdSetMiterLimit::doMerge(const Command& other) {
+  _limit = static_cast<const CmdSetMiterLimit&>(other)._limit;
+  return true;
+}
+bool CmdSetLineWidth::doMerge(const Command& other) {
+  _width = static_cast<const CmdSetLineWidth&>(other)._width;
+  return true;
+}
+bool CmdSetLineDashPattern::doMerge(const Command& other) {
+  _pattern = static_cast<const CmdSetLineDashPattern&>(other)._pattern;
+  return true;
+}
+bool CmdSetLineDashPhase::doMerge(const Command& other) {
+  _phase = static_cast<const CmdSetLineDashPhase&>(other)._phase;
+  return true;
+}
+bool CmdSetStrokeStart::doMerge(const Command& other) {
+  _start = static_cast<const CmdSetStrokeStart&>(other)._start;
+  return true;
+}
+bool CmdSetStrokeEnd::doMerge(const Command& other) {
+  _end = static_cast<const CmdSetStrokeEnd&>(other)._end;
+  return true;
+}
+bool CmdSetStrokeAlign::doMerge(const Command& other) {
+  _align = static_cast<const CmdSetStrokeAlign&>(other)._align;
+  return true;
+}
 
 void CmdMakeShapeLayer::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   objMap[_id] = ShapeLayer::Make();

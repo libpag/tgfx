@@ -43,7 +43,7 @@ struct CmdSetDefaultAllowsEdgeAntialiasing : Command {
   CommandType getType() const override {
     return CommandType::SetDefaultAllowsEdgeAntialiasing;
   }
-
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -58,6 +58,7 @@ struct CmdSetDefaultAllowsGroupOpacity : Command {
     return CommandType::SetDefaultAllowsGroupOpacity;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -70,6 +71,7 @@ struct CmdMakeLayer : Command {
     return CommandType::MakeLayer;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -84,6 +86,7 @@ struct CmdSetName : Command {
     return CommandType::setName;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -98,6 +101,7 @@ struct CmdSetAlpha : Command {
     return CommandType::setAlpha;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -112,6 +116,7 @@ struct CmdSetBlendMode : Command {
     return CommandType::setBlendMode;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -126,6 +131,7 @@ struct CmdSetPosition : Command {
     return CommandType::setPosition;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -140,6 +146,7 @@ struct CmdSetMatrix : Command {
     return CommandType::setMatrix;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -154,6 +161,7 @@ struct CmdSetVisible : Command {
     return CommandType::setVisible;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -168,6 +176,7 @@ struct CmdSetShouldRasterize : Command {
     return CommandType::setShouldRasterize;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -182,6 +191,7 @@ struct CmdSetRasterizationScale : Command {
     return CommandType::setRasterizationScale;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -196,6 +206,7 @@ struct CmdSetAllowsEdgeAntialiasing : Command {
     return CommandType::setAllowsEdgeAntialiasing;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -210,6 +221,7 @@ struct CmdSetAllowsGroupOpacity : Command {
     return CommandType::setAllowsGroupOpacity;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -224,6 +236,7 @@ struct CmdSetFilters : Command {
     return CommandType::setFilters;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -238,6 +251,7 @@ struct CmdSetMask : Command {
     return CommandType::setMask;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -252,6 +266,7 @@ struct CmdSetScrollRect : Command {
     return CommandType::setScrollRect;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -267,6 +282,7 @@ struct CmdAddChildAt : Command {
     return CommandType::addChildAt;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -281,6 +297,7 @@ struct CmdRemoveChildAt : Command {
     return CommandType::removeChildAt;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -297,6 +314,7 @@ struct CmdRemoveChildren : Command {
     return CommandType::removeChildren;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -309,6 +327,7 @@ struct CmdRemoveFromParent : Command {
     return CommandType::removeFromParent;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -324,6 +343,7 @@ struct CmdSetChildIndex : Command {
     return CommandType::setChildIndex;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };
@@ -340,6 +360,7 @@ struct CmdReplaceChild : Command {
     return CommandType::replaceChild;
   }
 
+  bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
   nlohmann::json toJson() const override;
 };

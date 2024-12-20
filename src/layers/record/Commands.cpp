@@ -30,7 +30,8 @@ std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
   switch (type) {
     // ------------------- Layer -------------------
     case CommandType::SetDefaultAllowsEdgeAntialiasing:
-      return std::make_unique<CmdSetDefaultAllowsEdgeAntialiasing>(id, json.at("value").get<bool>());
+      return std::make_unique<CmdSetDefaultAllowsEdgeAntialiasing>(id,
+                                                                   json.at("value").get<bool>());
     case CommandType::SetDefaultAllowsGroupOpacity:
       return std::make_unique<CmdSetDefaultAllowsGroupOpacity>(id, json.at("value").get<bool>());
     case CommandType::MakeLayer:
@@ -81,8 +82,8 @@ std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
       return std::make_unique<CmdSetScrollRect>(id, r);
     }
     case CommandType::addChildAt:
-      return std::make_unique<CmdAddChildAt>(
-          id, json.at("child_id").get<int>(), json.at("index").get<int>());
+      return std::make_unique<CmdAddChildAt>(id, json.at("child_id").get<int>(),
+                                             json.at("index").get<int>());
     case CommandType::removeChildAt:
       return std::make_unique<CmdRemoveChildAt>(id, json.at("index").get<int>());
     case CommandType::removeChildren:
@@ -91,8 +92,8 @@ std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
     case CommandType::removeFromParent:
       return std::make_unique<CmdRemoveFromParent>(id);
     case CommandType::setChildIndex:
-      return std::make_unique<CmdSetChildIndex>(
-          id, json.at("child_id").get<int>(), json.at("index").get<int>());
+      return std::make_unique<CmdSetChildIndex>(id, json.at("child_id").get<int>(),
+                                                json.at("index").get<int>());
     case CommandType::replaceChild:
       return std::make_unique<CmdReplaceChild>(id, json.at("oldChild_id").get<int>(),
                                                json.at("newChild_id").get<int>());
@@ -116,13 +117,15 @@ std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
     case CommandType::setLineCap:
       return std::make_unique<CmdSetLineCap>(id, static_cast<LineCap>(json.at("cap").get<int>()));
     case CommandType::setLineJoin:
-      return std::make_unique<CmdSetLineJoin>(id, static_cast<LineJoin>(json.at("join").get<int>()));
+      return std::make_unique<CmdSetLineJoin>(id,
+                                              static_cast<LineJoin>(json.at("join").get<int>()));
     case CommandType::setMiterLimit:
       return std::make_unique<CmdSetMiterLimit>(id, json.at("limit").get<float>());
     case CommandType::setLineWidth:
       return std::make_unique<CmdSetLineWidth>(id, json.at("width").get<float>());
     case CommandType::setLineDashPattern:
-      return std::make_unique<CmdSetLineDashPattern>(id, json.at("pattern").get<std::vector<float>>());
+      return std::make_unique<CmdSetLineDashPattern>(id,
+                                                     json.at("pattern").get<std::vector<float>>());
     case CommandType::setLineDashPhase:
       return std::make_unique<CmdSetLineDashPhase>(id, json.at("phase").get<float>());
     case CommandType::setStrokeStart:
@@ -130,10 +133,23 @@ std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
     case CommandType::setStrokeEnd:
       return std::make_unique<CmdSetStrokeEnd>(id, json.at("end").get<float>());
     case CommandType::setStrokeAlign:
-      return std::make_unique<CmdSetStrokeAlign>(id, static_cast<StrokeAlign>(json.at("align").get<int>()));
+      return std::make_unique<CmdSetStrokeAlign>(
+          id, static_cast<StrokeAlign>(json.at("align").get<int>()));
     default:
       throw std::invalid_argument("Unknown CommandType");
   }
+}
+bool Command::merge(const Command& other) {
+  // id 不同，或者 type 不同，不可合并
+  if (other._id != _id || other.getType() != getType()) {
+    return false;
+  }
+  return doMerge(other);
+}
+
+bool Command::doMerge(const Command& ){
+  // 默认不可合并，看子类
+  return false;
 }
 
 }  // namespace tgfx

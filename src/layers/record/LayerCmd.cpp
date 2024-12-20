@@ -21,6 +21,83 @@
 
 namespace tgfx {
 
+bool CmdSetDefaultAllowsEdgeAntialiasing::doMerge(const Command& other) {
+  _value = static_cast<const CmdSetDefaultAllowsEdgeAntialiasing&>(other)._value;
+  return true;
+}
+bool CmdSetDefaultAllowsGroupOpacity::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+bool CmdMakeLayer::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+bool CmdSetName::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+bool CmdSetAlpha::doMerge(const Command& other) {
+  _alpha = static_cast<const CmdSetAlpha&>(other)._alpha;
+  return true;
+}
+bool CmdSetBlendMode::doMerge(const Command& other) {
+  _blendMode = static_cast<const CmdSetBlendMode&>(other)._blendMode;
+  return true;
+}
+bool CmdSetPosition::doMerge(const Command& other) {
+  _position = static_cast<const CmdSetPosition&>(other)._position;
+  return true;
+}
+bool CmdSetMatrix::doMerge(const Command& other) {
+  _matrix = static_cast<const CmdSetMatrix&>(other)._matrix;
+  return true;
+}
+bool CmdSetVisible::doMerge(const Command& other) {
+  _visible = static_cast<const CmdSetVisible&>(other)._visible;
+  return true;
+}
+bool CmdSetShouldRasterize::doMerge(const Command& other) {
+  _shouldRasterize = static_cast<const CmdSetShouldRasterize&>(other)._shouldRasterize;
+  return true;
+}
+bool CmdSetRasterizationScale::doMerge(const Command& other) {
+  _scale = static_cast<const CmdSetRasterizationScale&>(other)._scale;
+  return true;
+}
+bool CmdSetAllowsEdgeAntialiasing::doMerge(const Command& other) {
+  _allows = static_cast<const CmdSetAllowsEdgeAntialiasing&>(other)._allows;
+  return true;
+}
+bool CmdSetAllowsGroupOpacity::doMerge(const Command& other) {
+  _allows = static_cast<const CmdSetAllowsGroupOpacity&>(other)._allows;
+  return true;
+}
+bool CmdSetFilters::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+bool CmdSetMask::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+bool CmdSetScrollRect::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+bool CmdAddChildAt::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+bool CmdRemoveChildAt::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+bool CmdRemoveChildren::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+bool CmdRemoveFromParent::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+bool CmdSetChildIndex::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+bool CmdReplaceChild::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+
 void CmdSetDefaultAllowsEdgeAntialiasing::execute(std::map<int, std::shared_ptr<Recordable>>& ) {
   Layer::SetDefaultAllowsEdgeAntialiasing(_value);
 }
