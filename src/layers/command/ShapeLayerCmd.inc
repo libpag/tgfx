@@ -1,0 +1,16 @@
+
+// ShapeLayerRecorder
+MakeShapeLayer,
+setPath,
+setShape,
+setFillStyle,
+setStrokeStyle,
+setLineCap,
+setLineJoin,
+setMiterLimit,
+setLineWidth,
+setLineDashPattern,
+setLineDashPhase,
+setStrokeStart,
+setStrokeEnd,
+setStrokeAlign,

@@ -24,55 +24,10 @@
 
 namespace tgfx {
 enum class CommandType {
-  // LayerRecorder
-  SetDefaultAllowsEdgeAntialiasing,
-  SetDefaultAllowsGroupOpacity,
-  MakeLayer,
-  setName,
-  setAlpha,
-  setBlendMode,
-  setPosition,
-  setMatrix,
-  setVisible,
-  setShouldRasterize,
-  setRasterizationScale,
-  setAllowsEdgeAntialiasing,
-  setAllowsGroupOpacity,
-  setFilters,
-  setMask,
-  setScrollRect,
-  addChildAt,
-  removeChildAt,
-  removeChildren,
-  removeFromParent,
-  setChildIndex,
-  replaceChild,
-  // ShapeLayerRecorder
-  MakeShapeLayer,
-  setPath,
-  setShape,
-  setFillStyle,
-  setStrokeStyle,
-  setLineCap,
-  setLineJoin,
-  setMiterLimit,
-  setLineWidth,
-  setLineDashPattern,
-  setLineDashPhase,
-  setStrokeStart,
-  setStrokeEnd,
-  setStrokeAlign,
-  // SolidLayerRecorder
-  MakeSolidLayer,
-  setWidth,
-  setHeight,
-  setRadiusX,
-  setRadiusY,
-  setColor,
-
+#include "LayerCmd.inc"
+#include "ShapeLayerCmd.inc"
+#include "SolidLayerCmd.inc"
 };
-
-
 
 struct Command {
   int _id;  // 新增 _id 属性
