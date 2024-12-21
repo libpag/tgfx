@@ -51,16 +51,15 @@ TGFX_TEST(RecordTest, RecordLayer) {
   rootLayer->setShouldRasterize(true);
 
   // 设置其他属性
-  rootLayer->setName("xxx");             // 设置 name
+  rootLayer->setName("xxx");                   // 设置 name
   rootLayer->setAllowsEdgeAntialiasing(true);  // 设置 allowsEdgeAntialiasing
   rootLayer->setAllowsGroupOpacity(true);      // 设置 allowsGroupOpacity
 
   // 应该是9条命令
   ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(9));
-  rootLayer->setName("TestLayer");             // 设置 name
+  rootLayer->setName("TestLayer");  // 设置 name
   // 再次设置name，命令应该被合并，还是9条
   ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(9));
-
 
   // 设置 filters
   // auto blendFilter = std::make_shared<BlendFilter>(BlendMode::Overlay);
@@ -207,11 +206,11 @@ TGFX_TEST(RecordTest, RecordLayer) {
   // 验证 ShapeLayer 的路径和填充样式
   // ASSERT_EQ(replayShapeLayer->path(), shapePath);
   ASSERT_NE(replayShapeLayer->fillStyle(), nullptr);
-//   auto solidColor = std::static_pointer_cast<SolidColor>(replayShapeLayer->fillStyle());
-//   ASSERT_EQ(solidColor->color().red, 255);
-// ASSERT_EQ(solidColor->color().green, 0);
-// ASSERT_EQ(solidColor->color().blue, 255);
-// ASSERT_EQ(solidColor->color().alpha, 0);
+  //   auto solidColor = std::static_pointer_cast<SolidColor>(replayShapeLayer->fillStyle());
+  //   ASSERT_EQ(solidColor->color().red, 255);
+  // ASSERT_EQ(solidColor->color().green, 0);
+  // ASSERT_EQ(solidColor->color().blue, 255);
+  // ASSERT_EQ(solidColor->color().alpha, 0);
   // 验证 ShapeLayer 被正确添加到 rootLayer 的子层中
   ASSERT_EQ(castedReplayLayer->children().size(), static_cast<size_t>(3));
   ASSERT_EQ(castedReplayLayer->children()[2]->name(), "TestShapeLayer");
@@ -241,7 +240,7 @@ TGFX_TEST(RecordTest, RecordShapeLayer) {
   shapeLayer->setFillStyle(fillStyle);
 
   ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(11));
-  
+
   auto jsonStr = Recorder::FlushCommands();
   std::cout << jsonStr << std::endl;
   int shapeUuid = shapeLayer->_uuid;
@@ -280,7 +279,7 @@ TGFX_TEST(RecordTest, RecordSolidLayer) {
   solidLayer->setColor(Color::FromRGBA(128, 128, 128, 255));
 
   ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(13));
-  
+
   auto jsonStr = Recorder::FlushCommands();
   std::cout << jsonStr << std::endl;
   int solidUuid = solidLayer->_uuid;
@@ -320,7 +319,7 @@ TGFX_TEST(RecordTest, RecordImageLayer) {
   imageLayer->setImage(image);
 
   ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(10));
-  
+
   auto jsonStr = Recorder::FlushCommands();
   std::cout << jsonStr << std::endl;
   int imageUuid = imageLayer->_uuid;

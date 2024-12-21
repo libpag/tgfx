@@ -22,81 +22,89 @@
 namespace tgfx {
 
 std::unique_ptr<Command> LayerCmdFactory::MakeFrom(const nlohmann::json& json) {
-  CommandType type = static_cast<CommandType>(json.at("type").get<int>());
+  int type = json.at("type").get<int>();
   int id = json.at("id").get<int>();  // 提取 _id
-  switch (type) {
-    case CommandType::SetDefaultAllowsEdgeAntialiasing:
-      return std::make_unique<CmdSetDefaultAllowsEdgeAntialiasing>(id,
-                                                                   json.at("value").get<bool>());
-    case CommandType::SetDefaultAllowsGroupOpacity:
-      return std::make_unique<CmdSetDefaultAllowsGroupOpacity>(id, json.at("value").get<bool>());
-    case CommandType::MakeLayer:
-      return std::make_unique<CmdMakeLayer>(id);
-    case CommandType::setName: {
-      auto name = json.at("name").get<std::string>();
-      return std::make_unique<CmdSetName>(id, name);
-    }
-    case CommandType::setAlpha:
-      return std::make_unique<CmdSetAlpha>(id, json.at("alpha").get<float>());
-    case CommandType::setBlendMode:
-      return std::make_unique<CmdSetBlendMode>(
-          id, static_cast<BlendMode>(json.at("blendMode").get<int>()));
-    case CommandType::setPosition: {
-      auto pos = json.at("position");
-      Point position = Point::Make(pos[0].get<float>(), pos[1].get<float>());
-      return std::make_unique<CmdSetPosition>(id, position);
-    }
-    case CommandType::setMatrix: {
-      auto mat = json.at("matrix");
-      Matrix matrix = Matrix::MakeAll(mat[0].get<float>(),  // scaleX
-                                      mat[1].get<float>(),  // skewX
-                                      mat[2].get<float>(),  // transX
-                                      mat[3].get<float>(),  // skewY
-                                      mat[4].get<float>(),  // scaleY
-                                      mat[5].get<float>()   // transY
-      );
-      return std::make_unique<CmdSetMatrix>(id, matrix);
-    }
-    case CommandType::setVisible:
-      return std::make_unique<CmdSetVisible>(id, json.at("visible").get<bool>());
-    case CommandType::setShouldRasterize:
-      return std::make_unique<CmdSetShouldRasterize>(id, json.at("shouldRasterize").get<bool>());
-    case CommandType::setRasterizationScale:
-      return std::make_unique<CmdSetRasterizationScale>(id, json.at("scale").get<float>());
-    case CommandType::setAllowsEdgeAntialiasing:
-      return std::make_unique<CmdSetAllowsEdgeAntialiasing>(id, json.at("allows").get<bool>());
-    case CommandType::setAllowsGroupOpacity:
-      return std::make_unique<CmdSetAllowsGroupOpacity>(id, json.at("allows").get<bool>());
-    case CommandType::setFilters:
-      return std::make_unique<CmdSetFilters>(id, json.at("filter_ids").get<std::vector<int>>());
-    case CommandType::setMask:
-      return std::make_unique<CmdSetMask>(id, json.at("mask_id").get<int>());
-    case CommandType::setScrollRect: {
-      auto rect = json.at("rect");
-      Rect r = Rect::MakeXYWH(rect[0].get<float>(), rect[1].get<float>(), rect[2].get<float>(),
-                              rect[3].get<float>());
-      return std::make_unique<CmdSetScrollRect>(id, r);
-    }
-    case CommandType::addChildAt:
-      return std::make_unique<CmdAddChildAt>(id, json.at("child_id").get<int>(),
-                                             json.at("index").get<int>());
-    case CommandType::removeChildAt:
-      return std::make_unique<CmdRemoveChildAt>(id, json.at("index").get<int>());
-    case CommandType::removeChildren:
-      return std::make_unique<CmdRemoveChildren>(id, json.at("beginIndex").get<int>(),
-                                                 json.at("endIndex").get<int>());
-    case CommandType::removeFromParent:
-      return std::make_unique<CmdRemoveFromParent>(id);
-    case CommandType::setChildIndex:
-      return std::make_unique<CmdSetChildIndex>(id, json.at("child_id").get<int>(),
-                                                json.at("index").get<int>());
-    case CommandType::replaceChild:
-      return std::make_unique<CmdReplaceChild>(id, json.at("oldChild_id").get<int>(),
-                                               json.at("newChild_id").get<int>());
-
-    default:
-      return nullptr;
+  if (type == CommandType::SetDefaultAllowsEdgeAntialiasing) {
+    return std::make_unique<CmdSetDefaultAllowsEdgeAntialiasing>(id, json.at("value").get<bool>());
   }
+  if (type == CommandType::SetDefaultAllowsGroupOpacity) {
+    return std::make_unique<CmdSetDefaultAllowsGroupOpacity>(id, json.at("value").get<bool>());
+  }
+  if (type == CommandType::MakeLayer) {
+    return std::make_unique<CmdMakeLayer>(id);
+  }
+  if (type == CommandType::setName) {
+    auto name = json.at("name").get<std::string>();
+    return std::make_unique<CmdSetName>(id, name);
+  }
+  if (type == CommandType::setAlpha) {
+    return std::make_unique<CmdSetAlpha>(id, json.at("alpha").get<float>());
+  }
+  if (type == CommandType::setBlendMode) {
+    return std::make_unique<CmdSetBlendMode>(
+        id, static_cast<BlendMode>(json.at("blendMode").get<int>()));
+  }
+  if (type == CommandType::setPosition) {
+    auto pos = json.at("position");
+    Point position = Point::Make(pos[0].get<float>(), pos[1].get<float>());
+    return std::make_unique<CmdSetPosition>(id, position);
+  }
+  if (type == CommandType::setMatrix) {
+    auto mat = json.at("matrix");
+    Matrix matrix = Matrix::MakeAll(mat[0].get<float>(), mat[1].get<float>(), mat[2].get<float>(),
+                                    mat[3].get<float>(), mat[4].get<float>(), mat[5].get<float>());
+    return std::make_unique<CmdSetMatrix>(id, matrix);
+  }
+  if (type == CommandType::setVisible) {
+    return std::make_unique<CmdSetVisible>(id, json.at("visible").get<bool>());
+  }
+  if (type == CommandType::setShouldRasterize) {
+    return std::make_unique<CmdSetShouldRasterize>(id, json.at("shouldRasterize").get<bool>());
+  }
+  if (type == CommandType::setRasterizationScale) {
+    return std::make_unique<CmdSetRasterizationScale>(id, json.at("scale").get<float>());
+  }
+  if (type == CommandType::setAllowsEdgeAntialiasing) {
+    return std::make_unique<CmdSetAllowsEdgeAntialiasing>(id, json.at("allows").get<bool>());
+  }
+  if (type == CommandType::setAllowsGroupOpacity) {
+    return std::make_unique<CmdSetAllowsGroupOpacity>(id, json.at("allows").get<bool>());
+  }
+  if (type == CommandType::setFilters) {
+    return std::make_unique<CmdSetFilters>(id, json.at("filter_ids").get<std::vector<int>>());
+  }
+  if (type == CommandType::setMask) {
+    return std::make_unique<CmdSetMask>(id, json.at("mask_id").get<int>());
+  }
+  if (type == CommandType::setScrollRect) {
+    auto rect = json.at("rect");
+    Rect r = Rect::MakeXYWH(rect[0].get<float>(), rect[1].get<float>(), rect[2].get<float>(),
+                            rect[3].get<float>());
+    return std::make_unique<CmdSetScrollRect>(id, r);
+  }
+  if (type == CommandType::addChildAt) {
+    return std::make_unique<CmdAddChildAt>(id, json.at("child_id").get<int>(),
+                                           json.at("index").get<int>());
+  }
+  if (type == CommandType::removeChildAt) {
+    return std::make_unique<CmdRemoveChildAt>(id, json.at("index").get<int>());
+  }
+  if (type == CommandType::removeChildren) {
+    return std::make_unique<CmdRemoveChildren>(id, json.at("beginIndex").get<int>(),
+                                               json.at("endIndex").get<int>());
+  }
+  if (type == CommandType::removeFromParent) {
+    return std::make_unique<CmdRemoveFromParent>(id);
+  }
+  if (type == CommandType::setChildIndex) {
+    return std::make_unique<CmdSetChildIndex>(id, json.at("child_id").get<int>(),
+                                              json.at("index").get<int>());
+  }
+  if (type == CommandType::replaceChild) {
+    return std::make_unique<CmdReplaceChild>(id, json.at("oldChild_id").get<int>(),
+                                             json.at("newChild_id").get<int>());
+  }
+  return nullptr;
 }
 
 // ---------------- CmdSetDefaultAllowsEdgeAntialiasing ----------------

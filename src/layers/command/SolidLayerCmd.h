@@ -18,24 +18,34 @@
 
 #pragma once
 
-#include "Commands.h"
 #include <tgfx/core/Path.h>
 #include <tgfx/core/Shape.h>
 #include <tgfx/layers/ShapeLayer.h>
 #include <tgfx/layers/record/Recordable.h>
 #include <nlohmann/json.hpp>
+#include "Commands.h"
+
+namespace CommandType {
+DEFINE_COMMAND_TYPE(MakeSolidLayer);
+DEFINE_COMMAND_TYPE(setWidth);
+DEFINE_COMMAND_TYPE(setHeight);
+DEFINE_COMMAND_TYPE(setRadiusX);
+DEFINE_COMMAND_TYPE(setRadiusY);
+DEFINE_COMMAND_TYPE(setColor);
+}  // namespace CommandType
 
 namespace tgfx {
 
 class SolidLayerCmdFactory {
-public:
+ public:
   static std::unique_ptr<Command> MakeFrom(const nlohmann::json& json);
 };
 
 struct CmdMakeSolidLayer : Command {
-  explicit CmdMakeSolidLayer(int id) : Command(id) {}
+  explicit CmdMakeSolidLayer(int id) : Command(id) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::MakeSolidLayer;
   }
 
@@ -47,9 +57,10 @@ struct CmdMakeSolidLayer : Command {
 struct CmdSetWidth : Command {
   float _width;
 
-  CmdSetWidth(int id, float width) : Command(id), _width(width) {}
+  CmdSetWidth(int id, float width) : Command(id), _width(width) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setWidth;
   }
 
@@ -61,9 +72,10 @@ struct CmdSetWidth : Command {
 struct CmdSetHeight : Command {
   float _height;
 
-  CmdSetHeight(int id, float height) : Command(id), _height(height) {}
+  CmdSetHeight(int id, float height) : Command(id), _height(height) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setHeight;
   }
 
@@ -75,9 +87,10 @@ struct CmdSetHeight : Command {
 struct CmdSetRadiusX : Command {
   float _radiusX;
 
-  CmdSetRadiusX(int id, float radiusX) : Command(id), _radiusX(radiusX) {}
+  CmdSetRadiusX(int id, float radiusX) : Command(id), _radiusX(radiusX) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setRadiusX;
   }
 
@@ -89,9 +102,10 @@ struct CmdSetRadiusX : Command {
 struct CmdSetRadiusY : Command {
   float _radiusY;
 
-  CmdSetRadiusY(int id, float radiusY) : Command(id), _radiusY(radiusY) {}
+  CmdSetRadiusY(int id, float radiusY) : Command(id), _radiusY(radiusY) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setRadiusY;
   }
 
@@ -103,9 +117,10 @@ struct CmdSetRadiusY : Command {
 struct CmdSetColor : Command {
   Color _color;
 
-  CmdSetColor(int id, const Color& color) : Command(id), _color(color) {}
+  CmdSetColor(int id, const Color& color) : Command(id), _color(color) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setColor;
   }
 

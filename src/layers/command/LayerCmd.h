@@ -17,7 +17,6 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-#include "Commands.h"
 #include <tgfx/core/BlendMode.h>
 #include <tgfx/core/Matrix.h>
 #include <tgfx/core/Path.h>
@@ -27,15 +26,40 @@
 #include <tgfx/layers/ShapeStyle.h>
 #include <tgfx/layers/record/Recordable.h>
 #include <nlohmann/json.hpp>
+#include "Commands.h"
+namespace CommandType {
+
+DEFINE_COMMAND_TYPE(SetDefaultAllowsEdgeAntialiasing);
+DEFINE_COMMAND_TYPE(SetDefaultAllowsGroupOpacity);
+DEFINE_COMMAND_TYPE(MakeLayer);
+DEFINE_COMMAND_TYPE(setName);
+DEFINE_COMMAND_TYPE(setAlpha);
+DEFINE_COMMAND_TYPE(setBlendMode);
+DEFINE_COMMAND_TYPE(setPosition);
+DEFINE_COMMAND_TYPE(setMatrix);
+DEFINE_COMMAND_TYPE(setVisible);
+DEFINE_COMMAND_TYPE(setShouldRasterize);
+DEFINE_COMMAND_TYPE(setRasterizationScale);
+DEFINE_COMMAND_TYPE(setAllowsEdgeAntialiasing);
+DEFINE_COMMAND_TYPE(setAllowsGroupOpacity);
+DEFINE_COMMAND_TYPE(setFilters);
+DEFINE_COMMAND_TYPE(setMask);
+DEFINE_COMMAND_TYPE(setScrollRect);
+DEFINE_COMMAND_TYPE(addChildAt);
+DEFINE_COMMAND_TYPE(removeChildAt);
+DEFINE_COMMAND_TYPE(removeChildren);
+DEFINE_COMMAND_TYPE(removeFromParent);
+DEFINE_COMMAND_TYPE(setChildIndex);
+DEFINE_COMMAND_TYPE(replaceChild);
+
+};  // namespace CommandType
 
 namespace tgfx {
 
-
 class LayerCmdFactory {
-public:
+ public:
   static std::unique_ptr<Command> MakeFrom(const nlohmann::json& json);
 };
-
 
 struct CmdSetDefaultAllowsEdgeAntialiasing : Command {
   bool _value;
@@ -43,7 +67,7 @@ struct CmdSetDefaultAllowsEdgeAntialiasing : Command {
   explicit CmdSetDefaultAllowsEdgeAntialiasing(int id, bool value) : Command(id), _value(value) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::SetDefaultAllowsEdgeAntialiasing;
   }
   bool doMerge(const Command& other) override;
@@ -57,7 +81,7 @@ struct CmdSetDefaultAllowsGroupOpacity : Command {
   explicit CmdSetDefaultAllowsGroupOpacity(int id, bool value) : Command(id), _value(value) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::SetDefaultAllowsGroupOpacity;
   }
 
@@ -70,7 +94,7 @@ struct CmdMakeLayer : Command {
   explicit CmdMakeLayer(int id) : Command(id) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::MakeLayer;
   }
 
@@ -85,7 +109,7 @@ struct CmdSetName : Command {
   CmdSetName(int id, const std::string& name) : Command(id), _name(name) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setName;
   }
 
@@ -100,7 +124,7 @@ struct CmdSetAlpha : Command {
   CmdSetAlpha(int id, float alpha) : Command(id), _alpha(alpha) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setAlpha;
   }
 
@@ -115,7 +139,7 @@ struct CmdSetBlendMode : Command {
   CmdSetBlendMode(int id, BlendMode blendMode) : Command(id), _blendMode(blendMode) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setBlendMode;
   }
 
@@ -130,7 +154,7 @@ struct CmdSetPosition : Command {
   CmdSetPosition(int id, const Point& position) : Command(id), _position(position) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setPosition;
   }
 
@@ -145,7 +169,7 @@ struct CmdSetMatrix : Command {
   CmdSetMatrix(int id, const Matrix& matrix) : Command(id), _matrix(matrix) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setMatrix;
   }
 
@@ -160,7 +184,7 @@ struct CmdSetVisible : Command {
   CmdSetVisible(int id, bool visible) : Command(id), _visible(visible) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setVisible;
   }
 
@@ -172,10 +196,11 @@ struct CmdSetVisible : Command {
 struct CmdSetShouldRasterize : Command {
   bool _shouldRasterize;
 
-  CmdSetShouldRasterize(int id, bool shouldRasterize) : Command(id), _shouldRasterize(shouldRasterize) {
+  CmdSetShouldRasterize(int id, bool shouldRasterize)
+      : Command(id), _shouldRasterize(shouldRasterize) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setShouldRasterize;
   }
 
@@ -190,7 +215,7 @@ struct CmdSetRasterizationScale : Command {
   CmdSetRasterizationScale(int id, float scale) : Command(id), _scale(scale) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setRasterizationScale;
   }
 
@@ -205,7 +230,7 @@ struct CmdSetAllowsEdgeAntialiasing : Command {
   CmdSetAllowsEdgeAntialiasing(int id, bool allows) : Command(id), _allows(allows) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setAllowsEdgeAntialiasing;
   }
 
@@ -220,7 +245,7 @@ struct CmdSetAllowsGroupOpacity : Command {
   CmdSetAllowsGroupOpacity(int id, bool allows) : Command(id), _allows(allows) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setAllowsGroupOpacity;
   }
 
@@ -235,7 +260,7 @@ struct CmdSetFilters : Command {
   CmdSetFilters(int id, const std::vector<int>& filter_ids) : Command(id), _filter_ids(filter_ids) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setFilters;
   }
 
@@ -250,7 +275,7 @@ struct CmdSetMask : Command {
   CmdSetMask(int id, int mask_id) : Command(id), _mask_id(mask_id) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setMask;
   }
 
@@ -265,7 +290,7 @@ struct CmdSetScrollRect : Command {
   CmdSetScrollRect(int id, const Rect& rect) : Command(id), _rect(rect) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setScrollRect;
   }
 
@@ -281,7 +306,7 @@ struct CmdAddChildAt : Command {
   CmdAddChildAt(int id, int child_id, int index) : Command(id), _child_id(child_id), _index(index) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::addChildAt;
   }
 
@@ -296,7 +321,7 @@ struct CmdRemoveChildAt : Command {
   CmdRemoveChildAt(int id, int index) : Command(id), _index(index) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::removeChildAt;
   }
 
@@ -313,7 +338,7 @@ struct CmdRemoveChildren : Command {
       : Command(id), _beginIndex(beginIndex), _endIndex(endIndex) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::removeChildren;
   }
 
@@ -326,7 +351,7 @@ struct CmdRemoveFromParent : Command {
   CmdRemoveFromParent(int id) : Command(id) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::removeFromParent;
   }
 
@@ -339,10 +364,11 @@ struct CmdSetChildIndex : Command {
   int _child_id;  // 将 Layer 替换为 id
   int _index;
 
-  CmdSetChildIndex(int id, int child_id, int index) : Command(id), _child_id(child_id), _index(index) {
+  CmdSetChildIndex(int id, int child_id, int index)
+      : Command(id), _child_id(child_id), _index(index) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setChildIndex;
   }
 
@@ -359,7 +385,7 @@ struct CmdReplaceChild : Command {
       : Command(id), _oldChild_id(oldChild_id), _newChild_id(newChild_id) {
   }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::replaceChild;
   }
 

@@ -24,6 +24,24 @@
 #include <tgfx/layers/record/Recordable.h>
 #include <nlohmann/json.hpp>
 
+namespace CommandType {
+// ShapeLayerRecorder
+DEFINE_COMMAND_TYPE(MakeShapeLayer);
+DEFINE_COMMAND_TYPE(setPath);
+DEFINE_COMMAND_TYPE(setShape);
+DEFINE_COMMAND_TYPE(setFillStyle);
+DEFINE_COMMAND_TYPE(setStrokeStyle);
+DEFINE_COMMAND_TYPE(setLineCap);
+DEFINE_COMMAND_TYPE(setLineJoin);
+DEFINE_COMMAND_TYPE(setMiterLimit);
+DEFINE_COMMAND_TYPE(setLineWidth);
+DEFINE_COMMAND_TYPE(setLineDashPattern);
+DEFINE_COMMAND_TYPE(setLineDashPhase);
+DEFINE_COMMAND_TYPE(setStrokeStart);
+DEFINE_COMMAND_TYPE(setStrokeEnd);
+DEFINE_COMMAND_TYPE(setStrokeAlign);
+}
+
 namespace tgfx {
 
 
@@ -33,9 +51,10 @@ public:
 };
 
 struct CmdMakeShapeLayer : Command {
-  explicit CmdMakeShapeLayer(int id) : Command(id) {}
+  explicit CmdMakeShapeLayer(int id) : Command(id) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::MakeShapeLayer;
   }
 
@@ -47,9 +66,10 @@ struct CmdMakeShapeLayer : Command {
 struct CmdSetPath : Command {
   Path _path;
 
-  CmdSetPath(int id, const Path& path) : Command(id), _path(path) {}
+  CmdSetPath(int id, const Path& path) : Command(id), _path(path) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setPath;
   }
 
@@ -61,9 +81,10 @@ struct CmdSetPath : Command {
 struct CmdSetShape : Command {
   std::shared_ptr<Shape> _shape;
 
-  CmdSetShape(int id, const std::shared_ptr<Shape>& shape) : Command(id), _shape(shape) {}
+  CmdSetShape(int id, const std::shared_ptr<Shape>& shape) : Command(id), _shape(shape) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setShape;
   }
 
@@ -75,9 +96,10 @@ struct CmdSetShape : Command {
 struct CmdSetFillStyle : Command {
   int _styleId;
 
-  CmdSetFillStyle(int id, int styleId) : Command(id), _styleId(styleId) {}
+  CmdSetFillStyle(int id, int styleId) : Command(id), _styleId(styleId) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setFillStyle;
   }
 
@@ -89,9 +111,10 @@ struct CmdSetFillStyle : Command {
 struct CmdSetStrokeStyle : Command {
   int _styleId;
 
-  CmdSetStrokeStyle(int id, int styleId) : Command(id), _styleId(styleId) {}
+  CmdSetStrokeStyle(int id, int styleId) : Command(id), _styleId(styleId) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setStrokeStyle;
   }
 
@@ -103,9 +126,10 @@ struct CmdSetStrokeStyle : Command {
 struct CmdSetLineCap : Command {
   LineCap _cap;
 
-  CmdSetLineCap(int id, LineCap cap) : Command(id), _cap(cap) {}
+  CmdSetLineCap(int id, LineCap cap) : Command(id), _cap(cap) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setLineCap;
   }
 
@@ -117,9 +141,10 @@ struct CmdSetLineCap : Command {
 struct CmdSetLineJoin : Command {
   LineJoin _join;
 
-  CmdSetLineJoin(int id, LineJoin join) : Command(id), _join(join) {}
+  CmdSetLineJoin(int id, LineJoin join) : Command(id), _join(join) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setLineJoin;
   }
 
@@ -131,9 +156,10 @@ struct CmdSetLineJoin : Command {
 struct CmdSetMiterLimit : Command {
   float _limit;
 
-  CmdSetMiterLimit(int id, float limit) : Command(id), _limit(limit) {}
+  CmdSetMiterLimit(int id, float limit) : Command(id), _limit(limit) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setMiterLimit;
   }
 
@@ -145,9 +171,10 @@ struct CmdSetMiterLimit : Command {
 struct CmdSetLineWidth : Command {
   float _width;
 
-  CmdSetLineWidth(int id, float width) : Command(id), _width(width) {}
+  CmdSetLineWidth(int id, float width) : Command(id), _width(width) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setLineWidth;
   }
 
@@ -159,9 +186,11 @@ struct CmdSetLineWidth : Command {
 struct CmdSetLineDashPattern : Command {
   std::vector<float> _pattern;
 
-  CmdSetLineDashPattern(int id, const std::vector<float>& pattern) : Command(id), _pattern(pattern) {}
+  CmdSetLineDashPattern(int id, const std::vector<float>& pattern)
+      : Command(id), _pattern(pattern) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setLineDashPattern;
   }
 
@@ -173,9 +202,10 @@ struct CmdSetLineDashPattern : Command {
 struct CmdSetLineDashPhase : Command {
   float _phase;
 
-  CmdSetLineDashPhase(int id, float phase) : Command(id), _phase(phase) {}
+  CmdSetLineDashPhase(int id, float phase) : Command(id), _phase(phase) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setLineDashPhase;
   }
 
@@ -187,9 +217,10 @@ struct CmdSetLineDashPhase : Command {
 struct CmdSetStrokeStart : Command {
   float _start;
 
-  CmdSetStrokeStart(int id, float start) : Command(id), _start(start) {}
+  CmdSetStrokeStart(int id, float start) : Command(id), _start(start) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setStrokeStart;
   }
 
@@ -201,9 +232,10 @@ struct CmdSetStrokeStart : Command {
 struct CmdSetStrokeEnd : Command {
   float _end;
 
-  CmdSetStrokeEnd(int id, float end) : Command(id), _end(end) {}
+  CmdSetStrokeEnd(int id, float end) : Command(id), _end(end) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setStrokeEnd;
   }
 
@@ -215,9 +247,10 @@ struct CmdSetStrokeEnd : Command {
 struct CmdSetStrokeAlign : Command {
   StrokeAlign _align;
 
-  CmdSetStrokeAlign(int id, StrokeAlign align) : Command(id), _align(align) {}
+  CmdSetStrokeAlign(int id, StrokeAlign align) : Command(id), _align(align) {
+  }
 
-  CommandType getType() const override {
+  int getType() const override {
     return CommandType::setStrokeAlign;
   }
 

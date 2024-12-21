@@ -22,58 +22,12 @@
 #include <tgfx/layers/record/Recordable.h>
 #include <nlohmann/json.hpp>
 
+namespace CommandType {
+int getNextCommandIndex();
+#define DEFINE_COMMAND_TYPE(name) static const int name = getNextCommandIndex();
+};  // namespace CommandType
+
 namespace tgfx {
-enum class CommandType {
-  // LayerRecorder
-  SetDefaultAllowsEdgeAntialiasing,
-  SetDefaultAllowsGroupOpacity,
-  MakeLayer,
-  setName,
-  setAlpha,
-  setBlendMode,
-  setPosition,
-  setMatrix,
-  setVisible,
-  setShouldRasterize,
-  setRasterizationScale,
-  setAllowsEdgeAntialiasing,
-  setAllowsGroupOpacity,
-  setFilters,
-  setMask,
-  setScrollRect,
-  addChildAt,
-  removeChildAt,
-  removeChildren,
-  removeFromParent,
-  setChildIndex,
-  replaceChild,
-  // ShapeLayerRecorder
-  MakeShapeLayer,
-  setPath,
-  setShape,
-  setFillStyle,
-  setStrokeStyle,
-  setLineCap,
-  setLineJoin,
-  setMiterLimit,
-  setLineWidth,
-  setLineDashPattern,
-  setLineDashPhase,
-  setStrokeStart,
-  setStrokeEnd,
-  setStrokeAlign,
-  // SolidLayerRecorder
-  MakeSolidLayer,
-  setWidth,
-  setHeight,
-  setRadiusX,
-  setRadiusY,
-  setColor,
-
-};
-
-
-
 struct Command {
   int _id;  // 新增 _id 属性
 
@@ -82,7 +36,7 @@ struct Command {
 
   static std::unique_ptr<Command> MakeFrom(const nlohmann::json& json);
   virtual ~Command() = default;
-  virtual CommandType getType() const = 0;
+  virtual int getType() const = 0;
   bool merge(const Command& other);
   virtual bool doMerge(const Command& other);
 

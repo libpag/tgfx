@@ -21,28 +21,29 @@
 #include "tgfx/layers/SolidLayer.h"
 
 namespace tgfx {
-
 std::unique_ptr<Command> SolidLayerCmdFactory::MakeFrom(const nlohmann::json& json) {
-  CommandType type = static_cast<CommandType>(json.at("type").get<int>());
+  int type = json.at("type").get<int>();
   int id = json.at("id").get<int>();  // 提取 _id
-  switch (type) {
-    case CommandType::MakeSolidLayer:
-      return std::make_unique<CmdMakeSolidLayer>(id);
-    case CommandType::setWidth:
-      return std::make_unique<CmdSetWidth>(id, json.at("width").get<float>());
-    case CommandType::setHeight:
-      return std::make_unique<CmdSetHeight>(id, json.at("height").get<float>());
-    case CommandType::setRadiusX:
-      return std::make_unique<CmdSetRadiusX>(id, json.at("radiusX").get<float>());
-    case CommandType::setRadiusY:
-      return std::make_unique<CmdSetRadiusY>(id, json.at("radiusY").get<float>());
-    case CommandType::setColor:
-      return std::make_unique<CmdSetColor>(id, Command::JsonToColor(json.at("color")));
-    default:
-      return nullptr;
+  if (type == CommandType::MakeSolidLayer) {
+    return std::make_unique<CmdMakeSolidLayer>(id);
   }
+  if (type == CommandType::setWidth) {
+    return std::make_unique<CmdSetWidth>(id, json.at("width").get<float>());
+  }
+  if (type == CommandType::setHeight) {
+    return std::make_unique<CmdSetHeight>(id, json.at("height").get<float>());
+  }
+  if (type == CommandType::setRadiusX) {
+    return std::make_unique<CmdSetRadiusX>(id, json.at("radiusX").get<float>());
+  }
+  if (type == CommandType::setRadiusY) {
+    return std::make_unique<CmdSetRadiusY>(id, json.at("radiusY").get<float>());
+  }
+  if (type == CommandType::setColor) {
+    return std::make_unique<CmdSetColor>(id, Command::JsonToColor(json.at("color")));
+  }
+  return nullptr;
 }
-
 // ---------------- CmdMakeSolidLayer ----------------
 void CmdMakeSolidLayer::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   objMap[_id] = SolidLayer::Make();
