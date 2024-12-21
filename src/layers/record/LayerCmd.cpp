@@ -21,92 +21,9 @@
 
 namespace tgfx {
 
-bool CmdSetDefaultAllowsEdgeAntialiasing::doMerge(const Command& other) {
-  _value = static_cast<const CmdSetDefaultAllowsEdgeAntialiasing&>(other)._value;
-  return true;
-}
-bool CmdSetDefaultAllowsGroupOpacity::doMerge(const Command& other) {
-  _value = static_cast<const CmdSetDefaultAllowsGroupOpacity&>(other)._value;
-  return true;
-}
-bool CmdMakeLayer::doMerge(const Command& ) {
-  // 正常不可能make同一个对象(相同id、相同type）多次，可能上游出现错误了，打印一下
-  std::cerr << "异常: CmdMakeLayer::doMerge, id = " << _id << std::endl;
-  // 返回true，不需要重复make
-  return true;
-}
-bool CmdSetName::doMerge(const Command& other) {
-  _name = static_cast<const CmdSetName&>(other)._name;
-  return true;
-}
-bool CmdSetAlpha::doMerge(const Command& other) {
-  _alpha = static_cast<const CmdSetAlpha&>(other)._alpha;
-  return true;
-}
-bool CmdSetBlendMode::doMerge(const Command& other) {
-  _blendMode = static_cast<const CmdSetBlendMode&>(other)._blendMode;
-  return true;
-}
-bool CmdSetPosition::doMerge(const Command& other) {
-  _position = static_cast<const CmdSetPosition&>(other)._position;
-  return true;
-}
-bool CmdSetMatrix::doMerge(const Command& other) {
-  _matrix = static_cast<const CmdSetMatrix&>(other)._matrix;
-  return true;
-}
-bool CmdSetVisible::doMerge(const Command& other) {
-  _visible = static_cast<const CmdSetVisible&>(other)._visible;
-  return true;
-}
-bool CmdSetShouldRasterize::doMerge(const Command& other) {
-  _shouldRasterize = static_cast<const CmdSetShouldRasterize&>(other)._shouldRasterize;
-  return true;
-}
-bool CmdSetRasterizationScale::doMerge(const Command& other) {
-  _scale = static_cast<const CmdSetRasterizationScale&>(other)._scale;
-  return true;
-}
-bool CmdSetAllowsEdgeAntialiasing::doMerge(const Command& other) {
-  _allows = static_cast<const CmdSetAllowsEdgeAntialiasing&>(other)._allows;
-  return true;
-}
-bool CmdSetAllowsGroupOpacity::doMerge(const Command& other) {
-  _allows = static_cast<const CmdSetAllowsGroupOpacity&>(other)._allows;
-  return true;
-}
-bool CmdSetFilters::doMerge(const Command& other) {
-  _filter_ids = static_cast<const CmdSetFilters&>(other)._filter_ids;
-  return true;
-}
-bool CmdSetMask::doMerge(const Command& other) {
-  _mask_id = static_cast<const CmdSetMask&>(other)._mask_id;
-  return true;
-}
-bool CmdSetScrollRect::doMerge(const Command& other) {
-  _rect = static_cast<const CmdSetScrollRect&>(other)._rect;
-  return true;
-}
-bool CmdAddChildAt::doMerge(const Command& other) {
-  return Command::doMerge(other);
-}
-bool CmdRemoveChildAt::doMerge(const Command& other) {
-  return Command::doMerge(other);
-}
-bool CmdRemoveChildren::doMerge(const Command& other) {
-  return Command::doMerge(other);
-}
-bool CmdRemoveFromParent::doMerge(const Command& other) {
-  return Command::doMerge(other);
-}
-bool CmdSetChildIndex::doMerge(const Command& other) {
-  return Command::doMerge(other);
-}
-bool CmdReplaceChild::doMerge(const Command& other) {
-  return Command::doMerge(other);
-}
+// ---------------- CmdSetDefaultAllowsEdgeAntialiasing ----------------
 
-void CmdSetDefaultAllowsEdgeAntialiasing::execute(std::map<int, std::shared_ptr<Recordable>>&) {
+void CmdSetDefaultAllowsEdgeAntialiasing::execute(std::map<int, std::shared_ptr<Recordable>>& ) {
   Layer::SetDefaultAllowsEdgeAntialiasing(_value);
 }
 
@@ -114,13 +31,27 @@ nlohmann::json CmdSetDefaultAllowsEdgeAntialiasing::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}, {"value", _value}};
 }
 
-void CmdSetDefaultAllowsGroupOpacity::execute(std::map<int, std::shared_ptr<Recordable>>&) {
+bool CmdSetDefaultAllowsEdgeAntialiasing::doMerge(const Command& other) {
+  _value = static_cast<const CmdSetDefaultAllowsEdgeAntialiasing&>(other)._value;
+  return true;
+}
+
+// ---------------- CmdSetDefaultAllowsGroupOpacity ----------------
+
+void CmdSetDefaultAllowsGroupOpacity::execute(std::map<int, std::shared_ptr<Recordable>>& ) {
   Layer::SetDefaultAllowsGroupOpacity(_value);
 }
 
 nlohmann::json CmdSetDefaultAllowsGroupOpacity::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}, {"value", _value}};
 }
+
+bool CmdSetDefaultAllowsGroupOpacity::doMerge(const Command& other) {
+  _value = static_cast<const CmdSetDefaultAllowsGroupOpacity&>(other)._value;
+  return true;
+}
+
+// ---------------- CmdMakeLayer ----------------
 
 void CmdMakeLayer::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto layer = Layer::Make();
@@ -131,6 +62,15 @@ void CmdMakeLayer::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
 nlohmann::json CmdMakeLayer::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}};
 }
+
+bool CmdMakeLayer::doMerge(const Command& ) {
+  // 正常不可能make同一个对象(相同id、相同type）多次，可能上游出现错误了，打印一下
+  std::cerr << "异常: CmdMakeLayer::doMerge, id = " << _id << std::endl;
+  // 返回true，不需要重复make
+  return true;
+}
+
+// ---------------- CmdSetName ----------------
 
 void CmdSetName::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
@@ -151,6 +91,13 @@ nlohmann::json CmdSetName::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}, {"name", _name}};
 }
 
+bool CmdSetName::doMerge(const Command& other) {
+  _name = static_cast<const CmdSetName&>(other)._name;
+  return true;
+}
+
+// ---------------- CmdSetAlpha ----------------
+
 void CmdSetAlpha::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
   if (it == objMap.end()) {
@@ -169,6 +116,13 @@ void CmdSetAlpha::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
 nlohmann::json CmdSetAlpha::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}, {"alpha", _alpha}};
 }
+
+bool CmdSetAlpha::doMerge(const Command& other) {
+  _alpha = static_cast<const CmdSetAlpha&>(other)._alpha;
+  return true;
+}
+
+// ---------------- CmdSetBlendMode ----------------
 
 void CmdSetBlendMode::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
@@ -191,6 +145,13 @@ nlohmann::json CmdSetBlendMode::toJson() const {
           {"blendMode", static_cast<int>(_blendMode)}};
 }
 
+bool CmdSetBlendMode::doMerge(const Command& other) {
+  _blendMode = static_cast<const CmdSetBlendMode&>(other)._blendMode;
+  return true;
+}
+
+// ---------------- CmdSetPosition ----------------
+
 void CmdSetPosition::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
   if (it == objMap.end()) {
@@ -212,14 +173,12 @@ nlohmann::json CmdSetPosition::toJson() const {
           {"position", {_position.x, _position.y}}};
 }
 
-nlohmann::json CmdSetMatrix::toJson() const {
-  return {{"type", static_cast<int>(getType())},
-          {"id", _id},
-          // 序列化 Matrix 的各个分量
-          {"matrix",
-           {_matrix.getScaleX(), _matrix.getSkewX(), _matrix.getTranslateX(), _matrix.getSkewY(),
-            _matrix.getScaleY(), _matrix.getTranslateY()}}};
+bool CmdSetPosition::doMerge(const Command& other) {
+  _position = static_cast<const CmdSetPosition&>(other)._position;
+  return true;
 }
+
+// ---------------- CmdSetMatrix ----------------
 
 void CmdSetMatrix::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
@@ -235,6 +194,22 @@ void CmdSetMatrix::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   std::cout << "CmdSetMatrix: Layer Type: " << layer->TypeToString() << std::endl;
   layer->setMatrix(_matrix);
 }
+
+nlohmann::json CmdSetMatrix::toJson() const {
+  return {{"type", static_cast<int>(getType())},
+          {"id", _id},
+          // 序列化 Matrix 的各个分量
+          {"matrix",
+           {_matrix.getScaleX(), _matrix.getSkewX(), _matrix.getTranslateX(), _matrix.getSkewY(),
+            _matrix.getScaleY(), _matrix.getTranslateY()}}};
+}
+
+bool CmdSetMatrix::doMerge(const Command& other) {
+  _matrix = static_cast<const CmdSetMatrix&>(other)._matrix;
+  return true;
+}
+
+// ---------------- CmdSetVisible ----------------
 
 void CmdSetVisible::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
@@ -254,6 +229,13 @@ void CmdSetVisible::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) 
 nlohmann::json CmdSetVisible::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}, {"visible", _visible}};
 }
+
+bool CmdSetVisible::doMerge(const Command& other) {
+  _visible = static_cast<const CmdSetVisible&>(other)._visible;
+  return true;
+}
+
+// ---------------- CmdSetShouldRasterize ----------------
 
 void CmdSetShouldRasterize::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
@@ -276,6 +258,13 @@ nlohmann::json CmdSetShouldRasterize::toJson() const {
           {"shouldRasterize", _shouldRasterize}};
 }
 
+bool CmdSetShouldRasterize::doMerge(const Command& other) {
+  _shouldRasterize = static_cast<const CmdSetShouldRasterize&>(other)._shouldRasterize;
+  return true;
+}
+
+// ---------------- CmdSetRasterizationScale ----------------
+
 void CmdSetRasterizationScale::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
   if (it == objMap.end()) {
@@ -294,6 +283,13 @@ void CmdSetRasterizationScale::execute(std::map<int, std::shared_ptr<Recordable>
 nlohmann::json CmdSetRasterizationScale::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}, {"scale", _scale}};
 }
+
+bool CmdSetRasterizationScale::doMerge(const Command& other) {
+  _scale = static_cast<const CmdSetRasterizationScale&>(other)._scale;
+  return true;
+}
+
+// ---------------- CmdSetAllowsEdgeAntialiasing ----------------
 
 void CmdSetAllowsEdgeAntialiasing::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
@@ -314,6 +310,13 @@ nlohmann::json CmdSetAllowsEdgeAntialiasing::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}, {"allows", _allows}};
 }
 
+bool CmdSetAllowsEdgeAntialiasing::doMerge(const Command& other) {
+  _allows = static_cast<const CmdSetAllowsEdgeAntialiasing&>(other)._allows;
+  return true;
+}
+
+// ---------------- CmdSetAllowsGroupOpacity ----------------
+
 void CmdSetAllowsGroupOpacity::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
   if (it == objMap.end()) {
@@ -332,6 +335,13 @@ void CmdSetAllowsGroupOpacity::execute(std::map<int, std::shared_ptr<Recordable>
 nlohmann::json CmdSetAllowsGroupOpacity::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}, {"allows", _allows}};
 }
+
+bool CmdSetAllowsGroupOpacity::doMerge(const Command& other) {
+  _allows = static_cast<const CmdSetAllowsGroupOpacity&>(other)._allows;
+  return true;
+}
+
+// ---------------- CmdSetFilters ----------------
 
 void CmdSetFilters::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
@@ -358,6 +368,13 @@ void CmdSetFilters::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) 
 nlohmann::json CmdSetFilters::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}, {"filter_ids", _filter_ids}};
 }
+
+bool CmdSetFilters::doMerge(const Command& other) {
+  _filter_ids = static_cast<const CmdSetFilters&>(other)._filter_ids;
+  return true;
+}
+
+// ---------------- CmdSetMask ----------------
 
 void CmdSetMask::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
@@ -387,6 +404,13 @@ nlohmann::json CmdSetMask::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}, {"mask_id", _mask_id}};
 }
 
+bool CmdSetMask::doMerge(const Command& other) {
+  _mask_id = static_cast<const CmdSetMask&>(other)._mask_id;
+  return true;
+}
+
+// ---------------- CmdSetScrollRect ----------------
+
 void CmdSetScrollRect::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
   if (it == objMap.end()) {
@@ -407,6 +431,13 @@ nlohmann::json CmdSetScrollRect::toJson() const {
           {"id", _id},
           {"rect", {_rect.x(), _rect.y(), _rect.width(), _rect.height()}}};
 }
+
+bool CmdSetScrollRect::doMerge(const Command& other) {
+  _rect = static_cast<const CmdSetScrollRect&>(other)._rect;
+  return true;
+}
+
+// ---------------- CmdAddChildAt ----------------
 
 void CmdAddChildAt::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto parentIt = objMap.find(_id);
@@ -446,6 +477,12 @@ nlohmann::json CmdAddChildAt::toJson() const {
           {"index", _index}};
 }
 
+bool CmdAddChildAt::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+
+// ---------------- CmdRemoveChildAt ----------------
+
 void CmdRemoveChildAt::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
   if (it == objMap.end()) {
@@ -464,6 +501,12 @@ void CmdRemoveChildAt::execute(std::map<int, std::shared_ptr<Recordable>>& objMa
 nlohmann::json CmdRemoveChildAt::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}, {"index", _index}};
 }
+
+bool CmdRemoveChildAt::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+
+// ---------------- CmdRemoveChildren ----------------
 
 void CmdRemoveChildren::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
@@ -487,6 +530,12 @@ nlohmann::json CmdRemoveChildren::toJson() const {
           {"endIndex", _endIndex}};
 }
 
+bool CmdRemoveChildren::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+
+// ---------------- CmdRemoveFromParent ----------------
+
 void CmdRemoveFromParent::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
   if (it == objMap.end()) {
@@ -505,6 +554,12 @@ void CmdRemoveFromParent::execute(std::map<int, std::shared_ptr<Recordable>>& ob
 nlohmann::json CmdRemoveFromParent::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}};
 }
+
+bool CmdRemoveFromParent::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+
+// ---------------- CmdSetChildIndex ----------------
 
 void CmdSetChildIndex::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto parentIt = objMap.find(_id);
@@ -538,6 +593,12 @@ nlohmann::json CmdSetChildIndex::toJson() const {
           {"child_id", _child_id},
           {"index", _index}};
 }
+
+bool CmdSetChildIndex::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+
+// ---------------- CmdReplaceChild ----------------
 
 void CmdReplaceChild::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto parentIt = objMap.find(_id);
@@ -582,4 +643,9 @@ nlohmann::json CmdReplaceChild::toJson() const {
           {"oldChild_id", _oldChild_id},
           {"newChild_id", _newChild_id}};
 }
+
+bool CmdReplaceChild::doMerge(const Command& other) {
+  return Command::doMerge(other);
+}
+
 }  // namespace tgfx
