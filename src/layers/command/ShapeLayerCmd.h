@@ -23,24 +23,8 @@
 #include <tgfx/layers/ShapeLayer.h>
 #include <tgfx/layers/record/Recordable.h>
 #include <nlohmann/json.hpp>
+#include "CommandType.h"
 
-namespace ShapeLayerCommandType {
-// ShapeLayerRecorder
-DEFINE_COMMAND_TYPE(MakeShapeLayer);
-DEFINE_COMMAND_TYPE(setPath);
-DEFINE_COMMAND_TYPE(setShape);
-DEFINE_COMMAND_TYPE(setFillStyle);
-DEFINE_COMMAND_TYPE(setStrokeStyle);
-DEFINE_COMMAND_TYPE(setLineCap);
-DEFINE_COMMAND_TYPE(setLineJoin);
-DEFINE_COMMAND_TYPE(setMiterLimit);
-DEFINE_COMMAND_TYPE(setLineWidth);
-DEFINE_COMMAND_TYPE(setLineDashPattern);
-DEFINE_COMMAND_TYPE(setLineDashPhase);
-DEFINE_COMMAND_TYPE(setStrokeStart);
-DEFINE_COMMAND_TYPE(setStrokeEnd);
-DEFINE_COMMAND_TYPE(setStrokeAlign);
-}
 
 namespace tgfx {
 

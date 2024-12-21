@@ -18,10 +18,7 @@
 #pragma once
 
 #include "Commands.h"
-namespace ShapeStyleCommandType {
-DEFINE_COMMAND_TYPE(MakeSolidColor);
-DEFINE_COMMAND_TYPE(setColor);
-}  // namespace ShapeStyleCommandType
+#include "CommandType.h"
 
 namespace tgfx {
 class ShapeStyleCmdFactory {

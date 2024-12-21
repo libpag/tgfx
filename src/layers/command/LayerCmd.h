@@ -27,32 +27,7 @@
 #include <tgfx/layers/record/Recordable.h>
 #include <nlohmann/json.hpp>
 #include "Commands.h"
-namespace LayerCommandType {
-
-DEFINE_COMMAND_TYPE(SetDefaultAllowsEdgeAntialiasing);
-DEFINE_COMMAND_TYPE(SetDefaultAllowsGroupOpacity);
-DEFINE_COMMAND_TYPE(MakeLayer);
-DEFINE_COMMAND_TYPE(setName);
-DEFINE_COMMAND_TYPE(setAlpha);
-DEFINE_COMMAND_TYPE(setBlendMode);
-DEFINE_COMMAND_TYPE(setPosition);
-DEFINE_COMMAND_TYPE(setMatrix);
-DEFINE_COMMAND_TYPE(setVisible);
-DEFINE_COMMAND_TYPE(setShouldRasterize);
-DEFINE_COMMAND_TYPE(setRasterizationScale);
-DEFINE_COMMAND_TYPE(setAllowsEdgeAntialiasing);
-DEFINE_COMMAND_TYPE(setAllowsGroupOpacity);
-DEFINE_COMMAND_TYPE(setFilters);
-DEFINE_COMMAND_TYPE(setMask);
-DEFINE_COMMAND_TYPE(setScrollRect);
-DEFINE_COMMAND_TYPE(addChildAt);
-DEFINE_COMMAND_TYPE(removeChildAt);
-DEFINE_COMMAND_TYPE(removeChildren);
-DEFINE_COMMAND_TYPE(removeFromParent);
-DEFINE_COMMAND_TYPE(setChildIndex);
-DEFINE_COMMAND_TYPE(replaceChild);
-
-};  // namespace LayerCommandType
+#include "CommandType.h"
 
 namespace tgfx {
 

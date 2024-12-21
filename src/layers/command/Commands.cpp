@@ -24,11 +24,6 @@
 #include "SolidLayerCmd.h"
 #include "tgfx/core/Color.h"
 
-int getNextCommandIndex() {
-  static int counter = 1000;
-  return counter++;
-}
-
 namespace tgfx {
 
 nlohmann::json Command::ColorToJson(const Color& color) {

@@ -24,15 +24,8 @@
 #include <tgfx/layers/record/Recordable.h>
 #include <nlohmann/json.hpp>
 #include "Commands.h"
+#include "CommandType.h"
 
-namespace SolidLayerCommandType {
-DEFINE_COMMAND_TYPE(MakeSolidLayer);
-DEFINE_COMMAND_TYPE(setWidth);
-DEFINE_COMMAND_TYPE(setHeight);
-DEFINE_COMMAND_TYPE(setRadiusX);
-DEFINE_COMMAND_TYPE(setRadiusY);
-DEFINE_COMMAND_TYPE(setColor);
-}  // namespace SolidLayerCommandType
 
 namespace tgfx {
 

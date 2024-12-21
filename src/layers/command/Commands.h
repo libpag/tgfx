@@ -22,11 +22,6 @@
 #include <tgfx/layers/record/Recordable.h>
 #include <nlohmann/json.hpp>
 
-
-int getNextCommandIndex();
-#define DEFINE_COMMAND_TYPE(name) static const int name = getNextCommandIndex();
-;  // namespace CommandType
-
 namespace tgfx {
 struct Command {
   int _id;  // 新增 _id 属性
