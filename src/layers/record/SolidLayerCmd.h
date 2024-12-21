@@ -27,7 +27,10 @@
 
 namespace tgfx {
 
-// ------------------------ SolidLayerRecorder begin ------------------------
+class SolidLayerCmdFactory {
+public:
+  static std::unique_ptr<Command> MakeFrom(const nlohmann::json& json);
+};
 
 struct CmdMakeSolidLayer : Command {
   explicit CmdMakeSolidLayer(int id) : Command(id) {}

@@ -31,7 +31,10 @@
 namespace tgfx {
 
 
-// ------------------------ Layer ------------------------
+class LayerCmdFactory {
+public:
+  static std::unique_ptr<Command> MakeFrom(const nlohmann::json& json);
+};
 
 
 struct CmdSetDefaultAllowsEdgeAntialiasing : Command {

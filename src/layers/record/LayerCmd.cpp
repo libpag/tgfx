@@ -21,9 +21,87 @@
 
 namespace tgfx {
 
+std::unique_ptr<Command> LayerCmdFactory::MakeFrom(const nlohmann::json& json) {
+  CommandType type = static_cast<CommandType>(json.at("type").get<int>());
+  int id = json.at("id").get<int>();  // 提取 _id
+  switch (type) {
+    case CommandType::SetDefaultAllowsEdgeAntialiasing:
+      return std::make_unique<CmdSetDefaultAllowsEdgeAntialiasing>(id,
+                                                                   json.at("value").get<bool>());
+    case CommandType::SetDefaultAllowsGroupOpacity:
+      return std::make_unique<CmdSetDefaultAllowsGroupOpacity>(id, json.at("value").get<bool>());
+    case CommandType::MakeLayer:
+      return std::make_unique<CmdMakeLayer>(id);
+    case CommandType::setName: {
+      auto name = json.at("name").get<std::string>();
+      return std::make_unique<CmdSetName>(id, name);
+    }
+    case CommandType::setAlpha:
+      return std::make_unique<CmdSetAlpha>(id, json.at("alpha").get<float>());
+    case CommandType::setBlendMode:
+      return std::make_unique<CmdSetBlendMode>(
+          id, static_cast<BlendMode>(json.at("blendMode").get<int>()));
+    case CommandType::setPosition: {
+      auto pos = json.at("position");
+      Point position = Point::Make(pos[0].get<float>(), pos[1].get<float>());
+      return std::make_unique<CmdSetPosition>(id, position);
+    }
+    case CommandType::setMatrix: {
+      auto mat = json.at("matrix");
+      Matrix matrix = Matrix::MakeAll(mat[0].get<float>(),  // scaleX
+                                      mat[1].get<float>(),  // skewX
+                                      mat[2].get<float>(),  // transX
+                                      mat[3].get<float>(),  // skewY
+                                      mat[4].get<float>(),  // scaleY
+                                      mat[5].get<float>()   // transY
+      );
+      return std::make_unique<CmdSetMatrix>(id, matrix);
+    }
+    case CommandType::setVisible:
+      return std::make_unique<CmdSetVisible>(id, json.at("visible").get<bool>());
+    case CommandType::setShouldRasterize:
+      return std::make_unique<CmdSetShouldRasterize>(id, json.at("shouldRasterize").get<bool>());
+    case CommandType::setRasterizationScale:
+      return std::make_unique<CmdSetRasterizationScale>(id, json.at("scale").get<float>());
+    case CommandType::setAllowsEdgeAntialiasing:
+      return std::make_unique<CmdSetAllowsEdgeAntialiasing>(id, json.at("allows").get<bool>());
+    case CommandType::setAllowsGroupOpacity:
+      return std::make_unique<CmdSetAllowsGroupOpacity>(id, json.at("allows").get<bool>());
+    case CommandType::setFilters:
+      return std::make_unique<CmdSetFilters>(id, json.at("filter_ids").get<std::vector<int>>());
+    case CommandType::setMask:
+      return std::make_unique<CmdSetMask>(id, json.at("mask_id").get<int>());
+    case CommandType::setScrollRect: {
+      auto rect = json.at("rect");
+      Rect r = Rect::MakeXYWH(rect[0].get<float>(), rect[1].get<float>(), rect[2].get<float>(),
+                              rect[3].get<float>());
+      return std::make_unique<CmdSetScrollRect>(id, r);
+    }
+    case CommandType::addChildAt:
+      return std::make_unique<CmdAddChildAt>(id, json.at("child_id").get<int>(),
+                                             json.at("index").get<int>());
+    case CommandType::removeChildAt:
+      return std::make_unique<CmdRemoveChildAt>(id, json.at("index").get<int>());
+    case CommandType::removeChildren:
+      return std::make_unique<CmdRemoveChildren>(id, json.at("beginIndex").get<int>(),
+                                                 json.at("endIndex").get<int>());
+    case CommandType::removeFromParent:
+      return std::make_unique<CmdRemoveFromParent>(id);
+    case CommandType::setChildIndex:
+      return std::make_unique<CmdSetChildIndex>(id, json.at("child_id").get<int>(),
+                                                json.at("index").get<int>());
+    case CommandType::replaceChild:
+      return std::make_unique<CmdReplaceChild>(id, json.at("oldChild_id").get<int>(),
+                                               json.at("newChild_id").get<int>());
+
+    default:
+      return nullptr;
+  }
+}
+
 // ---------------- CmdSetDefaultAllowsEdgeAntialiasing ----------------
 
-void CmdSetDefaultAllowsEdgeAntialiasing::execute(std::map<int, std::shared_ptr<Recordable>>& ) {
+void CmdSetDefaultAllowsEdgeAntialiasing::execute(std::map<int, std::shared_ptr<Recordable>>&) {
   Layer::SetDefaultAllowsEdgeAntialiasing(_value);
 }
 
@@ -38,7 +116,7 @@ bool CmdSetDefaultAllowsEdgeAntialiasing::doMerge(const Command& other) {
 
 // ---------------- CmdSetDefaultAllowsGroupOpacity ----------------
 
-void CmdSetDefaultAllowsGroupOpacity::execute(std::map<int, std::shared_ptr<Recordable>>& ) {
+void CmdSetDefaultAllowsGroupOpacity::execute(std::map<int, std::shared_ptr<Recordable>>&) {
   Layer::SetDefaultAllowsGroupOpacity(_value);
 }
 
@@ -63,7 +141,7 @@ nlohmann::json CmdMakeLayer::toJson() const {
   return {{"type", static_cast<int>(getType())}, {"id", _id}};
 }
 
-bool CmdMakeLayer::doMerge(const Command& ) {
+bool CmdMakeLayer::doMerge(const Command&) {
   // 正常不可能make同一个对象(相同id、相同type）多次，可能上游出现错误了，打印一下
   std::cerr << "异常: CmdMakeLayer::doMerge, id = " << _id << std::endl;
   // 返回true，不需要重复make
@@ -240,11 +318,13 @@ bool CmdSetVisible::doMerge(const Command& other) {
 void CmdSetShouldRasterize::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
   if (it == objMap.end()) {
-    std::cerr << "异常: CmdSetShouldRasterize::execute, objMap[" << _id << "] 未找到。" << std::endl;
+    std::cerr << "异常: CmdSetShouldRasterize::execute, objMap[" << _id << "] 未找到。"
+              << std::endl;
     return;
   }
   if (!it->second) {
-    std::cerr << "异常: CmdSetShouldRasterize::execute, objMap[" << _id << "] 是空指针。" << std::endl;
+    std::cerr << "异常: CmdSetShouldRasterize::execute, objMap[" << _id << "] 是空指针。"
+              << std::endl;
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
@@ -268,11 +348,13 @@ bool CmdSetShouldRasterize::doMerge(const Command& other) {
 void CmdSetRasterizationScale::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
   if (it == objMap.end()) {
-    std::cerr << "异常: CmdSetRasterizationScale::execute, objMap[" << _id << "] 未找到。" << std::endl;
+    std::cerr << "异常: CmdSetRasterizationScale::execute, objMap[" << _id << "] 未找到。"
+              << std::endl;
     return;
   }
   if (!it->second) {
-    std::cerr << "异常: CmdSetRasterizationScale::execute, objMap[" << _id << "] 是空指针。" << std::endl;
+    std::cerr << "异常: CmdSetRasterizationScale::execute, objMap[" << _id << "] 是空指针。"
+              << std::endl;
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
@@ -294,11 +376,13 @@ bool CmdSetRasterizationScale::doMerge(const Command& other) {
 void CmdSetAllowsEdgeAntialiasing::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
   if (it == objMap.end()) {
-    std::cerr << "异常: CmdSetAllowsEdgeAntialiasing::execute, objMap[" << _id << "] 未找到。" << std::endl;
+    std::cerr << "异常: CmdSetAllowsEdgeAntialiasing::execute, objMap[" << _id << "] 未找到。"
+              << std::endl;
     return;
   }
   if (!it->second) {
-    std::cerr << "异常: CmdSetAllowsEdgeAntialiasing::execute, objMap[" << _id << "] 是空指针。" << std::endl;
+    std::cerr << "异常: CmdSetAllowsEdgeAntialiasing::execute, objMap[" << _id << "] 是空指针。"
+              << std::endl;
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
@@ -320,11 +404,13 @@ bool CmdSetAllowsEdgeAntialiasing::doMerge(const Command& other) {
 void CmdSetAllowsGroupOpacity::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
   if (it == objMap.end()) {
-    std::cerr << "异常: CmdSetAllowsGroupOpacity::execute, objMap[" << _id << "] 未找到。" << std::endl;
+    std::cerr << "异常: CmdSetAllowsGroupOpacity::execute, objMap[" << _id << "] 未找到。"
+              << std::endl;
     return;
   }
   if (!it->second) {
-    std::cerr << "异常: CmdSetAllowsGroupOpacity::execute, objMap[" << _id << "] 是空指针。" << std::endl;
+    std::cerr << "异常: CmdSetAllowsGroupOpacity::execute, objMap[" << _id << "] 是空指针。"
+              << std::endl;
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
@@ -455,14 +541,15 @@ void CmdAddChildAt::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) 
     return;
   }
   if (!childIt->second) {
-    std::cerr << "异常: CmdAddChildAt::execute, objMap[" << _child_id << "] 是空指针。" << std::endl;
+    std::cerr << "异常: CmdAddChildAt::execute, objMap[" << _child_id << "] 是空指针。"
+              << std::endl;
     return;
   }
   auto parentLayer = std::static_pointer_cast<Layer>(parentIt->second);
   std::cout << "CmdAddChildAt: Parent Layer Type: " << parentLayer->TypeToString() << std::endl;
   auto childLayer = std::static_pointer_cast<Layer>(childIt->second);
   std::cout << "CmdAddChildAt: Child Layer Type: " << childLayer->TypeToString() << std::endl;
-  if (_index > static_cast<int> (parentLayer->children().size())) {
+  if (_index > static_cast<int>(parentLayer->children().size())) {
     // 如果 index 超出范围，那说明前面有逻辑漏掉了，这样插入位置就不对了
     std::cerr << "异常: CmdAddChildAt::execute, index 超出范围。" << std::endl;
     return;
@@ -543,7 +630,8 @@ void CmdRemoveFromParent::execute(std::map<int, std::shared_ptr<Recordable>>& ob
     return;
   }
   if (!it->second) {
-    std::cerr << "异常: CmdRemoveFromParent::execute, objMap[" << _id << "] 是空指针。" << std::endl;
+    std::cerr << "异常: CmdRemoveFromParent::execute, objMap[" << _id << "] 是空指针。"
+              << std::endl;
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
@@ -573,11 +661,13 @@ void CmdSetChildIndex::execute(std::map<int, std::shared_ptr<Recordable>>& objMa
   }
   auto childIt = objMap.find(_child_id);
   if (childIt == objMap.end()) {
-    std::cerr << "异常: CmdSetChildIndex::execute, objMap[" << _child_id << "] 未找到。" << std::endl;
+    std::cerr << "异常: CmdSetChildIndex::execute, objMap[" << _child_id << "] 未找到。"
+              << std::endl;
     return;
   }
   if (!childIt->second) {
-    std::cerr << "异常: CmdSetChildIndex::execute, objMap[" << _child_id << "] 是空指针。" << std::endl;
+    std::cerr << "异常: CmdSetChildIndex::execute, objMap[" << _child_id << "] 是空指针。"
+              << std::endl;
     return;
   }
   auto parentLayer = std::static_pointer_cast<Layer>(parentIt->second);
@@ -612,20 +702,24 @@ void CmdReplaceChild::execute(std::map<int, std::shared_ptr<Recordable>>& objMap
   }
   auto oldChildIt = objMap.find(_oldChild_id);
   if (oldChildIt == objMap.end()) {
-    std::cerr << "异常: CmdReplaceChild::execute, objMap[" << _oldChild_id << "] 未找到。" << std::endl;
+    std::cerr << "异常: CmdReplaceChild::execute, objMap[" << _oldChild_id << "] 未找到。"
+              << std::endl;
     return;
   }
   if (!oldChildIt->second) {
-    std::cerr << "异常: CmdReplaceChild::execute, objMap[" << _oldChild_id << "] 是空指针。" << std::endl;
+    std::cerr << "异常: CmdReplaceChild::execute, objMap[" << _oldChild_id << "] 是空指针。"
+              << std::endl;
     return;
   }
   auto newChildIt = objMap.find(_newChild_id);
   if (newChildIt == objMap.end()) {
-    std::cerr << "异常: CmdReplaceChild::execute, objMap[" << _newChild_id << "] 未找到。" << std::endl;
+    std::cerr << "异常: CmdReplaceChild::execute, objMap[" << _newChild_id << "] 未找到。"
+              << std::endl;
     return;
   }
   if (!newChildIt->second) {
-    std::cerr << "异常: CmdReplaceChild::execute, objMap[" << _newChild_id << "] 是空指针。" << std::endl;
+    std::cerr << "异常: CmdReplaceChild::execute, objMap[" << _newChild_id << "] 是空指针。"
+              << std::endl;
     return;
   }
   auto parentLayer = std::static_pointer_cast<Layer>(parentIt->second);

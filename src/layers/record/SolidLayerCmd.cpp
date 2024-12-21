@@ -17,10 +17,31 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "SolidLayerCmd.h"
-#include "tgfx/layers/SolidLayer.h"
 #include <iostream>
+#include "tgfx/layers/SolidLayer.h"
 
 namespace tgfx {
+
+std::unique_ptr<Command> SolidLayerCmdFactory::MakeFrom(const nlohmann::json& json) {
+  CommandType type = static_cast<CommandType>(json.at("type").get<int>());
+  int id = json.at("id").get<int>();  // 提取 _id
+  switch (type) {
+    case CommandType::MakeSolidLayer:
+      return std::make_unique<CmdMakeSolidLayer>(id);
+    case CommandType::setWidth:
+      return std::make_unique<CmdSetWidth>(id, json.at("width").get<float>());
+    case CommandType::setHeight:
+      return std::make_unique<CmdSetHeight>(id, json.at("height").get<float>());
+    case CommandType::setRadiusX:
+      return std::make_unique<CmdSetRadiusX>(id, json.at("radiusX").get<float>());
+    case CommandType::setRadiusY:
+      return std::make_unique<CmdSetRadiusY>(id, json.at("radiusY").get<float>());
+    case CommandType::setColor:
+      return std::make_unique<CmdSetColor>(id, Command::JsonToColor(json.at("color")));
+    default:
+      return nullptr;
+  }
+}
 
 // ---------------- CmdMakeSolidLayer ----------------
 void CmdMakeSolidLayer::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
@@ -125,7 +146,9 @@ void CmdSetColor::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
 }
 
 nlohmann::json CmdSetColor::toJson() const {
-  return {{"type", static_cast<int>(getType())}, {"id", _id}, {"color", Command::ColorToJson(_color)}};
+  return {{"type", static_cast<int>(getType())},
+          {"id", _id},
+          {"color", Command::ColorToJson(_color)}};
 }
 
 bool CmdSetColor::doMerge(const Command& other) {

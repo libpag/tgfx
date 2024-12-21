@@ -22,6 +22,55 @@
 
 namespace tgfx {
 
+std::unique_ptr<Command> ShapeLayerCmdFactory::MakeFrom(const nlohmann::json& json) {
+
+  CommandType type = static_cast<CommandType>(json.at("type").get<int>());
+  int id = json.at("id").get<int>();  // 提取 _id
+  switch (type) {
+
+    // ------------------- ShapeLayer -------------------
+    case CommandType::MakeShapeLayer:
+      return std::make_unique<CmdMakeShapeLayer>(id);
+    case CommandType::setPath: {
+      Path path;
+      path.fromJson(json.at("path").dump());
+      return std::make_unique<CmdSetPath>(id, path);
+    }
+    case CommandType::setShape: {
+      auto shapeJson = json.at("shape");
+      std::shared_ptr<Shape> shape = Shape::FromJson(shapeJson.dump());
+      return std::make_unique<CmdSetShape>(id, shape);
+    }
+    case CommandType::setFillStyle:
+      return std::make_unique<CmdSetFillStyle>(id, json.at("styleId").get<int>());
+    case CommandType::setStrokeStyle:
+      return std::make_unique<CmdSetStrokeStyle>(id, json.at("styleId").get<int>());
+    case CommandType::setLineCap:
+      return std::make_unique<CmdSetLineCap>(id, static_cast<LineCap>(json.at("cap").get<int>()));
+    case CommandType::setLineJoin:
+      return std::make_unique<CmdSetLineJoin>(id,
+                                              static_cast<LineJoin>(json.at("join").get<int>()));
+    case CommandType::setMiterLimit:
+      return std::make_unique<CmdSetMiterLimit>(id, json.at("limit").get<float>());
+    case CommandType::setLineWidth:
+      return std::make_unique<CmdSetLineWidth>(id, json.at("width").get<float>());
+    case CommandType::setLineDashPattern:
+      return std::make_unique<CmdSetLineDashPattern>(id,
+                                                     json.at("pattern").get<std::vector<float>>());
+    case CommandType::setLineDashPhase:
+      return std::make_unique<CmdSetLineDashPhase>(id, json.at("phase").get<float>());
+    case CommandType::setStrokeStart:
+      return std::make_unique<CmdSetStrokeStart>(id, json.at("start").get<float>());
+    case CommandType::setStrokeEnd:
+      return std::make_unique<CmdSetStrokeEnd>(id, json.at("end").get<float>());
+    case CommandType::setStrokeAlign:
+      return std::make_unique<CmdSetStrokeAlign>(
+          id, static_cast<StrokeAlign>(json.at("align").get<int>()));
+    default:
+      return nullptr;
+  }
+}
+
 // ===== CmdMakeShapeLayer =====
 void CmdMakeShapeLayer::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   objMap[_id] = ShapeLayer::Make();

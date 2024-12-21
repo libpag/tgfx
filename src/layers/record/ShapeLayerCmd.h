@@ -27,7 +27,10 @@
 namespace tgfx {
 
 
-// ------------------------ ShapeLayer begin ------------------------
+class ShapeLayerCmdFactory {
+public:
+  static std::unique_ptr<Command> MakeFrom(const nlohmann::json& json);
+};
 
 struct CmdMakeShapeLayer : Command {
   explicit CmdMakeShapeLayer(int id) : Command(id) {}

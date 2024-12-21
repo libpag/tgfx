@@ -72,6 +72,8 @@ enum class CommandType {
 
 };
 
+
+
 struct Command {
   int _id;  // 新增 _id 属性
 
@@ -103,5 +105,7 @@ struct Command {
   static Color JsonToColor(const nlohmann::json& json);
   // ------------------------ 静态工具方法 end ------------------------
 };
+
+
 
 }  // namespace tgfx
