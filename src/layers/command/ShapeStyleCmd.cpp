@@ -17,8 +17,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "ShapeStyleCmd.h"
-#include "tgfx/layers/SolidColor.h"
 #include <iostream>
+#include "tgfx/layers/SolidColor.h"
 
 namespace tgfx {
 
@@ -26,7 +26,7 @@ std::unique_ptr<Command> ShapeStyleCmdFactory::MakeFrom(const nlohmann::json& js
   int type = json.at("type").get<int>();
   int id = json.at("id").get<int>();
   if (type == ShapeStyleCommandType::MakeSolidColor) {
-    return std::make_unique<MakeSolidColor>(id);
+    return std::make_unique<CmdMakeSolidColor>(id, Command::JsonToColor(json.at("color")));
   }
   if (type == ShapeStyleCommandType::setColor) {
     return std::make_unique<CmdSetSolidColor>(id, Command::JsonToColor(json.at("color")));
@@ -35,15 +35,17 @@ std::unique_ptr<Command> ShapeStyleCmdFactory::MakeFrom(const nlohmann::json& js
 }
 
 // ---------------- MakeSolidColor ----------------
-void MakeSolidColor::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
-  objMap[_id] = SolidColor::Make();
+void CmdMakeSolidColor::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
+  objMap[_id] = SolidColor::Make(_color);
 }
 
-nlohmann::json MakeSolidColor::toJson() const {
-  return {{"type", static_cast<int>(getType())}, {"id", _id}};
+nlohmann::json CmdMakeSolidColor::toJson() const {
+  return {{"type", static_cast<int>(getType())},
+          {"id", _id},
+          {"color", Command::ColorToJson(_color)}};
 }
 
-bool MakeSolidColor::doMerge(const Command&) {
+bool CmdMakeSolidColor::doMerge(const Command&) {
   std::cerr << "异常: MakeSolidColor::doMerge, id = " << _id << std::endl;
   return true;
 }
@@ -59,7 +61,9 @@ void CmdSetSolidColor::execute(std::map<int, std::shared_ptr<Recordable>>& objMa
 }
 
 nlohmann::json CmdSetSolidColor::toJson() const {
-  return {{"type", static_cast<int>(getType())}, {"id", _id}, {"color", Command::ColorToJson(_color)}};
+  return {{"type", static_cast<int>(getType())},
+          {"id", _id},
+          {"color", Command::ColorToJson(_color)}};
 }
 
 bool CmdSetSolidColor::doMerge(const Command& other) {

@@ -15,29 +15,29 @@
 //  and limitations under the license.
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
-
 #pragma once
-#include <map>
-#include <string>
-#include "Recordable.h"
+
+#include <memory>
+#include "tgfx/core/Color.h"
 
 namespace tgfx {
 
-struct Command;
+class ShapeStyle;
 
-class Recorder {
+/**
+ * ShapeStyleRecorder 负责记录 ShapeStyle 的操作。
+ */
+class ShapeStyleRecorder {
  public:
-  static void Replay(std::string jsonStr, std::map<int, std::shared_ptr<Recordable>>& objMap);
-  static std::string FlushCommands();
+    /**
+     * 录制创建 SolidColor
+     */
+    static void MakeSolidColor(ShapeStyle* style, const Color& color);
 
- private:
-  static void Record(std::unique_ptr<Command> command);
-  static void Remove(int uuid);
-  static std::vector<std::unique_ptr<Command>> commands_;
-
-  friend class LayerRecorder;
-  friend class ShapeLayerRecorder;
-  friend class SolidLayerRecorder;
-  friend class ShapeStyleRecorder;
+    /**
+     * 录制设置颜色
+     */
+    static void setColor(ShapeStyle* style, const Color& color);
 };
+
 }  // namespace tgfx

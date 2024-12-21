@@ -17,15 +17,19 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "tgfx/layers/SolidColor.h"
+#include "record/ShapeStyleRecorder.h"
 
 namespace tgfx {
 std::shared_ptr<SolidColor> SolidColor::Make(const Color& color) {
-  return std::shared_ptr<SolidColor>(new SolidColor(color));
+  auto solidColor = std::shared_ptr<SolidColor>(new SolidColor(color));
+  ShapeStyleRecorder::MakeSolidColor(solidColor.get(), color);
+  return solidColor;
 }
 
 void SolidColor::setColor(const Color& color) {
   _color = color;
   invalidate();
+  ShapeStyleRecorder::setColor(this, color);
 }
 
 std::shared_ptr<Shader> SolidColor::getShader() const {

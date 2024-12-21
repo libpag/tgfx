@@ -21,16 +21,17 @@
 namespace ShapeStyleCommandType {
 DEFINE_COMMAND_TYPE(MakeSolidColor);
 DEFINE_COMMAND_TYPE(setColor);
-}  // namespace SolidLayerCommandType
+}  // namespace ShapeStyleCommandType
 
 namespace tgfx {
 class ShapeStyleCmdFactory {
-public:
+ public:
   static std::unique_ptr<Command> MakeFrom(const nlohmann::json& json);
 };
 
-struct MakeSolidColor : Command {
-  explicit MakeSolidColor(int id) : Command(id) {
+struct CmdMakeSolidColor : Command {
+  Color _color;
+  CmdMakeSolidColor(int id, const Color& color) : Command(id), _color(color) {
   }
 
   int getType() const override {
@@ -41,7 +42,6 @@ struct MakeSolidColor : Command {
   nlohmann::json toJson() const override;
   bool doMerge(const Command& other) override;
 };
-
 
 struct CmdSetSolidColor : Command {
   Color _color;
@@ -57,7 +57,5 @@ struct CmdSetSolidColor : Command {
   nlohmann::json toJson() const override;
   bool doMerge(const Command& other) override;
 };
-
-
 
 }  // namespace tgfx

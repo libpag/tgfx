@@ -239,7 +239,7 @@ TGFX_TEST(RecordTest, RecordShapeLayer) {
   fillStyle->setColor(Color::FromRGBA(255, 0, 255, 0));
   shapeLayer->setFillStyle(fillStyle);
 
-  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(11));
+  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(14));
 
   auto jsonStr = Recorder::FlushCommands();
   std::cout << jsonStr << std::endl;
