@@ -22,6 +22,7 @@
 
 namespace tgfx {
 
+// ---------------- CmdMakeSolidLayer ----------------
 void CmdMakeSolidLayer::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   objMap[_id] = SolidLayer::Make();
 }
@@ -37,11 +38,14 @@ bool CmdMakeSolidLayer::doMerge(const Command&) {
   return true;
 }
 
+// ---------------- CmdSetWidth ----------------
 void CmdSetWidth::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    std::static_pointer_cast<SolidLayer>(it->second)->setWidth(_width);
+  if (it == objMap.end()) {
+    std::cerr << "异常: CmdSetWidth::execute 找不到 id = " << _id << std::endl;
+    return;
   }
+  std::static_pointer_cast<SolidLayer>(it->second)->setWidth(_width);
 }
 
 nlohmann::json CmdSetWidth::toJson() const {
@@ -53,11 +57,14 @@ bool CmdSetWidth::doMerge(const Command& other) {
   return true;
 }
 
+// ---------------- CmdSetHeight ----------------
 void CmdSetHeight::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    std::static_pointer_cast<SolidLayer>(it->second)->setHeight(_height);
+  if (it == objMap.end()) {
+    std::cerr << "异常: CmdSetHeight::execute 找不到 id = " << _id << std::endl;
+    return;
   }
+  std::static_pointer_cast<SolidLayer>(it->second)->setHeight(_height);
 }
 
 nlohmann::json CmdSetHeight::toJson() const {
@@ -69,11 +76,14 @@ bool CmdSetHeight::doMerge(const Command& other) {
   return true;
 }
 
+// ---------------- CmdSetRadiusX ----------------
 void CmdSetRadiusX::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    std::static_pointer_cast<SolidLayer>(it->second)->setRadiusX(_radiusX);
+  if (it == objMap.end()) {
+    std::cerr << "异常: CmdSetRadiusX::execute 找不到 id = " << _id << std::endl;
+    return;
   }
+  std::static_pointer_cast<SolidLayer>(it->second)->setRadiusX(_radiusX);
 }
 
 nlohmann::json CmdSetRadiusX::toJson() const {
@@ -85,11 +95,14 @@ bool CmdSetRadiusX::doMerge(const Command& other) {
   return true;
 }
 
+// ---------------- CmdSetRadiusY ----------------
 void CmdSetRadiusY::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    std::static_pointer_cast<SolidLayer>(it->second)->setRadiusY(_radiusY);
+  if (it == objMap.end()) {
+    std::cerr << "异常: CmdSetRadiusY::execute 找不到 id = " << _id << std::endl;
+    return;
   }
+  std::static_pointer_cast<SolidLayer>(it->second)->setRadiusY(_radiusY);
 }
 
 nlohmann::json CmdSetRadiusY::toJson() const {
@@ -101,11 +114,14 @@ bool CmdSetRadiusY::doMerge(const Command& other) {
   return true;
 }
 
+// ---------------- CmdSetColor ----------------
 void CmdSetColor::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
   auto it = objMap.find(_id);
-  if (it != objMap.end()) {
-    std::static_pointer_cast<SolidLayer>(it->second)->setColor(_color);
+  if (it == objMap.end()) {
+    std::cerr << "异常: CmdSetColor::execute 找不到 id = " << _id << std::endl;
+    return;
   }
+  std::static_pointer_cast<SolidLayer>(it->second)->setColor(_color);
 }
 
 nlohmann::json CmdSetColor::toJson() const {

@@ -255,7 +255,7 @@ TGFX_TEST(RecordTest, RecordShapeLayer) {
   ASSERT_EQ(castedReplayLayer->blendMode(), BlendMode::Overlay);
   ASSERT_NE(castedReplayLayer->fillStyle(), nullptr);
   auto solidColor = std::static_pointer_cast<SolidColor>(castedReplayLayer->fillStyle());
-  // ASSERT_EQ(solidColor->color(), Color::FromRGBA(255, 0, 255, 0));
+  ASSERT_EQ(solidColor->color(), Color::FromRGBA(255, 0, 255, 0));
 
   // ...更多属性断言...
 }
