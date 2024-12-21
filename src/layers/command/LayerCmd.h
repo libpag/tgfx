@@ -27,7 +27,7 @@
 #include <tgfx/layers/record/Recordable.h>
 #include <nlohmann/json.hpp>
 #include "Commands.h"
-namespace CommandType {
+namespace LayerCommandType {
 
 DEFINE_COMMAND_TYPE(SetDefaultAllowsEdgeAntialiasing);
 DEFINE_COMMAND_TYPE(SetDefaultAllowsGroupOpacity);
@@ -52,7 +52,7 @@ DEFINE_COMMAND_TYPE(removeFromParent);
 DEFINE_COMMAND_TYPE(setChildIndex);
 DEFINE_COMMAND_TYPE(replaceChild);
 
-};  // namespace CommandType
+};  // namespace LayerCommandType
 
 namespace tgfx {
 
@@ -68,7 +68,7 @@ struct CmdSetDefaultAllowsEdgeAntialiasing : Command {
   }
 
   int getType() const override {
-    return CommandType::SetDefaultAllowsEdgeAntialiasing;
+    return LayerCommandType::SetDefaultAllowsEdgeAntialiasing;
   }
   bool doMerge(const Command& other) override;
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -82,7 +82,7 @@ struct CmdSetDefaultAllowsGroupOpacity : Command {
   }
 
   int getType() const override {
-    return CommandType::SetDefaultAllowsGroupOpacity;
+    return LayerCommandType::SetDefaultAllowsGroupOpacity;
   }
 
   bool doMerge(const Command& other) override;
@@ -95,7 +95,7 @@ struct CmdMakeLayer : Command {
   }
 
   int getType() const override {
-    return CommandType::MakeLayer;
+    return LayerCommandType::MakeLayer;
   }
 
   bool doMerge(const Command& other) override;
@@ -110,7 +110,7 @@ struct CmdSetName : Command {
   }
 
   int getType() const override {
-    return CommandType::setName;
+    return LayerCommandType::setName;
   }
 
   bool doMerge(const Command& other) override;
@@ -125,7 +125,7 @@ struct CmdSetAlpha : Command {
   }
 
   int getType() const override {
-    return CommandType::setAlpha;
+    return LayerCommandType::setAlpha;
   }
 
   bool doMerge(const Command& other) override;
@@ -140,7 +140,7 @@ struct CmdSetBlendMode : Command {
   }
 
   int getType() const override {
-    return CommandType::setBlendMode;
+    return LayerCommandType::setBlendMode;
   }
 
   bool doMerge(const Command& other) override;
@@ -155,7 +155,7 @@ struct CmdSetPosition : Command {
   }
 
   int getType() const override {
-    return CommandType::setPosition;
+    return LayerCommandType::setPosition;
   }
 
   bool doMerge(const Command& other) override;
@@ -170,7 +170,7 @@ struct CmdSetMatrix : Command {
   }
 
   int getType() const override {
-    return CommandType::setMatrix;
+    return LayerCommandType::setMatrix;
   }
 
   bool doMerge(const Command& other) override;
@@ -185,7 +185,7 @@ struct CmdSetVisible : Command {
   }
 
   int getType() const override {
-    return CommandType::setVisible;
+    return LayerCommandType::setVisible;
   }
 
   bool doMerge(const Command& other) override;
@@ -201,7 +201,7 @@ struct CmdSetShouldRasterize : Command {
   }
 
   int getType() const override {
-    return CommandType::setShouldRasterize;
+    return LayerCommandType::setShouldRasterize;
   }
 
   bool doMerge(const Command& other) override;
@@ -216,7 +216,7 @@ struct CmdSetRasterizationScale : Command {
   }
 
   int getType() const override {
-    return CommandType::setRasterizationScale;
+    return LayerCommandType::setRasterizationScale;
   }
 
   bool doMerge(const Command& other) override;
@@ -231,7 +231,7 @@ struct CmdSetAllowsEdgeAntialiasing : Command {
   }
 
   int getType() const override {
-    return CommandType::setAllowsEdgeAntialiasing;
+    return LayerCommandType::setAllowsEdgeAntialiasing;
   }
 
   bool doMerge(const Command& other) override;
@@ -246,7 +246,7 @@ struct CmdSetAllowsGroupOpacity : Command {
   }
 
   int getType() const override {
-    return CommandType::setAllowsGroupOpacity;
+    return LayerCommandType::setAllowsGroupOpacity;
   }
 
   bool doMerge(const Command& other) override;
@@ -261,7 +261,7 @@ struct CmdSetFilters : Command {
   }
 
   int getType() const override {
-    return CommandType::setFilters;
+    return LayerCommandType::setFilters;
   }
 
   bool doMerge(const Command& other) override;
@@ -276,7 +276,7 @@ struct CmdSetMask : Command {
   }
 
   int getType() const override {
-    return CommandType::setMask;
+    return LayerCommandType::setMask;
   }
 
   bool doMerge(const Command& other) override;
@@ -291,7 +291,7 @@ struct CmdSetScrollRect : Command {
   }
 
   int getType() const override {
-    return CommandType::setScrollRect;
+    return LayerCommandType::setScrollRect;
   }
 
   bool doMerge(const Command& other) override;
@@ -307,7 +307,7 @@ struct CmdAddChildAt : Command {
   }
 
   int getType() const override {
-    return CommandType::addChildAt;
+    return LayerCommandType::addChildAt;
   }
 
   bool doMerge(const Command& other) override;
@@ -322,7 +322,7 @@ struct CmdRemoveChildAt : Command {
   }
 
   int getType() const override {
-    return CommandType::removeChildAt;
+    return LayerCommandType::removeChildAt;
   }
 
   bool doMerge(const Command& other) override;
@@ -339,7 +339,7 @@ struct CmdRemoveChildren : Command {
   }
 
   int getType() const override {
-    return CommandType::removeChildren;
+    return LayerCommandType::removeChildren;
   }
 
   bool doMerge(const Command& other) override;
@@ -352,7 +352,7 @@ struct CmdRemoveFromParent : Command {
   }
 
   int getType() const override {
-    return CommandType::removeFromParent;
+    return LayerCommandType::removeFromParent;
   }
 
   bool doMerge(const Command& other) override;
@@ -369,7 +369,7 @@ struct CmdSetChildIndex : Command {
   }
 
   int getType() const override {
-    return CommandType::setChildIndex;
+    return LayerCommandType::setChildIndex;
   }
 
   bool doMerge(const Command& other) override;
@@ -386,7 +386,7 @@ struct CmdReplaceChild : Command {
   }
 
   int getType() const override {
-    return CommandType::replaceChild;
+    return LayerCommandType::replaceChild;
   }
 
   bool doMerge(const Command& other) override;

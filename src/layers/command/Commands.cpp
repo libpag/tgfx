@@ -23,12 +23,10 @@
 #include "SolidLayerCmd.h"
 #include "tgfx/core/Color.h"
 
-namespace CommandType {
 int getNextCommandIndex() {
   static int counter = 1000;
   return counter++;
 }
-}  // namespace CommandType
 
 namespace tgfx {
 

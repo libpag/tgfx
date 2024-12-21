@@ -24,22 +24,22 @@ namespace tgfx {
 std::unique_ptr<Command> SolidLayerCmdFactory::MakeFrom(const nlohmann::json& json) {
   int type = json.at("type").get<int>();
   int id = json.at("id").get<int>();  // 提取 _id
-  if (type == CommandType::MakeSolidLayer) {
+  if (type == SolidLayerCommandType::MakeSolidLayer) {
     return std::make_unique<CmdMakeSolidLayer>(id);
   }
-  if (type == CommandType::setWidth) {
+  if (type == SolidLayerCommandType::setWidth) {
     return std::make_unique<CmdSetWidth>(id, json.at("width").get<float>());
   }
-  if (type == CommandType::setHeight) {
+  if (type == SolidLayerCommandType::setHeight) {
     return std::make_unique<CmdSetHeight>(id, json.at("height").get<float>());
   }
-  if (type == CommandType::setRadiusX) {
+  if (type == SolidLayerCommandType::setRadiusX) {
     return std::make_unique<CmdSetRadiusX>(id, json.at("radiusX").get<float>());
   }
-  if (type == CommandType::setRadiusY) {
+  if (type == SolidLayerCommandType::setRadiusY) {
     return std::make_unique<CmdSetRadiusY>(id, json.at("radiusY").get<float>());
   }
-  if (type == CommandType::setColor) {
+  if (type == SolidLayerCommandType::setColor) {
     return std::make_unique<CmdSetColor>(id, Command::JsonToColor(json.at("color")));
   }
   return nullptr;

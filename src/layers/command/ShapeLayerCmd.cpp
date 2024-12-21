@@ -26,51 +26,51 @@ std::unique_ptr<Command> ShapeLayerCmdFactory::MakeFrom(const nlohmann::json& js
 
   int type = json.at("type").get<int>();
   int id = json.at("id").get<int>();  // 提取 _id
-  if (type == CommandType::MakeShapeLayer) {
+  if (type == ShapeLayerCommandType::MakeShapeLayer) {
     return std::make_unique<CmdMakeShapeLayer>(id);
   }
-  if (type == CommandType::setPath) {
+  if (type == ShapeLayerCommandType::setPath) {
     Path path;
     path.fromJson(json.at("path").dump());
     return std::make_unique<CmdSetPath>(id, path);
   }
-  if (type == CommandType::setShape) {
+  if (type == ShapeLayerCommandType::setShape) {
     auto shapeJson = json.at("shape");
     std::shared_ptr<Shape> shape = Shape::FromJson(shapeJson.dump());
     return std::make_unique<CmdSetShape>(id, shape);
   }
-  if (type == CommandType::setFillStyle) {
+  if (type == ShapeLayerCommandType::setFillStyle) {
     return std::make_unique<CmdSetFillStyle>(id, json.at("styleId").get<int>());
   }
-  if (type == CommandType::setStrokeStyle) {
+  if (type == ShapeLayerCommandType::setStrokeStyle) {
     return std::make_unique<CmdSetStrokeStyle>(id, json.at("styleId").get<int>());
   }
-  if (type == CommandType::setLineCap) {
+  if (type == ShapeLayerCommandType::setLineCap) {
     return std::make_unique<CmdSetLineCap>(id, static_cast<LineCap>(json.at("cap").get<int>()));
   }
-  if (type == CommandType::setLineJoin) {
+  if (type == ShapeLayerCommandType::setLineJoin) {
     return std::make_unique<CmdSetLineJoin>(id, static_cast<LineJoin>(json.at("join").get<int>()));
   }
-  if (type == CommandType::setMiterLimit) {
+  if (type == ShapeLayerCommandType::setMiterLimit) {
     return std::make_unique<CmdSetMiterLimit>(id, json.at("limit").get<float>());
   }
-  if (type == CommandType::setLineWidth) {
+  if (type == ShapeLayerCommandType::setLineWidth) {
     return std::make_unique<CmdSetLineWidth>(id, json.at("width").get<float>());
   }
-  if (type == CommandType::setLineDashPattern) {
+  if (type == ShapeLayerCommandType::setLineDashPattern) {
     return std::make_unique<CmdSetLineDashPattern>(id,
                                                    json.at("pattern").get<std::vector<float>>());
   }
-  if (type == CommandType::setLineDashPhase) {
+  if (type == ShapeLayerCommandType::setLineDashPhase) {
     return std::make_unique<CmdSetLineDashPhase>(id, json.at("phase").get<float>());
   }
-  if (type == CommandType::setStrokeStart) {
+  if (type == ShapeLayerCommandType::setStrokeStart) {
     return std::make_unique<CmdSetStrokeStart>(id, json.at("start").get<float>());
   }
-  if (type == CommandType::setStrokeEnd) {
+  if (type == ShapeLayerCommandType::setStrokeEnd) {
     return std::make_unique<CmdSetStrokeEnd>(id, json.at("end").get<float>());
   }
-  if (type == CommandType::setStrokeAlign) {
+  if (type == ShapeLayerCommandType::setStrokeAlign) {
     return std::make_unique<CmdSetStrokeAlign>(
         id, static_cast<StrokeAlign>(json.at("align").get<int>()));
   }

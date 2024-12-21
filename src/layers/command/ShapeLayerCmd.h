@@ -24,7 +24,7 @@
 #include <tgfx/layers/record/Recordable.h>
 #include <nlohmann/json.hpp>
 
-namespace CommandType {
+namespace ShapeLayerCommandType {
 // ShapeLayerRecorder
 DEFINE_COMMAND_TYPE(MakeShapeLayer);
 DEFINE_COMMAND_TYPE(setPath);
@@ -55,7 +55,7 @@ struct CmdMakeShapeLayer : Command {
   }
 
   int getType() const override {
-    return CommandType::MakeShapeLayer;
+    return ShapeLayerCommandType::MakeShapeLayer;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -70,7 +70,7 @@ struct CmdSetPath : Command {
   }
 
   int getType() const override {
-    return CommandType::setPath;
+    return ShapeLayerCommandType::setPath;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -85,7 +85,7 @@ struct CmdSetShape : Command {
   }
 
   int getType() const override {
-    return CommandType::setShape;
+    return ShapeLayerCommandType::setShape;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -100,7 +100,7 @@ struct CmdSetFillStyle : Command {
   }
 
   int getType() const override {
-    return CommandType::setFillStyle;
+    return ShapeLayerCommandType::setFillStyle;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -115,7 +115,7 @@ struct CmdSetStrokeStyle : Command {
   }
 
   int getType() const override {
-    return CommandType::setStrokeStyle;
+    return ShapeLayerCommandType::setStrokeStyle;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -130,7 +130,7 @@ struct CmdSetLineCap : Command {
   }
 
   int getType() const override {
-    return CommandType::setLineCap;
+    return ShapeLayerCommandType::setLineCap;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -145,7 +145,7 @@ struct CmdSetLineJoin : Command {
   }
 
   int getType() const override {
-    return CommandType::setLineJoin;
+    return ShapeLayerCommandType::setLineJoin;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -160,7 +160,7 @@ struct CmdSetMiterLimit : Command {
   }
 
   int getType() const override {
-    return CommandType::setMiterLimit;
+    return ShapeLayerCommandType::setMiterLimit;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -175,7 +175,7 @@ struct CmdSetLineWidth : Command {
   }
 
   int getType() const override {
-    return CommandType::setLineWidth;
+    return ShapeLayerCommandType::setLineWidth;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -191,7 +191,7 @@ struct CmdSetLineDashPattern : Command {
   }
 
   int getType() const override {
-    return CommandType::setLineDashPattern;
+    return ShapeLayerCommandType::setLineDashPattern;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -206,7 +206,7 @@ struct CmdSetLineDashPhase : Command {
   }
 
   int getType() const override {
-    return CommandType::setLineDashPhase;
+    return ShapeLayerCommandType::setLineDashPhase;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -221,7 +221,7 @@ struct CmdSetStrokeStart : Command {
   }
 
   int getType() const override {
-    return CommandType::setStrokeStart;
+    return ShapeLayerCommandType::setStrokeStart;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -236,7 +236,7 @@ struct CmdSetStrokeEnd : Command {
   }
 
   int getType() const override {
-    return CommandType::setStrokeEnd;
+    return ShapeLayerCommandType::setStrokeEnd;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -251,7 +251,7 @@ struct CmdSetStrokeAlign : Command {
   }
 
   int getType() const override {
-    return CommandType::setStrokeAlign;
+    return ShapeLayerCommandType::setStrokeAlign;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;

@@ -25,14 +25,14 @@
 #include <nlohmann/json.hpp>
 #include "Commands.h"
 
-namespace CommandType {
+namespace SolidLayerCommandType {
 DEFINE_COMMAND_TYPE(MakeSolidLayer);
 DEFINE_COMMAND_TYPE(setWidth);
 DEFINE_COMMAND_TYPE(setHeight);
 DEFINE_COMMAND_TYPE(setRadiusX);
 DEFINE_COMMAND_TYPE(setRadiusY);
 DEFINE_COMMAND_TYPE(setColor);
-}  // namespace CommandType
+}  // namespace SolidLayerCommandType
 
 namespace tgfx {
 
@@ -46,7 +46,7 @@ struct CmdMakeSolidLayer : Command {
   }
 
   int getType() const override {
-    return CommandType::MakeSolidLayer;
+    return SolidLayerCommandType::MakeSolidLayer;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -61,7 +61,7 @@ struct CmdSetWidth : Command {
   }
 
   int getType() const override {
-    return CommandType::setWidth;
+    return SolidLayerCommandType::setWidth;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -76,7 +76,7 @@ struct CmdSetHeight : Command {
   }
 
   int getType() const override {
-    return CommandType::setHeight;
+    return SolidLayerCommandType::setHeight;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -91,7 +91,7 @@ struct CmdSetRadiusX : Command {
   }
 
   int getType() const override {
-    return CommandType::setRadiusX;
+    return SolidLayerCommandType::setRadiusX;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -106,7 +106,7 @@ struct CmdSetRadiusY : Command {
   }
 
   int getType() const override {
-    return CommandType::setRadiusY;
+    return SolidLayerCommandType::setRadiusY;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
@@ -121,7 +121,7 @@ struct CmdSetColor : Command {
   }
 
   int getType() const override {
-    return CommandType::setColor;
+    return SolidLayerCommandType::setColor;
   }
 
   void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;

@@ -24,83 +24,83 @@ namespace tgfx {
 std::unique_ptr<Command> LayerCmdFactory::MakeFrom(const nlohmann::json& json) {
   int type = json.at("type").get<int>();
   int id = json.at("id").get<int>();  // 提取 _id
-  if (type == CommandType::SetDefaultAllowsEdgeAntialiasing) {
+  if (type == LayerCommandType::SetDefaultAllowsEdgeAntialiasing) {
     return std::make_unique<CmdSetDefaultAllowsEdgeAntialiasing>(id, json.at("value").get<bool>());
   }
-  if (type == CommandType::SetDefaultAllowsGroupOpacity) {
+  if (type == LayerCommandType::SetDefaultAllowsGroupOpacity) {
     return std::make_unique<CmdSetDefaultAllowsGroupOpacity>(id, json.at("value").get<bool>());
   }
-  if (type == CommandType::MakeLayer) {
+  if (type == LayerCommandType::MakeLayer) {
     return std::make_unique<CmdMakeLayer>(id);
   }
-  if (type == CommandType::setName) {
+  if (type == LayerCommandType::setName) {
     auto name = json.at("name").get<std::string>();
     return std::make_unique<CmdSetName>(id, name);
   }
-  if (type == CommandType::setAlpha) {
+  if (type == LayerCommandType::setAlpha) {
     return std::make_unique<CmdSetAlpha>(id, json.at("alpha").get<float>());
   }
-  if (type == CommandType::setBlendMode) {
+  if (type == LayerCommandType::setBlendMode) {
     return std::make_unique<CmdSetBlendMode>(
         id, static_cast<BlendMode>(json.at("blendMode").get<int>()));
   }
-  if (type == CommandType::setPosition) {
+  if (type == LayerCommandType::setPosition) {
     auto pos = json.at("position");
     Point position = Point::Make(pos[0].get<float>(), pos[1].get<float>());
     return std::make_unique<CmdSetPosition>(id, position);
   }
-  if (type == CommandType::setMatrix) {
+  if (type == LayerCommandType::setMatrix) {
     auto mat = json.at("matrix");
     Matrix matrix = Matrix::MakeAll(mat[0].get<float>(), mat[1].get<float>(), mat[2].get<float>(),
                                     mat[3].get<float>(), mat[4].get<float>(), mat[5].get<float>());
     return std::make_unique<CmdSetMatrix>(id, matrix);
   }
-  if (type == CommandType::setVisible) {
+  if (type == LayerCommandType::setVisible) {
     return std::make_unique<CmdSetVisible>(id, json.at("visible").get<bool>());
   }
-  if (type == CommandType::setShouldRasterize) {
+  if (type == LayerCommandType::setShouldRasterize) {
     return std::make_unique<CmdSetShouldRasterize>(id, json.at("shouldRasterize").get<bool>());
   }
-  if (type == CommandType::setRasterizationScale) {
+  if (type == LayerCommandType::setRasterizationScale) {
     return std::make_unique<CmdSetRasterizationScale>(id, json.at("scale").get<float>());
   }
-  if (type == CommandType::setAllowsEdgeAntialiasing) {
+  if (type == LayerCommandType::setAllowsEdgeAntialiasing) {
     return std::make_unique<CmdSetAllowsEdgeAntialiasing>(id, json.at("allows").get<bool>());
   }
-  if (type == CommandType::setAllowsGroupOpacity) {
+  if (type == LayerCommandType::setAllowsGroupOpacity) {
     return std::make_unique<CmdSetAllowsGroupOpacity>(id, json.at("allows").get<bool>());
   }
-  if (type == CommandType::setFilters) {
+  if (type == LayerCommandType::setFilters) {
     return std::make_unique<CmdSetFilters>(id, json.at("filter_ids").get<std::vector<int>>());
   }
-  if (type == CommandType::setMask) {
+  if (type == LayerCommandType::setMask) {
     return std::make_unique<CmdSetMask>(id, json.at("mask_id").get<int>());
   }
-  if (type == CommandType::setScrollRect) {
+  if (type == LayerCommandType::setScrollRect) {
     auto rect = json.at("rect");
     Rect r = Rect::MakeXYWH(rect[0].get<float>(), rect[1].get<float>(), rect[2].get<float>(),
                             rect[3].get<float>());
     return std::make_unique<CmdSetScrollRect>(id, r);
   }
-  if (type == CommandType::addChildAt) {
+  if (type == LayerCommandType::addChildAt) {
     return std::make_unique<CmdAddChildAt>(id, json.at("child_id").get<int>(),
                                            json.at("index").get<int>());
   }
-  if (type == CommandType::removeChildAt) {
+  if (type == LayerCommandType::removeChildAt) {
     return std::make_unique<CmdRemoveChildAt>(id, json.at("index").get<int>());
   }
-  if (type == CommandType::removeChildren) {
+  if (type == LayerCommandType::removeChildren) {
     return std::make_unique<CmdRemoveChildren>(id, json.at("beginIndex").get<int>(),
                                                json.at("endIndex").get<int>());
   }
-  if (type == CommandType::removeFromParent) {
+  if (type == LayerCommandType::removeFromParent) {
     return std::make_unique<CmdRemoveFromParent>(id);
   }
-  if (type == CommandType::setChildIndex) {
+  if (type == LayerCommandType::setChildIndex) {
     return std::make_unique<CmdSetChildIndex>(id, json.at("child_id").get<int>(),
                                               json.at("index").get<int>());
   }
-  if (type == CommandType::replaceChild) {
+  if (type == LayerCommandType::replaceChild) {
     return std::make_unique<CmdReplaceChild>(id, json.at("oldChild_id").get<int>(),
                                              json.at("newChild_id").get<int>());
   }
