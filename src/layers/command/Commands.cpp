@@ -20,6 +20,7 @@
 #include <iostream>
 #include "LayerCmd.h"
 #include "ShapeLayerCmd.h"
+#include "ShapeStyleCmd.h"
 #include "SolidLayerCmd.h"
 #include "tgfx/core/Color.h"
 
@@ -52,6 +53,11 @@ std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
   }
 
   command = SolidLayerCmdFactory::MakeFrom(json);
+  if (command != nullptr) {
+    return command;
+  }
+
+  command = ShapeStyleCmdFactory::MakeFrom(json);
   if (command != nullptr) {
     return command;
   }
