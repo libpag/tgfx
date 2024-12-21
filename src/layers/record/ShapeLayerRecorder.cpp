@@ -15,7 +15,7 @@
 //  and limitations under the license.
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
-#include "tgfx/layers/record/ShapeLayerRecorder.h"
+#include "layers/record/ShapeLayerRecorder.h"
 #include <tgfx/core/Path.h>
 #include <tgfx/layers/record/Recorder.h>
 #include "ShapeLayerCmd.h"

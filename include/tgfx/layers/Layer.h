@@ -19,7 +19,6 @@
 #pragma once
 
 #include <memory>
-#include "record/LayerRecorder.h"
 #include "record/Recordable.h"
 #include "tgfx/core/BlendMode.h"
 #include "tgfx/core/Canvas.h"
@@ -90,10 +89,7 @@ class Layer : public Recordable {
   /**
    * Sets the instance name of the layer.
    */
-  void setName(const std::string& value) {
-    _name = value;
-    LayerRecorder::setName(this, value);
-  }
+  void setName(const std::string& value);
 
   /**
    * Returns the alpha transparency value of the layer. Valid values are 0 (fully transparent) to

@@ -18,24 +18,25 @@
 
 #include "tgfx/layers/Layer.h"
 #include <atomic>
+#include <iostream>
 #include "core/images/PictureImage.h"
 #include "core/utils/Log.h"
 #include "core/utils/MathExtra.h"
 #include "core/utils/Profiling.h"
 #include "layers/DrawArgs.h"
 #include "layers/contents/RasterizedContent.h"
-#include "tgfx/layers/record/LayerRecorder.h"
 #include "tgfx/core/Recorder.h"
 #include "tgfx/core/Surface.h"
-#include <iostream>
-
+#include "layers/record/LayerRecorder.h"
 
 // 添加日志宏定义
 #define ENABLE_METHOD_LOGGING 0
 
 #if ENABLE_METHOD_LOGGING
-#define LOG_METHOD(message) std::cout << "[ffjiefan]" << this->TypeToString() << ": " << message << std::endl
-#define LOG_METHOD_STATIC(type, message) std::cout << "[ffjiefan]" << type << ": " << message << std::endl
+#define LOG_METHOD(message) \
+  std::cout << "[ffjiefan]" << this->TypeToString() << ": " << message << std::endl
+#define LOG_METHOD_STATIC(type, message) \
+  std::cout << "[ffjiefan]" << type << ": " << message << std::endl
 #else
 #define LOG_METHOD(message)
 #define LOG_METHOD_STATIC(type, message)
@@ -94,6 +95,11 @@ Layer::Layer() {
   bitFields.visible = true;
   bitFields.allowsEdgeAntialiasing = AllowsEdgeAntialiasing;
   bitFields.allowsGroupOpacity = AllowsGroupOpacity;
+}
+
+void Layer::setName(const std::string& value) {
+  _name = value;
+  LayerRecorder::setName(this, value);
 }
 
 void Layer::setAlpha(float value) {
@@ -369,8 +375,8 @@ bool Layer::setChildIndex(std::shared_ptr<Layer> child, int index) {
 
 bool Layer::replaceChild(std::shared_ptr<Layer> oldChild, std::shared_ptr<Layer> newChild) {
   LOG_METHOD(
-      "Entering Layer::replaceChild(std::shared_ptr<Layer> oldChild, std::shared_ptr<Layer> newChild)")
-  ;
+      "Entering Layer::replaceChild(std::shared_ptr<Layer> oldChild, std::shared_ptr<Layer> "
+      "newChild)");
   auto index = getChildIndex(oldChild);
   if (index < 0) {
     LOGE("The supplied layer must be a child layer of the caller.");
@@ -668,8 +674,8 @@ LayerContent* Layer::getRasterizedCache(const DrawArgs& args) {
 std::shared_ptr<Image> Layer::getRasterizedImage(const DrawArgs& args, float contentScale,
                                                  Matrix* drawingMatrix) {
   LOG_METHOD(
-      "Entering Layer::getRasterizedImage(const DrawArgs& args, float contentScale, Matrix* drawingMatrix)")
-  ;
+      "Entering Layer::getRasterizedImage(const DrawArgs& args, float contentScale, Matrix* "
+      "drawingMatrix)");
   DEBUG_ASSERT(drawingMatrix != nullptr);
   auto picture = getLayerContents(args, contentScale);
   if (!picture) {
@@ -710,8 +716,8 @@ std::shared_ptr<Picture> Layer::getLayerContents(const DrawArgs& args, float con
 
 void Layer::drawLayer(const DrawArgs& args, Canvas* canvas, float alpha, BlendMode blendMode) {
   LOG_METHOD(
-      "Entering Layer::drawLayer(const DrawArgs& args, Canvas* canvas, float alpha, BlendMode blendMode)")
-  ;
+      "Entering Layer::drawLayer(const DrawArgs& args, Canvas* canvas, float alpha, BlendMode "
+      "blendMode)");
   TRACE_EVENT;
   DEBUG_ASSERT(canvas != nullptr);
   if (auto rasterizedCache = getRasterizedCache(args)) {
@@ -771,8 +777,8 @@ std::shared_ptr<MaskFilter> Layer::getMaskFilter(const DrawArgs& args, float sca
 
 void Layer::drawOffscreen(const DrawArgs& args, Canvas* canvas, float alpha, BlendMode blendMode) {
   LOG_METHOD(
-      "Entering Layer::drawOffscreen(const DrawArgs& args, Canvas* canvas, float alpha, BlendMode blendMode)")
-  ;
+      "Entering Layer::drawOffscreen(const DrawArgs& args, Canvas* canvas, float alpha, BlendMode "
+      "blendMode)");
   auto contentScale = canvas->getMatrix().getMaxScale();
   auto picture = getLayerContents(args, contentScale);
   if (picture == nullptr) {
@@ -814,8 +820,8 @@ void Layer::drawContents(const DrawArgs& args, Canvas* canvas, float alpha) {
 bool Layer::getLayersUnderPointInternal(float x, float y,
                                         std::vector<std::shared_ptr<Layer> >* results) {
   LOG_METHOD(
-      "Entering Layer::getLayersUnderPointInternal(float x, float y, std::vector<std::shared_ptr<Layer>>* results)")
-  ;
+      "Entering Layer::getLayersUnderPointInternal(float x, float y, "
+      "std::vector<std::shared_ptr<Layer>>* results)");
   bool hasLayerUnderPoint = false;
   for (auto item = _children.rbegin(); item != _children.rend(); ++item) {
     const auto& childLayer = *item;
@@ -865,22 +871,22 @@ bool Layer::hasValidMask() const {
 
 // 添加 TypeToString 方法
 std::string Layer::TypeToString() const {
-    switch(this->type()) {
-        case LayerType::Layer:
-            return "Layer";
-        case LayerType::Image:
-            return "Image";
-        case LayerType::Shape:
-            return "Shape";
-        case LayerType::Gradient:
-            return "Gradient";
-        case LayerType::Text:
-            return "Text";
-        case LayerType::Solid:
-            return "Solid";
-        default:
-            return "Unknown";
-    }
+  switch (this->type()) {
+    case LayerType::Layer:
+      return "Layer";
+    case LayerType::Image:
+      return "Image";
+    case LayerType::Shape:
+      return "Shape";
+    case LayerType::Gradient:
+      return "Gradient";
+    case LayerType::Text:
+      return "Text";
+    case LayerType::Solid:
+      return "Solid";
+    default:
+      return "Unknown";
+  }
 }
 
 } // namespace tgfx

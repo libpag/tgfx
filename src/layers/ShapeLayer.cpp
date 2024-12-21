@@ -17,7 +17,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "tgfx/layers/ShapeLayer.h"
-#include <tgfx/layers/record/ShapeLayerRecorder.h>
+#include <layers/record/ShapeLayerRecorder.h>
 #include "core/utils/Profiling.h"
 #include "layers/contents/ShapeContent.h"
 #include "tgfx/core/PathEffect.h"

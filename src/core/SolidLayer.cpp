@@ -17,7 +17,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "tgfx/layers/SolidLayer.h"
-#include <tgfx/layers/record/SolidLayerRecorder.h>
+#include "layers/record/SolidLayerRecorder.h"
 #include "layers/contents/ShapeContent.h"
 #include "layers/contents/SolidContent.h"
 

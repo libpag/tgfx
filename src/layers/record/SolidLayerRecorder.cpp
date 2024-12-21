@@ -15,7 +15,7 @@
 //  and limitations under the license.
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
-#include "tgfx/layers/record/SolidLayerRecorder.h"
+#include "layers/record/SolidLayerRecorder.h"
 #include <tgfx/core/Path.h>
 #include <tgfx/layers/SolidLayer.h>
 #include <tgfx/layers/record/Recorder.h>
