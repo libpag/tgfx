@@ -16,10 +16,9 @@
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
 #include "layers/record/SolidLayerRecorder.h"
-#include <tgfx/core/Path.h>
 #include <tgfx/layers/SolidLayer.h>
 #include <tgfx/layers/record/Recorder.h>
-#include "SolidLayerCmd.h"
+#include "layers/command/SolidLayerCmd.h"
 namespace tgfx {
 void SolidLayerRecorder::MakeSolidLayer(SolidLayer* layer) {
     Recorder::Record(std::make_unique<CmdMakeSolidLayer>(layer->_uuid));

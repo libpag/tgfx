@@ -17,7 +17,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "tgfx/layers/record/Recorder.h"
-#include "layers/record/Commands.h"
+#include "layers/command/Commands.h"
 
 namespace tgfx {
 std::vector<std::unique_ptr<Command>> Recorder::commands_;

@@ -18,7 +18,7 @@
 #include "layers/record/ShapeLayerRecorder.h"
 #include <tgfx/core/Path.h>
 #include <tgfx/layers/record/Recorder.h>
-#include "ShapeLayerCmd.h"
+#include "layers/command/ShapeLayerCmd.h"
 namespace tgfx {
 void ShapeLayerRecorder::MakeShapeLayer(ShapeLayer* layer) {
   Recorder::Record(std::make_unique<CmdMakeShapeLayer>(layer->_uuid));
