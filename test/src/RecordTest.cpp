@@ -57,7 +57,7 @@ class RecordTestFixture : public ::testing::Test {
   void compare(const std::shared_ptr<DisplayList>& display, const std::string& baselineKey) {
     display->render(surface.get());
     std::cout << " baselineKey: " << baselineKey << std::endl;
-    ASSERT_TRUE(Baseline::Compare(surface, baselineKey));
+    EXPECT_TRUE(Baseline::Compare(surface, baselineKey));
   }
 
   std::string dump(const std::shared_ptr<Layer>& layer, const std::string& key = "test_image") {
@@ -81,7 +81,7 @@ class RecordTestFixture : public ::testing::Test {
 TEST_F(RecordTestFixture, RecordFromJson) {
   std::string jsonPath = ProjectPath::Absolute("test/src/record.json");
   auto jsonData = ReadFile(jsonPath);
-  ASSERT_NE(jsonData, nullptr);
+  EXPECT_NE(jsonData, nullptr);
   auto jsonStr = std::string(reinterpret_cast<const char*>(jsonData->data()), jsonData->size());
   auto jsonArray = nlohmann::json::parse(jsonStr);
 
@@ -105,7 +105,7 @@ TEST_F(RecordTestFixture, RecordFromJson) {
         displayList->root()->addChild(layer);
       }
     }
-    ASSERT_NE(layer, nullptr);
+    EXPECT_NE(layer, nullptr);
   }
   compare(displayList, "RecordTest/RecordFromJson");
 }
@@ -116,12 +116,12 @@ TGFX_TEST(RecordTest, RecordLayer) {
   rootLayer->setBlendMode(BlendMode::Multiply);
   rootLayer->setPosition(Point{100.0f, 200.0f});
   // layer 设置position后，应该是下面的值
-  ASSERT_EQ(rootLayer->position().x, 100.0f);
-  ASSERT_EQ(rootLayer->position().y, 200.0f);
+  EXPECT_EQ(rootLayer->position().x, 100.0f);
+  EXPECT_EQ(rootLayer->position().y, 200.0f);
   rootLayer->setMatrix(Matrix::MakeScale(1.5f, 1.5f));  // 设置 matrix
   // 继续设置matrix后，position会被覆盖掉，所以是0了
-  ASSERT_EQ(rootLayer->position().x, 0);
-  ASSERT_EQ(rootLayer->position().y, 0);
+  EXPECT_EQ(rootLayer->position().x, 0);
+  EXPECT_EQ(rootLayer->position().y, 0);
 
   rootLayer->setRasterizationScale(2.0f);  // 设置 rasterizationScale
   rootLayer->setVisible(true);
@@ -133,10 +133,10 @@ TGFX_TEST(RecordTest, RecordLayer) {
   rootLayer->setAllowsGroupOpacity(true);      // 设置 allowsGroupOpacity
 
   // 应该是9条命令
-  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(9));
+  EXPECT_EQ(Recorder::commands_.size(), static_cast<size_t>(9));
   rootLayer->setName("TestLayer");  // 设置 name
   // 再次设置name，命令应该被合并，还是9条
-  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(9));
+  EXPECT_EQ(Recorder::commands_.size(), static_cast<size_t>(9));
 
   // 设置 filters
   // auto blendFilter = std::make_shared<BlendFilter>(BlendMode::Overlay);
@@ -170,11 +170,11 @@ TGFX_TEST(RecordTest, RecordLayer) {
   childLayer2->setMatrix(Matrix::MakeRotate(45.0f));
 
   // 添加子层
-  ASSERT_TRUE(rootLayer->addChild(childLayer1));
-  ASSERT_TRUE(rootLayer->addChildAt(childLayer2, 0));
-  ASSERT_EQ(rootLayer->children().size(), static_cast<size_t>(2));
-  ASSERT_EQ(rootLayer->children()[0]->name(), "ChildLayer2");
-  ASSERT_EQ(rootLayer->children()[1]->name(), "ChildLayer1");
+  EXPECT_TRUE(rootLayer->addChild(childLayer1));
+  EXPECT_TRUE(rootLayer->addChildAt(childLayer2, 0));
+  EXPECT_EQ(rootLayer->children().size(), static_cast<size_t>(2));
+  EXPECT_EQ(rootLayer->children()[0]->name(), "ChildLayer2");
+  EXPECT_EQ(rootLayer->children()[1]->name(), "ChildLayer1");
 
   // 构建 ShapeLayer 并设置属性
   auto shapeLayer = ShapeLayer::Make();
@@ -198,7 +198,7 @@ TGFX_TEST(RecordTest, RecordLayer) {
   shapeLayer->setFillStyle(fillStyle);
 
   // 将 ShapeLayer 添加为 rootLayer 的子层
-  ASSERT_TRUE(rootLayer->addChild(shapeLayer));
+  EXPECT_TRUE(rootLayer->addChild(shapeLayer));
 
   // ------- 序列化 --------
   auto jsonStr = Recorder::FlushCommands();
@@ -210,87 +210,87 @@ TGFX_TEST(RecordTest, RecordLayer) {
   Recorder::Replay(jsonStr, objMap);
   auto replayLayer = objMap[rootUuid];
   auto castedReplayLayer = std::static_pointer_cast<Layer>(replayLayer);
-  ASSERT_NE(castedReplayLayer, nullptr);
-  ASSERT_FLOAT_EQ(castedReplayLayer->alpha(), 0.5f);
-  ASSERT_EQ(castedReplayLayer->blendMode(), BlendMode::Multiply);
+  EXPECT_NE(castedReplayLayer, nullptr);
+  EXPECT_FLOAT_EQ(castedReplayLayer->alpha(), 0.5f);
+  EXPECT_EQ(castedReplayLayer->blendMode(), BlendMode::Multiply);
 
   // 这里同时还原设置了position和matrix，所以还原后的position是0
-  ASSERT_EQ(castedReplayLayer->position().x, 0.0f);
-  ASSERT_EQ(castedReplayLayer->position().y, 0.0f);
-  ASSERT_EQ(castedReplayLayer->matrix(), Matrix::MakeScale(1.5f, 1.5f));  // 验证 matrix
-  ASSERT_FLOAT_EQ(castedReplayLayer->rasterizationScale(), 2.0f);         // 验证 rasterizationScale
-  ASSERT_TRUE(castedReplayLayer->visible());
-  ASSERT_TRUE(castedReplayLayer->shouldRasterize());
+  EXPECT_EQ(castedReplayLayer->position().x, 0.0f);
+  EXPECT_EQ(castedReplayLayer->position().y, 0.0f);
+  EXPECT_EQ(castedReplayLayer->matrix(), Matrix::MakeScale(1.5f, 1.5f));  // 验证 matrix
+  EXPECT_FLOAT_EQ(castedReplayLayer->rasterizationScale(), 2.0f);         // 验证 rasterizationScale
+  EXPECT_TRUE(castedReplayLayer->visible());
+  EXPECT_TRUE(castedReplayLayer->shouldRasterize());
 
   // 验证额外属性
-  ASSERT_EQ(castedReplayLayer->name(), "TestLayer");         // 验证 name
-  ASSERT_TRUE(castedReplayLayer->allowsEdgeAntialiasing());  // 验证 allowsEdgeAntialiasing
-  ASSERT_TRUE(castedReplayLayer->allowsGroupOpacity());      // 验证 allowsGroupOpacity
+  EXPECT_EQ(castedReplayLayer->name(), "TestLayer");         // 验证 name
+  EXPECT_TRUE(castedReplayLayer->allowsEdgeAntialiasing());  // 验证 allowsEdgeAntialiasing
+  EXPECT_TRUE(castedReplayLayer->allowsGroupOpacity());      // 验证 allowsGroupOpacity
 
   // 验证 filters
-  // ASSERT_EQ(castedReplayLayer->filters().size(), static_cast<size_t>(2));
-  // ASSERT_EQ(castedReplayLayer->filters()[0]->type(), LayerFilterType::Blend);
-  // ASSERT_EQ(castedReplayLayer->filters()[1]->type(), LayerFilterType::Blur);
+  // EXPECT_EQ(castedReplayLayer->filters().size(), static_cast<size_t>(2));
+  // EXPECT_EQ(castedReplayLayer->filters()[0]->type(), LayerFilterType::Blend);
+  // EXPECT_EQ(castedReplayLayer->filters()[1]->type(), LayerFilterType::Blur);
 
   // 验证 mask
-  ASSERT_NE(castedReplayLayer->mask(), nullptr);
-  ASSERT_EQ(castedReplayLayer->mask()->name(), "MaskLayer");
+  EXPECT_NE(castedReplayLayer->mask(), nullptr);
+  EXPECT_EQ(castedReplayLayer->mask()->name(), "MaskLayer");
 
   // 验证 scrollRect
-  ASSERT_EQ(castedReplayLayer->scrollRect(), scrollRect);
+  EXPECT_EQ(castedReplayLayer->scrollRect(), scrollRect);
 
   // ------- 验证子层 --------
-  ASSERT_EQ(castedReplayLayer->children().size(), static_cast<size_t>(3));
-  ASSERT_EQ(castedReplayLayer->children()[0]->name(), "ChildLayer2");
-  ASSERT_EQ(castedReplayLayer->children()[1]->name(), "ChildLayer1");
+  EXPECT_EQ(castedReplayLayer->children().size(), static_cast<size_t>(3));
+  EXPECT_EQ(castedReplayLayer->children()[0]->name(), "ChildLayer2");
+  EXPECT_EQ(castedReplayLayer->children()[1]->name(), "ChildLayer1");
 
   // ------- 验证子层的进一步属性 --------
-  ASSERT_FLOAT_EQ(castedReplayLayer->children()[0]->alpha(), 0.6f);  // 验证 ChildLayer2 的 alpha
-  ASSERT_EQ(castedReplayLayer->children()[0]->blendMode(),
+  EXPECT_FLOAT_EQ(castedReplayLayer->children()[0]->alpha(), 0.6f);  // 验证 ChildLayer2 的 alpha
+  EXPECT_EQ(castedReplayLayer->children()[0]->blendMode(),
             BlendMode::Overlay);                             // 验证 ChildLayer2 的 blendMode
-  ASSERT_TRUE(castedReplayLayer->children()[0]->visible());  // 验证 ChildLayer2 的 visible
-  ASSERT_EQ(castedReplayLayer->children()[0]->matrix(),
+  EXPECT_TRUE(castedReplayLayer->children()[0]->visible());  // 验证 ChildLayer2 的 visible
+  EXPECT_EQ(castedReplayLayer->children()[0]->matrix(),
             Matrix::MakeRotate(45.0f));  // 验证 ChildLayer2 的 matrix
 
-  ASSERT_FLOAT_EQ(castedReplayLayer->children()[1]->alpha(), 0.8f);  // 验证 ChildLayer1 的 alpha
-  ASSERT_EQ(castedReplayLayer->children()[1]->blendMode(),
+  EXPECT_FLOAT_EQ(castedReplayLayer->children()[1]->alpha(), 0.8f);  // 验证 ChildLayer1 的 alpha
+  EXPECT_EQ(castedReplayLayer->children()[1]->blendMode(),
             BlendMode::Screen);                               // 验证 ChildLayer1 的 blendMode
-  ASSERT_FALSE(castedReplayLayer->children()[1]->visible());  // 验证 ChildLayer1 的 visible
-  ASSERT_EQ(castedReplayLayer->children()[1]->matrix(),
+  EXPECT_FALSE(castedReplayLayer->children()[1]->visible());  // 验证 ChildLayer1 的 visible
+  EXPECT_EQ(castedReplayLayer->children()[1]->matrix(),
             Matrix::MakeTrans(10.0f, 20.0f));  // 验证 ChildLayer1 的 matrix
 
   // 如果子层设置了其他属性，可以继续添加相应的断言
   // 例如，如果设置了 position，可以验证 position 是否正确
-  // ASSERT_EQ(castedReplayLayer->children()[0]->position().x, expected_x);
-  // ASSERT_EQ(castedReplayLayer->children()[0]->position().y, expected_y);
+  // EXPECT_EQ(castedReplayLayer->children()[0]->position().x, expected_x);
+  // EXPECT_EQ(castedReplayLayer->children()[0]->position().y, expected_y);
 
   // 在回放后，验证 ShapeLayer 的还原
   auto replayShapeLayer = std::static_pointer_cast<ShapeLayer>(objMap[shapeLayer->_uuid]);
-  ASSERT_NE(replayShapeLayer, nullptr);
-  ASSERT_FLOAT_EQ(replayShapeLayer->alpha(), 0.75f);
-  ASSERT_EQ(replayShapeLayer->blendMode(), BlendMode::Overlay);
+  EXPECT_NE(replayShapeLayer, nullptr);
+  EXPECT_FLOAT_EQ(replayShapeLayer->alpha(), 0.75f);
+  EXPECT_EQ(replayShapeLayer->blendMode(), BlendMode::Overlay);
   // 这里同时还原设置了position和matrix，所以还原后的position是0
-  ASSERT_EQ(replayShapeLayer->position().x, 0.0f);
-  ASSERT_EQ(replayShapeLayer->position().y, 0.0f);
-  ASSERT_EQ(replayShapeLayer->matrix(), Matrix::MakeScale(2.0f, 2.0f));
-  ASSERT_FLOAT_EQ(replayShapeLayer->rasterizationScale(), 1.5f);
-  ASSERT_TRUE(replayShapeLayer->visible());
-  ASSERT_FALSE(replayShapeLayer->shouldRasterize());
-  ASSERT_EQ(replayShapeLayer->name(), "TestShapeLayer");
-  ASSERT_FALSE(replayShapeLayer->allowsEdgeAntialiasing());
-  ASSERT_TRUE(replayShapeLayer->allowsGroupOpacity());
+  EXPECT_EQ(replayShapeLayer->position().x, 0.0f);
+  EXPECT_EQ(replayShapeLayer->position().y, 0.0f);
+  EXPECT_EQ(replayShapeLayer->matrix(), Matrix::MakeScale(2.0f, 2.0f));
+  EXPECT_FLOAT_EQ(replayShapeLayer->rasterizationScale(), 1.5f);
+  EXPECT_TRUE(replayShapeLayer->visible());
+  EXPECT_FALSE(replayShapeLayer->shouldRasterize());
+  EXPECT_EQ(replayShapeLayer->name(), "TestShapeLayer");
+  EXPECT_FALSE(replayShapeLayer->allowsEdgeAntialiasing());
+  EXPECT_TRUE(replayShapeLayer->allowsGroupOpacity());
 
   // 验证 ShapeLayer 的路径和填充样式
-  // ASSERT_EQ(replayShapeLayer->path(), shapePath);
-  ASSERT_NE(replayShapeLayer->fillStyle(), nullptr);
+  // EXPECT_EQ(replayShapeLayer->path(), shapePath);
+  EXPECT_NE(replayShapeLayer->fillStyle(), nullptr);
   //   auto solidColor = std::static_pointer_cast<SolidColor>(replayShapeLayer->fillStyle());
-  //   ASSERT_EQ(solidColor->color().red, 255);
-  // ASSERT_EQ(solidColor->color().green, 0);
-  // ASSERT_EQ(solidColor->color().blue, 255);
-  // ASSERT_EQ(solidColor->color().alpha, 0);
+  //   EXPECT_EQ(solidColor->color().red, 255);
+  // EXPECT_EQ(solidColor->color().green, 0);
+  // EXPECT_EQ(solidColor->color().blue, 255);
+  // EXPECT_EQ(solidColor->color().alpha, 0);
   // 验证 ShapeLayer 被正确添加到 rootLayer 的子层中
-  ASSERT_EQ(castedReplayLayer->children().size(), static_cast<size_t>(3));
-  ASSERT_EQ(castedReplayLayer->children()[2]->name(), "TestShapeLayer");
+  EXPECT_EQ(castedReplayLayer->children().size(), static_cast<size_t>(3));
+  EXPECT_EQ(castedReplayLayer->children()[2]->name(), "TestShapeLayer");
 
   // 检查是否有遗漏的接口
   // ���果设置了其他属性，如 additional properties, 应进行验证
@@ -307,14 +307,22 @@ TEST_F(RecordTestFixture, RecordShapeLayer) {
   shapeLayer->setVisible(true);
   shapeLayer->setName("TestShapeLayer");
 
+  shapeLayer->setLineWidth(10.0f);
+  shapeLayer->setLineCap(LineCap::Butt);
+  shapeLayer->setLineJoin(LineJoin::Miter);
+
   Path shapePath;
   shapePath.addRect(Rect::MakeLTRB(0.0f, 0.0f, 100.0f, 100.0f));
   shapeLayer->setPath(shapePath);
+
   auto fillStyle = SolidColor::Make();
   fillStyle->setColor(Color::FromRGBA(255, 0, 255, 0));
   shapeLayer->setFillStyle(fillStyle);
 
-  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(12));
+  auto strokeStyle = SolidColor::Make(Color::Red());
+  shapeLayer->setStrokeStyle(strokeStyle);
+
+  EXPECT_EQ(Recorder::commands_.size(), static_cast<size_t>(15));
 
   auto md5 = dump(shapeLayer, "RecordTest/RecordShapeLayer1");
 
@@ -326,16 +334,21 @@ TEST_F(RecordTestFixture, RecordShapeLayer) {
   Recorder::Replay(jsonStr, objMap);
   auto replayLayer = objMap[shapeUuid];
   auto castedReplayLayer = std::static_pointer_cast<ShapeLayer>(replayLayer);
-  ASSERT_NE(castedReplayLayer, nullptr);
-  ASSERT_FLOAT_EQ(castedReplayLayer->alpha(), 0.75f);
-  ASSERT_EQ(castedReplayLayer->blendMode(), BlendMode::Overlay);
-  ASSERT_NE(castedReplayLayer->fillStyle(), nullptr);
+  EXPECT_NE(castedReplayLayer, nullptr);
+  EXPECT_FLOAT_EQ(castedReplayLayer->alpha(), 0.75f);
+  EXPECT_EQ(castedReplayLayer->blendMode(), BlendMode::Overlay);
+
+  EXPECT_EQ(castedReplayLayer->lineWidth(), 10.0f);
+  EXPECT_EQ(castedReplayLayer->lineCap(), LineCap::Butt);
+  EXPECT_EQ(castedReplayLayer->lineJoin(), LineJoin::Miter);
+
+  EXPECT_NE(castedReplayLayer->fillStyle(), nullptr);
   auto solidColor = std::static_pointer_cast<SolidColor>(castedReplayLayer->fillStyle());
-  ASSERT_EQ(solidColor->color(), Color::FromRGBA(255, 0, 255, 0));
+  EXPECT_EQ(solidColor->color(), Color::FromRGBA(255, 0, 255, 0));
 
   auto newMd5 = dump(shapeLayer, "RecordTest/RecordShapeLayer2");
 
-  ASSERT_EQ(md5, newMd5);
+  EXPECT_EQ(md5, newMd5);
   // ...更多属性断言...
 }
 
@@ -358,7 +371,7 @@ TGFX_TEST(RecordTest, RecordSolidLayer) {
   solidLayer->setRadiusY(20.0f);
   solidLayer->setColor(Color::FromRGBA(128, 128, 128, 255));
 
-  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(13));
+  EXPECT_EQ(Recorder::commands_.size(), static_cast<size_t>(13));
 
   auto jsonStr = Recorder::FlushCommands();
   std::cout << jsonStr << std::endl;
@@ -368,15 +381,15 @@ TGFX_TEST(RecordTest, RecordSolidLayer) {
   Recorder::Replay(jsonStr, objMap);
   auto replayLayer = objMap[solidUuid];
   auto castedReplayLayer = std::static_pointer_cast<SolidLayer>(replayLayer);
-  ASSERT_NE(castedReplayLayer, nullptr);
-  ASSERT_FLOAT_EQ(castedReplayLayer->alpha(), 0.6f);
-  ASSERT_EQ(castedReplayLayer->blendMode(), BlendMode::Screen);
+  EXPECT_NE(castedReplayLayer, nullptr);
+  EXPECT_FLOAT_EQ(castedReplayLayer->alpha(), 0.6f);
+  EXPECT_EQ(castedReplayLayer->blendMode(), BlendMode::Screen);
   // ...更多属性断言...
-  ASSERT_FLOAT_EQ(castedReplayLayer->width(), 100.0f);
-  ASSERT_FLOAT_EQ(castedReplayLayer->height(), 200.0f);
-  ASSERT_FLOAT_EQ(castedReplayLayer->radiusX(), 10.0f);
-  ASSERT_FLOAT_EQ(castedReplayLayer->radiusY(), 20.0f);
-  ASSERT_EQ(castedReplayLayer->color(), Color::FromRGBA(128, 128, 128, 255));
+  EXPECT_FLOAT_EQ(castedReplayLayer->width(), 100.0f);
+  EXPECT_FLOAT_EQ(castedReplayLayer->height(), 200.0f);
+  EXPECT_FLOAT_EQ(castedReplayLayer->radiusX(), 10.0f);
+  EXPECT_FLOAT_EQ(castedReplayLayer->radiusY(), 20.0f);
+  EXPECT_EQ(castedReplayLayer->color(), Color::FromRGBA(128, 128, 128, 255));
 
   // ...更多属性断言...
 }
@@ -398,7 +411,7 @@ TGFX_TEST(RecordTest, RecordImageLayer) {
   auto image = MakeImage("resources/apitest/rotation.jpg");
   imageLayer->setImage(image);
 
-  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(10));
+  EXPECT_EQ(Recorder::commands_.size(), static_cast<size_t>(10));
 
   auto jsonStr = Recorder::FlushCommands();
   std::cout << jsonStr << std::endl;
@@ -408,16 +421,16 @@ TGFX_TEST(RecordTest, RecordImageLayer) {
   Recorder::Replay(jsonStr, objMap);
   auto replayLayer = objMap[imageUuid];
   auto castedReplayLayer = std::static_pointer_cast<ImageLayer>(replayLayer);
-  ASSERT_NE(castedReplayLayer, nullptr);
-  ASSERT_FLOAT_EQ(castedReplayLayer->alpha(), 0.9f);
-  ASSERT_EQ(castedReplayLayer->blendMode(), BlendMode::Multiply);
+  EXPECT_NE(castedReplayLayer, nullptr);
+  EXPECT_FLOAT_EQ(castedReplayLayer->alpha(), 0.9f);
+  EXPECT_EQ(castedReplayLayer->blendMode(), BlendMode::Multiply);
   // ...更多属性断言...
-  ASSERT_EQ(castedReplayLayer->sampling(), SamplingOptions(FilterMode::Nearest, MipmapMode::None));
-  ASSERT_NE(castedReplayLayer->image(), nullptr);
+  EXPECT_EQ(castedReplayLayer->sampling(), SamplingOptions(FilterMode::Nearest, MipmapMode::None));
+  EXPECT_NE(castedReplayLayer->image(), nullptr);
   // 如果 Image 有更多属性，可以继续添加断言
   // 例如：
-  // ASSERT_EQ(castedReplayLayer->image()->width(), expectedWidth);
-  // ASSERT_EQ(castedReplayLayer->image()->height(), expectedHeight);
+  // EXPECT_EQ(castedReplayLayer->image()->width(), expectedWidth);
+  // EXPECT_EQ(castedReplayLayer->image()->height(), expectedHeight);
 
   // ...更多属性断言...
 }
