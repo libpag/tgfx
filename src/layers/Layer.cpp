@@ -25,18 +25,17 @@
 #include "core/utils/Profiling.h"
 #include "layers/DrawArgs.h"
 #include "layers/contents/RasterizedContent.h"
+#include "layers/record/LayerRecorder.h"
 #include "tgfx/core/Recorder.h"
 #include "tgfx/core/Surface.h"
-#include "layers/record/LayerRecorder.h"
 
 // 添加日志宏定义
 #define ENABLE_METHOD_LOGGING 1
 
 #if ENABLE_METHOD_LOGGING
+#define SHORT_FILE (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #define LOG_METHOD(message) \
-  std::cout << "[ffjiefan]" << this->TypeToString() << ": " << message << std::endl
-#define LOG_METHOD_STATIC(type, message) \
-  std::cout << "[ffjiefan]" << type << ": " << message << std::endl
+  std::cout << "[ffjiefan]" << SHORT_FILE << "::" << __FUNCTION__ << ": " << message << std::endl
 #else
 #define LOG_METHOD(message)
 #define LOG_METHOD_STATIC(type, message)
@@ -51,7 +50,6 @@ bool Layer::DefaultAllowsEdgeAntialiasing() {
 }
 
 void Layer::SetDefaultAllowsEdgeAntialiasing(bool value) {
-  LOG_METHOD_STATIC("Layer", "Entering Layer::SetDefaultAllowsEdgeAntialiasing(bool value)");
   AllowsEdgeAntialiasing = value;
   LayerRecorder::SetDefaultAllowsEdgeAntialiasing(value);
 }
@@ -61,13 +59,12 @@ bool Layer::DefaultAllowsGroupOpacity() {
 }
 
 void Layer::SetDefaultAllowsGroupOpacity(bool value) {
-  LOG_METHOD_STATIC("Layer", "Entering Layer::SetDefaultAllowsGroupOpacity(bool value)");
   AllowsGroupOpacity = value;
   LayerRecorder::SetDefaultAllowsGroupOpacity(value);
 }
 
 std::shared_ptr<Layer> Layer::Make() {
-  LOG_METHOD_STATIC("Layer", "Entering Layer::Make()");
+  LOG_METHOD("");
   TRACE_EVENT_COLOR(TRACY_COLOR_YELLOW);
   auto layer = std::shared_ptr<Layer>(new Layer());
   layer->weakThis = layer;
@@ -76,7 +73,7 @@ std::shared_ptr<Layer> Layer::Make() {
 }
 
 Layer::~Layer() {
-  LOG_METHOD("Entering Layer::~Layer()");
+  LOG_METHOD(TypeToString());
   for (const auto& filter : _filters) {
     filter->detachFromLayer(this);
   }
@@ -100,7 +97,7 @@ void Layer::setName(const std::string& value) {
 }
 
 void Layer::setAlpha(float value) {
-  LOG_METHOD("Entering Layer::setAlpha(float value)");
+  LOG_METHOD(TypeToString());
   if (_alpha == value) {
     return;
   }
@@ -110,7 +107,7 @@ void Layer::setAlpha(float value) {
 }
 
 void Layer::setBlendMode(BlendMode value) {
-  LOG_METHOD("Entering Layer::setBlendMode(BlendMode value)");
+  LOG_METHOD(TypeToString());
   if (_blendMode == value) {
     return;
   }
@@ -120,7 +117,7 @@ void Layer::setBlendMode(BlendMode value) {
 }
 
 void Layer::setPosition(const Point& value) {
-  LOG_METHOD("Entering Layer::setPosition(const Point& value)");
+  LOG_METHOD(TypeToString());
   if (_matrix.getTranslateX() == value.x && _matrix.getTranslateY() == value.y) {
     return;
   }
@@ -131,7 +128,7 @@ void Layer::setPosition(const Point& value) {
 }
 
 void Layer::setMatrix(const Matrix& value) {
-  LOG_METHOD("Entering Layer::setMatrix(const Matrix& value)");
+  LOG_METHOD(TypeToString());
   if (_matrix == value) {
     return;
   }
@@ -141,7 +138,7 @@ void Layer::setMatrix(const Matrix& value) {
 }
 
 void Layer::setVisible(bool value) {
-  LOG_METHOD("Entering Layer::setVisible(bool value)");
+  LOG_METHOD(TypeToString());
   if (bitFields.visible == value) {
     return;
   }
@@ -151,7 +148,7 @@ void Layer::setVisible(bool value) {
 }
 
 void Layer::setShouldRasterize(bool value) {
-  LOG_METHOD("Entering Layer::setShouldRasterize(bool value)");
+  LOG_METHOD(TypeToString());
   if (bitFields.shouldRasterize == value) {
     return;
   }
@@ -161,7 +158,7 @@ void Layer::setShouldRasterize(bool value) {
 }
 
 void Layer::setRasterizationScale(float value) {
-  LOG_METHOD("Entering Layer::setRasterizationScale(float value)");
+  LOG_METHOD(TypeToString());
   if (_rasterizationScale < 0) {
     _rasterizationScale = 0;
   }
@@ -174,7 +171,7 @@ void Layer::setRasterizationScale(float value) {
 }
 
 void Layer::setAllowsEdgeAntialiasing(bool value) {
-  LOG_METHOD("Entering Layer::setAllowsEdgeAntialiasing(bool value)");
+  LOG_METHOD(TypeToString());
   if (bitFields.allowsEdgeAntialiasing == value) {
     return;
   }
@@ -184,7 +181,7 @@ void Layer::setAllowsEdgeAntialiasing(bool value) {
 }
 
 void Layer::setAllowsGroupOpacity(bool value) {
-  LOG_METHOD("Entering Layer::setAllowsGroupOpacity(bool value)");
+  LOG_METHOD(TypeToString());
   if (bitFields.allowsGroupOpacity == value) {
     return;
   }
@@ -194,7 +191,7 @@ void Layer::setAllowsGroupOpacity(bool value) {
 }
 
 void Layer::setFilters(std::vector<std::shared_ptr<LayerFilter> > value) {
-  LOG_METHOD("Entering Layer::setFilters(std::vector<std::shared_ptr<LayerFilter>> value)");
+  LOG_METHOD(TypeToString());
   if (_filters.size() == value.size() &&
       std::equal(_filters.begin(), _filters.end(), value.begin())) {
     return;
@@ -212,7 +209,7 @@ void Layer::setFilters(std::vector<std::shared_ptr<LayerFilter> > value) {
 }
 
 void Layer::setMask(std::shared_ptr<Layer> value) {
-  LOG_METHOD("Entering Layer::setMask(std::shared_ptr<Layer> value)");
+  LOG_METHOD(TypeToString());
   if (_mask == value) {
     return;
   }
@@ -229,7 +226,7 @@ void Layer::setMask(std::shared_ptr<Layer> value) {
 }
 
 void Layer::setScrollRect(const Rect& rect) {
-  LOG_METHOD("Entering Layer::setScrollRect(const Rect& rect)");
+  LOG_METHOD(TypeToString());
   if ((_scrollRect && *_scrollRect == rect) || (!_scrollRect && rect.isEmpty())) {
     return;
   }
@@ -257,7 +254,7 @@ bool Layer::addChildAt(std::shared_ptr<Layer> child, int index) {
   if (!child) {
     return false;
   }
-  LOG_METHOD("Entering Layer::addChildAt() child is " + child->TypeToString());
+  LOG_METHOD(TypeToString() + " ; child is " + child->TypeToString());
   if (child.get() == this) {
     LOGE("addChildAt() The child is the same as the parent.");
     return false;
@@ -304,7 +301,7 @@ std::vector<std::shared_ptr<Layer> > Layer::getLayersUnderPoint(float x, float y
 }
 
 void Layer::removeFromParent() {
-  LOG_METHOD("Entering Layer::removeFromParent()");
+  LOG_METHOD(TypeToString());
   if (!_parent) {
     return;
   }
@@ -313,7 +310,7 @@ void Layer::removeFromParent() {
 }
 
 std::shared_ptr<Layer> Layer::removeChildAt(int index) {
-  LOG_METHOD("Entering Layer::removeChildAt(int index)");
+  LOG_METHOD(TypeToString());
   if (index < 0 || static_cast<size_t>(index) >= _children.size()) {
     LOGE("The supplied index is out of bounds.");
     return nullptr;
@@ -328,7 +325,7 @@ std::shared_ptr<Layer> Layer::removeChildAt(int index) {
 }
 
 void Layer::removeChildren(int beginIndex, int endIndex) {
-  LOG_METHOD("Entering Layer::removeChildren(int beginIndex, int endIndex)");
+  LOG_METHOD(TypeToString());
   if (_children.empty()) {
     return;
   }
@@ -346,7 +343,7 @@ void Layer::removeChildren(int beginIndex, int endIndex) {
 }
 
 bool Layer::setChildIndex(std::shared_ptr<Layer> child, int index) {
-  LOG_METHOD("Entering Layer::setChildIndex(std::shared_ptr<Layer> child, int index)");
+  LOG_METHOD(TypeToString());
   if (index < 0 || static_cast<size_t>(index) >= _children.size()) {
     index = static_cast<int>(_children.size()) - 1;
   }
@@ -366,9 +363,8 @@ bool Layer::setChildIndex(std::shared_ptr<Layer> child, int index) {
 }
 
 bool Layer::replaceChild(std::shared_ptr<Layer> oldChild, std::shared_ptr<Layer> newChild) {
-  LOG_METHOD(
-      "Entering Layer::replaceChild(std::shared_ptr<Layer> oldChild, std::shared_ptr<Layer> "
-      "newChild)");
+  LOG_METHOD(TypeToString());
+
   auto index = getChildIndex(oldChild);
   if (index < 0) {
     LOGE("The supplied layer must be a child layer of the caller.");
