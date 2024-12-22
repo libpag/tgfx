@@ -33,11 +33,41 @@
 #include "utils/TestUtils.h"
 #include "utils/common.h"
 
+// Debug: 画出来看看
 #define GENERATOR_BASELINE_IMAGES = 1;
 
 namespace tgfx {
 
-TGFX_TEST(RecordTest, RecordFromJson) {
+// 定义测试夹具
+class RecordTestFixture : public ::testing::Test {
+ protected:
+  std::shared_ptr<GLDevice> device;
+  std::shared_ptr<Surface> surface;
+
+  void SetUp() override {
+    device = GLDevice::Make();
+    auto context = device->lockContext();
+    surface = Surface::Make(context, 400, 400);
+  }
+
+  void TearDown() override {
+    device->unlock();
+  }
+
+  void compare(const std::shared_ptr<DisplayList>& display, const std::string& baselineKey) {
+    display->render(surface.get());
+    std::cout << " baselineKey: " << baselineKey << std::endl;
+    ASSERT_TRUE(Baseline::Compare(surface, baselineKey));
+  }
+
+  std::string dump(const std::shared_ptr<DisplayList>& display) {
+    display->render(surface.get());
+    // Baseline::Compare(surface, "");
+    return Baseline::GetSurfaceMD5(surface);
+  }
+};
+
+TEST_F(RecordTestFixture, RecordFromJson) {
   std::string jsonPath = ProjectPath::Absolute("test/src/record.json");
   auto jsonData = ReadFile(jsonPath);
   ASSERT_NE(jsonData, nullptr);
@@ -47,7 +77,7 @@ TGFX_TEST(RecordTest, RecordFromJson) {
   auto objMap = std::map<int, std::shared_ptr<Recordable>>();
   std::shared_ptr<Layer> layer = nullptr;
 
-  auto displayList = std::make_unique<DisplayList>();
+  const std::shared_ptr displayList = std::make_unique<DisplayList>();
 
   ContextScope scope;
   auto context = scope.getContext();
@@ -64,10 +94,9 @@ TGFX_TEST(RecordTest, RecordFromJson) {
         displayList->root()->addChild(layer);
       }
     }
-    displayList->render(surface.get());
     ASSERT_NE(layer, nullptr);
   }
-  EXPECT_TRUE(Baseline::Compare(surface, "RecordTest/RecordFromJson"));
+  compare(displayList, "RecordTest/RecordFromJson");
 }
 
 TGFX_TEST(RecordTest, RecordLayer) {
