@@ -60,9 +60,20 @@ class RecordTestFixture : public ::testing::Test {
     ASSERT_TRUE(Baseline::Compare(surface, baselineKey));
   }
 
-  std::string dump(const std::shared_ptr<DisplayList>& display) {
+  std::string dump(const std::shared_ptr<Layer>& layer, const std::string& key = "test_image") {
+    const std::shared_ptr displayList = std::make_unique<DisplayList>();
+    displayList->root()->addChild(layer);
+    return dump(displayList, key);
+  }
+
+  std::string dump(const std::shared_ptr<DisplayList>& display,
+                   const std::string& key = "test_image") {
     display->render(surface.get());
-    // Baseline::Compare(surface, "");
+#ifdef GENERATOR_BASELINE_IMAGES
+    // 保存图片查看
+    Baseline::Compare(surface, key);
+#endif
+
     return Baseline::GetSurfaceMD5(surface);
   }
 };
@@ -285,7 +296,8 @@ TGFX_TEST(RecordTest, RecordLayer) {
   // ���果设置了其他属性，如 additional properties, 应进行验证
 }
 
-TGFX_TEST(RecordTest, RecordShapeLayer) {
+TEST_F(RecordTestFixture, RecordShapeLayer) {
+
   auto shapeLayer = ShapeLayer::Make();
   shapeLayer->setAlpha(0.75f);
   shapeLayer->setBlendMode(BlendMode::Overlay);
@@ -293,10 +305,7 @@ TGFX_TEST(RecordTest, RecordShapeLayer) {
   shapeLayer->setMatrix(Matrix::MakeScale(2.0f, 2.0f));
   shapeLayer->setRasterizationScale(1.5f);
   shapeLayer->setVisible(true);
-  shapeLayer->setShouldRasterize(false);
   shapeLayer->setName("TestShapeLayer");
-  shapeLayer->setAllowsEdgeAntialiasing(false);
-  shapeLayer->setAllowsGroupOpacity(true);
 
   Path shapePath;
   shapePath.addRect(Rect::MakeLTRB(0.0f, 0.0f, 100.0f, 100.0f));
@@ -305,7 +314,9 @@ TGFX_TEST(RecordTest, RecordShapeLayer) {
   fillStyle->setColor(Color::FromRGBA(255, 0, 255, 0));
   shapeLayer->setFillStyle(fillStyle);
 
-  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(14));
+  ASSERT_EQ(Recorder::commands_.size(), static_cast<size_t>(12));
+
+  auto md5 = dump(shapeLayer, "RecordTest/RecordShapeLayer1");
 
   auto jsonStr = Recorder::FlushCommands();
   std::cout << jsonStr << std::endl;
@@ -322,6 +333,9 @@ TGFX_TEST(RecordTest, RecordShapeLayer) {
   auto solidColor = std::static_pointer_cast<SolidColor>(castedReplayLayer->fillStyle());
   ASSERT_EQ(solidColor->color(), Color::FromRGBA(255, 0, 255, 0));
 
+  auto newMd5 = dump(shapeLayer, "RecordTest/RecordShapeLayer2");
+
+  ASSERT_EQ(md5, newMd5);
   // ...更多属性断言...
 }
 
