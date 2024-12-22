@@ -218,5 +218,26 @@ std::string Shape::toJson() const {
   json["type"] = type();
   return json.dump();
 }
+std::string Shape::typeToString() {
+  switch (type()) {
+    case Type::Append:
+      return "Append";
+    case Type::Effect:
+      return "Effect";
+    case Type::Glyph:
+      return "Glyph";
+    case Type::Matrix:
+      return "Matrix";
+    case Type::Merge:
+      return "Merge";
+    case Type::Path:
+      return "Path";
+    case Type::Stroke:
+      return "Stroke";
+    default:
+      return "Unknown";
+  }
+}
+
 
 }  // namespace tgfx

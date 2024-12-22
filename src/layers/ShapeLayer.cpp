@@ -18,6 +18,7 @@
 
 #include "tgfx/layers/ShapeLayer.h"
 #include <layers/record/ShapeLayerRecorder.h>
+#include <iostream>
 #include "core/utils/Profiling.h"
 #include "layers/contents/ShapeContent.h"
 #include "tgfx/core/PathEffect.h"
@@ -57,6 +58,7 @@ void ShapeLayer::setShape(std::shared_ptr<Shape> value) {
   if (_shape == value) {
     return;
   }
+  std::cout << "[ffjiefan] ShapeLayer::setShape called with shape type is " << value->typeToString() << std::endl;
   _shape = std::move(value);
   invalidateContent();
   ShapeLayerRecorder::setShape(this, _shape);

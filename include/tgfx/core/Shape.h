@@ -136,6 +136,9 @@ class Shape {
   virtual void configFromJson(const std::string& jsonStr);
   virtual std::string toJson() const;
 
+  std::string typeToString();
+
+
  protected:
   enum class Type { Append, Effect, Glyph, Matrix, Merge, Path, Stroke };
 

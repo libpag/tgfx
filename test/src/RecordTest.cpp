@@ -110,7 +110,7 @@ TEST_F(RecordTestFixture, RecordFromJson) {
   compare(displayList, "RecordTest/RecordFromJson");
 }
 
-TGFX_TEST(RecordTest, RecordLayer) {
+TEST_F(RecordTestFixture, RecordLayer) {
   auto rootLayer = Layer::Make();
   rootLayer->setAlpha(0.5f);
   rootLayer->setBlendMode(BlendMode::Multiply);
@@ -352,7 +352,7 @@ TEST_F(RecordTestFixture, RecordShapeLayer) {
   // ...更多属性断言...
 }
 
-TGFX_TEST(RecordTest, RecordSolidLayer) {
+TEST_F(RecordTestFixture, RecordSolidLayer) {
   auto solidLayer = SolidLayer::Make();
   solidLayer->setAlpha(0.6f);
   solidLayer->setBlendMode(BlendMode::Screen);
@@ -394,7 +394,7 @@ TGFX_TEST(RecordTest, RecordSolidLayer) {
   // ...更多属性断言...
 }
 
-TGFX_TEST(RecordTest, RecordImageLayer) {
+TEST_F(RecordTestFixture, RecordImageLayer) {
   auto imageLayer = ImageLayer::Make();
   imageLayer->setAlpha(0.9f);
   imageLayer->setBlendMode(BlendMode::Multiply);
