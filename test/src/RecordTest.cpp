@@ -18,8 +18,10 @@
 
 #include <gtest/gtest.h>
 #include <math.h>
+#include <tgfx/layers/DisplayList.h>
 #include <tgfx/layers/ImageLayer.h>
 #include <tgfx/layers/record/Recorder.h>
+#include <nlohmann/json.hpp>
 #include <vector>
 #include "core/Records.h"
 #include "core/utils/Profiling.h"
@@ -31,7 +33,42 @@
 #include "utils/TestUtils.h"
 #include "utils/common.h"
 
+#define GENERATOR_BASELINE_IMAGES = 1;
+
 namespace tgfx {
+
+TGFX_TEST(RecordTest, RecordFromJson) {
+  std::string jsonPath = ProjectPath::Absolute("test/src/record.json");
+  auto jsonData = ReadFile(jsonPath);
+  ASSERT_NE(jsonData, nullptr);
+  auto jsonStr = std::string(reinterpret_cast<const char*>(jsonData->data()), jsonData->size());
+  auto jsonArray = nlohmann::json::parse(jsonStr);
+
+  auto objMap = std::map<int, std::shared_ptr<Recordable>>();
+  std::shared_ptr<Layer> layer = nullptr;
+
+  auto displayList = std::make_unique<DisplayList>();
+
+  ContextScope scope;
+  auto context = scope.getContext();
+  auto surface = Surface::Make(context, 1000, 1000);
+
+  for (const auto& json : jsonArray) {
+    int rootId = json["rootId"];
+    std::string commands = json["commands"];
+    Recorder::Replay(commands, objMap);
+
+    if (layer == nullptr) {
+      if (auto it = objMap.find(rootId); it != objMap.end()) {
+        layer = std::static_pointer_cast<tgfx::Layer>(it->second);
+        displayList->root()->addChild(layer);
+      }
+    }
+    displayList->render(surface.get());
+    ASSERT_NE(layer, nullptr);
+  }
+  EXPECT_TRUE(Baseline::Compare(surface, "RecordTest/RecordFromJson"));
+}
 
 TGFX_TEST(RecordTest, RecordLayer) {
   auto rootLayer = Layer::Make();
