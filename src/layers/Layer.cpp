@@ -30,7 +30,7 @@
 #include "layers/record/LayerRecorder.h"
 
 // 添加日志宏定义
-#define ENABLE_METHOD_LOGGING 0
+#define ENABLE_METHOD_LOGGING 1
 
 #if ENABLE_METHOD_LOGGING
 #define LOG_METHOD(message) \
@@ -47,7 +47,6 @@ static std::atomic_bool AllowsEdgeAntialiasing = true;
 static std::atomic_bool AllowsGroupOpacity = false;
 
 bool Layer::DefaultAllowsEdgeAntialiasing() {
-  LOG_METHOD_STATIC("Layer", "Entering Layer::DefaultAllowsEdgeAntialiasing()");
   return AllowsEdgeAntialiasing;
 }
 
@@ -58,7 +57,6 @@ void Layer::SetDefaultAllowsEdgeAntialiasing(bool value) {
 }
 
 bool Layer::DefaultAllowsGroupOpacity() {
-  LOG_METHOD_STATIC("Layer", "Entering Layer::DefaultAllowsGroupOpacity()");
   return AllowsGroupOpacity;
 }
 
@@ -90,7 +88,6 @@ Layer::~Layer() {
 }
 
 Layer::Layer() {
-  LOG_METHOD("Entering Layer::Layer()");
   memset(&bitFields, 0, sizeof(bitFields));
   bitFields.visible = true;
   bitFields.allowsEdgeAntialiasing = AllowsEdgeAntialiasing;
@@ -246,7 +243,6 @@ void Layer::setScrollRect(const Rect& rect) {
 }
 
 bool Layer::addChild(std::shared_ptr<Layer> child) {
-  LOG_METHOD("Entering Layer::addChild(std::shared_ptr<Layer> child)");
   if (!child) {
     return false;
   }
@@ -285,12 +281,10 @@ bool Layer::addChildAt(std::shared_ptr<Layer> child, int index) {
 }
 
 bool Layer::contains(std::shared_ptr<Layer> child) const {
-  LOG_METHOD("Entering Layer::contains(std::shared_ptr<Layer> child) const");
   return doContains(child.get());
 }
 
 std::shared_ptr<Layer> Layer::getChildByName(const std::string& name) {
-  LOG_METHOD("Entering Layer::getChildByName(const std::string& name)");
   for (const auto& child : _children) {
     if (child->name() == name) {
       return child;
@@ -300,12 +294,10 @@ std::shared_ptr<Layer> Layer::getChildByName(const std::string& name) {
 }
 
 int Layer::getChildIndex(std::shared_ptr<Layer> child) const {
-  LOG_METHOD("Entering Layer::getChildIndex(std::shared_ptr<Layer> child) const");
   return doGetChildIndex(child.get());
 }
 
 std::vector<std::shared_ptr<Layer> > Layer::getLayersUnderPoint(float x, float y) {
-  LOG_METHOD("Entering Layer::getLayersUnderPoint(float x, float y)");
   std::vector<std::shared_ptr<Layer> > results;
   getLayersUnderPointInternal(x, y, &results);
   return results;
@@ -392,7 +384,6 @@ bool Layer::replaceChild(std::shared_ptr<Layer> oldChild, std::shared_ptr<Layer>
 }
 
 Rect Layer::getBounds(const Layer* targetCoordinateSpace) {
-  LOG_METHOD("Entering Layer::getBounds(const Layer* targetCoordinateSpace)");
   Rect bounds = Rect::MakeEmpty();
   auto content = getContent();
   if (content) {
@@ -435,7 +426,6 @@ Rect Layer::getBounds(const Layer* targetCoordinateSpace) {
 }
 
 Point Layer::globalToLocal(const Point& globalPoint) const {
-  LOG_METHOD("Entering Layer::globalToLocal(const Point& globalPoint) const");
   auto globalMatrix = getGlobalMatrix();
   auto inverseMatrix = Matrix::I();
   if (!globalMatrix.invert(&inverseMatrix)) {
@@ -445,13 +435,11 @@ Point Layer::globalToLocal(const Point& globalPoint) const {
 }
 
 Point Layer::localToGlobal(const Point& localPoint) const {
-  LOG_METHOD("Entering Layer::localToGlobal(const Point& localPoint) const");
   auto globalMatrix = getGlobalMatrix();
   return globalMatrix.mapXY(localPoint.x, localPoint.y);
 }
 
 bool Layer::hitTestPoint(float x, float y, bool pixelHitTest) {
-  LOG_METHOD("Entering Layer::hitTestPoint(float x, float y, bool pixelHitTest)");
   auto content = getContent();
   if (nullptr != content) {
     Point localPoint = globalToLocal(Point::Make(x, y));
@@ -487,7 +475,6 @@ bool Layer::hitTestPoint(float x, float y, bool pixelHitTest) {
 }
 
 void Layer::draw(Canvas* canvas, float alpha, BlendMode blendMode) {
-  LOG_METHOD("Entering Layer::draw(Canvas* canvas, float alpha, BlendMode blendMode)");
   if (canvas == nullptr || alpha <= 0) {
     return;
   }
@@ -501,14 +488,12 @@ void Layer::draw(Canvas* canvas, float alpha, BlendMode blendMode) {
 }
 
 void Layer::invalidate() {
-  LOG_METHOD("Entering Layer::invalidate()");
   if (_parent) {
     _parent->invalidateChildren();
   }
 }
 
 void Layer::invalidateContent() {
-  LOG_METHOD("Entering Layer::invalidateContent()");
   if (bitFields.contentDirty) {
     return;
   }
@@ -518,7 +503,6 @@ void Layer::invalidateContent() {
 }
 
 void Layer::invalidateChildren() {
-  LOG_METHOD("Entering Layer::invalidateChildren()");
   if (bitFields.childrenDirty) {
     return;
   }
@@ -528,26 +512,22 @@ void Layer::invalidateChildren() {
 }
 
 std::unique_ptr<LayerContent> Layer::onUpdateContent() {
-  LOG_METHOD("Entering Layer::onUpdateContent()");
   return nullptr;
 }
 
 void Layer::attachProperty(LayerProperty* property) const {
-  LOG_METHOD("Entering Layer::attachProperty(LayerProperty* property) const");
   if (property) {
     property->attachToLayer(this);
   }
 }
 
 void Layer::detachProperty(LayerProperty* property) const {
-  LOG_METHOD("Entering Layer::detachProperty(LayerProperty* property) const");
   if (property) {
     property->detachFromLayer(this);
   }
 }
 
 void Layer::onAttachToRoot(Layer* owner) {
-  LOG_METHOD("Entering Layer::onAttachToRoot(Layer* owner)");
   _root = owner;
   for (auto& child : _children) {
     child->onAttachToRoot(owner);
@@ -555,7 +535,6 @@ void Layer::onAttachToRoot(Layer* owner) {
 }
 
 void Layer::onDetachFromRoot() {
-  LOG_METHOD("Entering Layer::onDetachFromRoot()");
   _root = nullptr;
   for (auto& child : _children) {
     child->onDetachFromRoot();
@@ -563,7 +542,6 @@ void Layer::onDetachFromRoot() {
 }
 
 int Layer::doGetChildIndex(const Layer* child) const {
-  LOG_METHOD("Entering Layer::doGetChildIndex(const Layer* child) const");
   int index = 0;
   for (auto& layer : _children) {
     if (layer.get() == child) {
@@ -575,7 +553,6 @@ int Layer::doGetChildIndex(const Layer* child) const {
 }
 
 bool Layer::doContains(const Layer* child) const {
-  LOG_METHOD("Entering Layer::doContains(const Layer* child) const");
   auto target = child;
   while (target) {
     if (target == this) {
@@ -587,7 +564,6 @@ bool Layer::doContains(const Layer* child) const {
 }
 
 Matrix Layer::getGlobalMatrix() const {
-  LOG_METHOD("Entering Layer::getGlobalMatrix() const");
   // The global matrix transforms the layer's local coordinate space to the coordinate space of its
   // top-level parent layer. This means the top-level parent layer's own matrix is not included in
   // the global matrix.
@@ -601,7 +577,6 @@ Matrix Layer::getGlobalMatrix() const {
 }
 
 Matrix Layer::getMatrixWithScrollRect() const {
-  LOG_METHOD("Entering Layer::getMatrixWithScrollRect() const");
   auto matrix = _matrix;
   if (_scrollRect) {
     matrix.preTranslate(-_scrollRect->left, -_scrollRect->top);
@@ -610,7 +585,6 @@ Matrix Layer::getMatrixWithScrollRect() const {
 }
 
 LayerContent* Layer::getContent() {
-  LOG_METHOD("Entering Layer::getContent()");
   TRACE_EVENT;
   if (bitFields.contentDirty) {
     layerContent = onUpdateContent();
@@ -620,7 +594,6 @@ LayerContent* Layer::getContent() {
 }
 
 Paint Layer::getLayerPaint(float alpha, BlendMode blendMode) {
-  LOG_METHOD("Entering Layer::getLayerPaint(float alpha, BlendMode blendMode)");
   Paint paint;
   paint.setAntiAlias(bitFields.allowsEdgeAntialiasing);
   paint.setAlpha(alpha);
@@ -629,7 +602,6 @@ Paint Layer::getLayerPaint(float alpha, BlendMode blendMode) {
 }
 
 std::shared_ptr<ImageFilter> Layer::getLayerFilter(float contentScale) {
-  LOG_METHOD("Entering Layer::getLayerFilter(float contentScale)");
   if (_filters.empty() || FloatNearlyZero(contentScale)) {
     return nullptr;
   }
@@ -645,7 +617,6 @@ std::shared_ptr<ImageFilter> Layer::getLayerFilter(float contentScale) {
 }
 
 LayerContent* Layer::getRasterizedCache(const DrawArgs& args) {
-  LOG_METHOD("Entering Layer::getRasterizedCache(const DrawArgs& args)");
   if (!bitFields.shouldRasterize || args.context == nullptr) {
     return nullptr;
   }
@@ -673,9 +644,7 @@ LayerContent* Layer::getRasterizedCache(const DrawArgs& args) {
 
 std::shared_ptr<Image> Layer::getRasterizedImage(const DrawArgs& args, float contentScale,
                                                  Matrix* drawingMatrix) {
-  LOG_METHOD(
-      "Entering Layer::getRasterizedImage(const DrawArgs& args, float contentScale, Matrix* "
-      "drawingMatrix)");
+
   DEBUG_ASSERT(drawingMatrix != nullptr);
   auto picture = getLayerContents(args, contentScale);
   if (!picture) {
@@ -703,7 +672,6 @@ std::shared_ptr<Image> Layer::getRasterizedImage(const DrawArgs& args, float con
 }
 
 std::shared_ptr<Picture> Layer::getLayerContents(const DrawArgs& args, float contentScale) {
-  LOG_METHOD("Entering Layer::getLayerContents(const DrawArgs& args, float contentScale)");
   if (FloatNearlyZero(contentScale)) {
     return nullptr;
   }
@@ -715,9 +683,7 @@ std::shared_ptr<Picture> Layer::getLayerContents(const DrawArgs& args, float con
 }
 
 void Layer::drawLayer(const DrawArgs& args, Canvas* canvas, float alpha, BlendMode blendMode) {
-  LOG_METHOD(
-      "Entering Layer::drawLayer(const DrawArgs& args, Canvas* canvas, float alpha, BlendMode "
-      "blendMode)");
+
   TRACE_EVENT;
   DEBUG_ASSERT(canvas != nullptr);
   if (auto rasterizedCache = getRasterizedCache(args)) {
@@ -732,7 +698,6 @@ void Layer::drawLayer(const DrawArgs& args, Canvas* canvas, float alpha, BlendMo
 }
 
 Matrix Layer::getRelativeMatrix(const Layer* targetCoordinateSpace) const {
-  LOG_METHOD("Entering Layer::getRelativeMatrix(const Layer* targetCoordinateSpace) const");
   if (targetCoordinateSpace == nullptr || targetCoordinateSpace == this) {
     return Matrix::I();
   }
@@ -747,7 +712,6 @@ Matrix Layer::getRelativeMatrix(const Layer* targetCoordinateSpace) const {
 }
 
 std::shared_ptr<MaskFilter> Layer::getMaskFilter(const DrawArgs& args, float scale) {
-  LOG_METHOD("Entering Layer::getMaskFilter(const DrawArgs& args, float scale)");
   if (!hasValidMask()) {
     return nullptr;
   }
@@ -776,9 +740,7 @@ std::shared_ptr<MaskFilter> Layer::getMaskFilter(const DrawArgs& args, float sca
 }
 
 void Layer::drawOffscreen(const DrawArgs& args, Canvas* canvas, float alpha, BlendMode blendMode) {
-  LOG_METHOD(
-      "Entering Layer::drawOffscreen(const DrawArgs& args, Canvas* canvas, float alpha, BlendMode "
-      "blendMode)");
+
   auto contentScale = canvas->getMatrix().getMaxScale();
   auto picture = getLayerContents(args, contentScale);
   if (picture == nullptr) {
@@ -795,7 +757,6 @@ void Layer::drawOffscreen(const DrawArgs& args, Canvas* canvas, float alpha, Ble
 }
 
 void Layer::drawContents(const DrawArgs& args, Canvas* canvas, float alpha) {
-  LOG_METHOD("Entering Layer::drawContents(const DrawArgs& args, Canvas* canvas, float alpha)");
   TRACE_EVENT;
   if (auto content = getContent()) {
     content->draw(canvas, getLayerPaint(alpha, BlendMode::SrcOver));
@@ -819,9 +780,7 @@ void Layer::drawContents(const DrawArgs& args, Canvas* canvas, float alpha) {
 
 bool Layer::getLayersUnderPointInternal(float x, float y,
                                         std::vector<std::shared_ptr<Layer> >* results) {
-  LOG_METHOD(
-      "Entering Layer::getLayersUnderPointInternal(float x, float y, "
-      "std::vector<std::shared_ptr<Layer>>* results)");
+
   bool hasLayerUnderPoint = false;
   for (auto item = _children.rbegin(); item != _children.rend(); ++item) {
     const auto& childLayer = *item;
@@ -865,7 +824,6 @@ bool Layer::getLayersUnderPointInternal(float x, float y,
 }
 
 bool Layer::hasValidMask() const {
-  LOG_METHOD("Entering Layer::hasValidMask() const");
   return _mask && _mask->root() == root();
 }
 
