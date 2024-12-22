@@ -258,10 +258,10 @@ bool Layer::addChild(std::shared_ptr<Layer> child) {
 }
 
 bool Layer::addChildAt(std::shared_ptr<Layer> child, int index) {
-  LOG_METHOD("Entering Layer::addChildAt(std::shared_ptr<Layer> child, int index)");
   if (!child) {
     return false;
   }
+  LOG_METHOD("Entering Layer::addChildAt() child is " + child->TypeToString());
   if (child.get() == this) {
     LOGE("addChildAt() The child is the same as the parent.");
     return false;
