@@ -20,6 +20,7 @@
 
 #include <cstdlib>
 #include "tgfx/platform/Print.h"
+#include <iostream>
 
 namespace tgfx {
 
