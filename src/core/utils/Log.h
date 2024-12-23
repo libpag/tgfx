@@ -22,6 +22,22 @@
 #include "tgfx/platform/Print.h"
 
 namespace tgfx {
+
+
+
+#define ENABLE_METHOD_LOGGING 0
+
+#if ENABLE_METHOD_LOGGING
+#define SHORT_FILE (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+#define LOG_METHOD(message) \
+std::cout << "[ffjiefan][" << SHORT_FILE << "] " << __FUNCTION__ << " called. " << message << std::endl
+#else
+#define LOG_METHOD(message)
+#define LOG_METHOD_STATIC(type, message)
+#endif
+
+
+
 #define ABORT(msg)                                                                \
   do {                                                                            \
     ::tgfx::PrintError("%s:%d: fatal error: \"%s\"\n", __FILE__, __LINE__, #msg); \
