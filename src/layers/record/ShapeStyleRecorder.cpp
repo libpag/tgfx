@@ -19,7 +19,7 @@
 #include <tgfx/layers/ShapeStyle.h>
 #include <tgfx/layers/record/Recorder.h>
 
-#define ENABLE_METHOD_LOGGING 1
+#define ENABLE_METHOD_LOGGING 0
 #include "core/utils/Log.h"
 
 #include "layers/command/ShapeStyleCmd.h"

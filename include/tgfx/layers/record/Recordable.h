@@ -28,7 +28,7 @@ class Recordable {
   int _uuid;
 
   virtual std::string toDebugString() const {
-    return "uuid: " + std::to_string(_uuid);
+    return std::to_string(_uuid);
   }
 
  protected:

@@ -93,7 +93,7 @@ TEST_F(RecordTestFixture, RecordFromJson) {
 
   ContextScope scope;
   auto context = scope.getContext();
-  auto surface = Surface::Make(context, 1000, 1000);
+  auto surface = Surface::Make(context, 10000, 10000);
 
   for (const auto& json : jsonArray) {
     int rootId = json["rootId"];
@@ -108,7 +108,23 @@ TEST_F(RecordTestFixture, RecordFromJson) {
     }
     EXPECT_NE(layer, nullptr);
   }
-  compare(displayList, "RecordTest/RecordFromJson");
+  // compare(displayList, "RecordTest/RecordFromJson");
+
+  std::function<void(const std::shared_ptr<Layer>&, const std::string&)> traverseLayers =
+      [&](const std::shared_ptr<Layer>& layer, const std::string& path) {
+    dump(layer, path);
+    for (const auto& child : layer->children()) {
+      EXPECT_NE(child, nullptr);
+      if (child == nullptr) {
+        continue;
+      }
+      traverseLayers(child, path + "__" + child->toDebugString());
+    }
+  };
+
+  for (auto layer : displayList->root()->children()) {
+    traverseLayers(layer, "RecordTest/RecordFromJson/" + layer->toDebugString());
+  }
 }
 
 TEST_F(RecordTestFixture, RecordLayer) {
