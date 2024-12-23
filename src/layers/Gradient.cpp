@@ -17,41 +17,52 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "tgfx/layers/Gradient.h"
+#include "record/ShapeStyleRecorder.h"
 #include "tgfx/layers/Layer.h"
 
 namespace tgfx {
 std::shared_ptr<LinearGradient> Gradient::MakeLinear(const Point& startPoint,
                                                      const Point& endPoint) {
-  return std::shared_ptr<LinearGradient>(new LinearGradient(startPoint, endPoint));
+  auto linearGradient = std::shared_ptr<LinearGradient>(new LinearGradient(startPoint, endPoint));
+  ShapeStyleRecorder::MakeLinear(linearGradient.get(), startPoint, endPoint);
+  return linearGradient;
 }
 
 std::shared_ptr<RadialGradient> Gradient::MakeRadial(const Point& center, float radius) {
-  return std::shared_ptr<RadialGradient>(new RadialGradient(center, radius));
+  auto radialGradient = std::shared_ptr<RadialGradient>(new RadialGradient(center, radius));
+  ShapeStyleRecorder::MakeRadial(radialGradient.get(), center, radius);
+  return radialGradient;
 }
 
 std::shared_ptr<ConicGradient> Gradient::MakeConic(const Point& center, float startAngle,
                                                    float endAngle) {
-  return std::shared_ptr<ConicGradient>(new ConicGradient(center, startAngle, endAngle));
+  auto conicGradient = std::shared_ptr<ConicGradient>(new ConicGradient(center, startAngle, endAngle));
+  ShapeStyleRecorder::MakeConic(conicGradient.get(), center, startAngle, endAngle);
+  return conicGradient;
 }
 
 void Gradient::setColors(std::vector<Color> colors) {
   _colors = std::move(colors);
   invalidate();
+  ShapeStyleRecorder::setColors(this, colors);
 }
 
 void Gradient::setPositions(std::vector<float> positions) {
   _positions = std::move(positions);
   invalidate();
+  ShapeStyleRecorder::setPositions(this, positions);
 }
 
 void LinearGradient::setEndPoint(const Point& endPoint) {
   _endPoint = endPoint;
   invalidate();
+  ShapeStyleRecorder::setEndPoint(this, endPoint);
 }
 
 void LinearGradient::setStartPoint(const Point& startPoint) {
   _startPoint = startPoint;
   invalidate();
+  ShapeStyleRecorder::setStartPoint(this, startPoint);
 }
 
 std::shared_ptr<Shader> LinearGradient::getShader() const {
@@ -61,11 +72,13 @@ std::shared_ptr<Shader> LinearGradient::getShader() const {
 void RadialGradient::setCenter(const Point& center) {
   _center = center;
   invalidate();
+  ShapeStyleRecorder::setCenter(this, center);
 }
 
 void RadialGradient::setRadius(float radius) {
   _radius = radius;
   invalidate();
+  ShapeStyleRecorder::setRadius(this, radius);
 }
 
 std::shared_ptr<Shader> RadialGradient::getShader() const {
@@ -75,16 +88,19 @@ std::shared_ptr<Shader> RadialGradient::getShader() const {
 void ConicGradient::setStartAngle(float startAngle) {
   _startAngle = startAngle;
   invalidate();
+  ShapeStyleRecorder::setStartAngle(this, startAngle);
 }
 
 void ConicGradient::setCenter(const Point& center) {
   _center = center;
   invalidate();
+  ShapeStyleRecorder::setCenter(this, center);
 }
 
 void ConicGradient::setEndAngle(float endAngle) {
   _endAngle = endAngle;
   invalidate();
+  ShapeStyleRecorder::setEndAngle(this, endAngle);
 }
 
 std::shared_ptr<Shader> ConicGradient::getShader() const {
