@@ -35,7 +35,7 @@
 #if ENABLE_METHOD_LOGGING
 #define SHORT_FILE (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #define LOG_METHOD(message) \
-  std::cout << "[ffjiefan]" << SHORT_FILE << "::" << __FUNCTION__ << ": " << message << std::endl
+  std::cout << "[ffjiefan][" << SHORT_FILE << "] " << __FUNCTION__ << " calld. " << message << std::endl
 #else
 #define LOG_METHOD(message)
 #define LOG_METHOD_STATIC(type, message)
@@ -254,7 +254,7 @@ bool Layer::addChildAt(std::shared_ptr<Layer> child, int index) {
   if (!child) {
     return false;
   }
-  LOG_METHOD(TypeToString() + " ; child is " + child->TypeToString());
+  LOG_METHOD(TypeToString() + ", child is " + child->TypeToString());
   if (child.get() == this) {
     LOGE("addChildAt() The child is the same as the parent.");
     return false;
