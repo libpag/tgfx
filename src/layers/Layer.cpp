@@ -20,7 +20,10 @@
 #include <atomic>
 #include <iostream>
 #include "core/images/PictureImage.h"
+
+#define ENABLE_METHOD_LOGGING 1
 #include "core/utils/Log.h"
+
 #include "core/utils/MathExtra.h"
 #include "core/utils/Profiling.h"
 #include "layers/DrawArgs.h"
@@ -28,18 +31,6 @@
 #include "layers/record/LayerRecorder.h"
 #include "tgfx/core/Recorder.h"
 #include "tgfx/core/Surface.h"
-
-// 添加日志宏定义
-#define ENABLE_METHOD_LOGGING 1
-
-#if ENABLE_METHOD_LOGGING
-#define SHORT_FILE (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
-#define LOG_METHOD(message) \
-  std::cout << "[ffjiefan][" << SHORT_FILE << "] " << __FUNCTION__ << " calld. " << message << std::endl
-#else
-#define LOG_METHOD(message)
-#define LOG_METHOD_STATIC(type, message)
-#endif
 
 namespace tgfx {
 static std::atomic_bool AllowsEdgeAntialiasing = true;

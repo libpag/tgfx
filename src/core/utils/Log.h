@@ -25,7 +25,6 @@ namespace tgfx {
 
 
 
-#define ENABLE_METHOD_LOGGING 0
 
 #if ENABLE_METHOD_LOGGING
 #define SHORT_FILE (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
