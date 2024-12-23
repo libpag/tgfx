@@ -45,13 +45,14 @@ Path ShapeLayer::path() const {
 }
 
 void ShapeLayer::setPath(Path path) {
+  std::cout << "[ffjiefan] ShapeLayer::setPath called with path" << std::endl;
   Path oldPath = {};
   if (_shape && _shape->isSimplePath(&oldPath) && oldPath == path) {
     return;
   }
+  ShapeLayerRecorder::setPath(this, path);
   _shape = Shape::MakeFrom(std::move(path));
   invalidateContent();
-  ShapeLayerRecorder::setPath(this, path);
 }
 
 void ShapeLayer::setShape(std::shared_ptr<Shape> value) {
@@ -59,9 +60,9 @@ void ShapeLayer::setShape(std::shared_ptr<Shape> value) {
     return;
   }
   std::cout << "[ffjiefan] ShapeLayer::setShape called with shape type is " << value->typeToString() << std::endl;
+  ShapeLayerRecorder::setShape(this, value);
   _shape = std::move(value);
   invalidateContent();
-  ShapeLayerRecorder::setShape(this, _shape);
 }
 
 void ShapeLayer::setFillStyle(std::shared_ptr<ShapeStyle> style) {

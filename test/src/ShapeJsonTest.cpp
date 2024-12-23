@@ -92,6 +92,7 @@ TEST_F(ShapeJsonTestFixture, PathShapeJson) {
   auto md5 = clearAndDraw(pathShape, "ShapeJsonTest/PathShapeJson1");
 
   std::string pathJson = pathShape->toJson();
+  std::cout << "pathJson: " << pathJson << std::endl;
   auto parsedPathShape = Shape::FromJson(pathJson);
   ASSERT_NE(parsedPathShape, nullptr);
   ASSERT_EQ(parsedPathShape->type(), Shape::Type::Path);
