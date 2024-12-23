@@ -312,7 +312,7 @@ TEST_F(RecordTestFixture, RecordShapeLayer) {
   shapeLayer->setLineJoin(LineJoin::Miter);
 
   Path shapePath;
-  shapePath.addRect(Rect::MakeLTRB(0.0f, 0.0f, 100.0f, 100.0f));
+  shapePath.addRect(Rect::MakeLTRB(0.0f, 0.0f, 100.0f, 200.0f));
   shapeLayer->setPath(shapePath);
 
   auto fillStyle = SolidColor::Make();
@@ -346,7 +346,7 @@ TEST_F(RecordTestFixture, RecordShapeLayer) {
   auto solidColor = std::static_pointer_cast<SolidColor>(castedReplayLayer->fillStyle());
   EXPECT_EQ(solidColor->color(), Color::FromRGBA(255, 0, 255, 0));
 
-  auto newMd5 = dump(shapeLayer, "RecordTest/RecordShapeLayer2");
+  auto newMd5 = dump(castedReplayLayer, "RecordTest/RecordShapeLayer2");
 
   EXPECT_EQ(md5, newMd5);
   // ...更多属性断言...
