@@ -17,6 +17,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "tgfx/layers/TextLayer.h"
+#include <tgfx/layers/record/Recorder.h>
+#include "command/TextLayerCmd.h"
 #include "core/utils/Log.h"
 #include "core/utils/Profiling.h"
 #include "layers/contents/TextContent.h"
@@ -41,6 +43,7 @@ std::shared_ptr<TextLayer> TextLayer::Make() {
   TRACE_EVENT;
   auto layer = std::shared_ptr<TextLayer>(new TextLayer());
   layer->weakThis = layer;
+  Recorder::Record(std::make_unique<CmdMakeTextLayer>(layer->_uuid));
   return layer;
 }
 

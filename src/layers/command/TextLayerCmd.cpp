@@ -16,29 +16,36 @@
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-#pragma once
-#include <map>
-#include <string>
-#include "Recordable.h"
+#include "TextLayerCmd.h"
+#include <tgfx/layers/TextLayer.h>
+#include <iostream>
 
 namespace tgfx {
 
-struct Command;
+std::unique_ptr<Command> TextLayerCmdFactory::MakeFrom(const nlohmann::json& json) {
 
-class Recorder {
- public:
-  static void Replay(std::string jsonStr, std::map<int, std::shared_ptr<Recordable>>& objMap);
-  static std::string FlushCommands();
+  int type = json.at("type").get<int>();
+  int id = json.at("id").get<int>();  // 提取 _id
+  if (type == TextLayerCommandType::MakeTextLayer) {
+    return std::make_unique<CmdMakeTextLayer>(id);
+  }
+  return nullptr;
+}
 
- private:
-  static void Record(std::unique_ptr<Command> command);
-  static void Remove(int uuid);
-  static std::vector<std::unique_ptr<Command>> commands_;
 
-  friend class LayerRecorder;
-  friend class ShapeLayerRecorder;
-  friend class SolidLayerRecorder;
-  friend class ShapeStyleRecorder;
-  friend class TextLayer;
-};
+void CmdMakeTextLayer::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
+  objMap[_id] = TextLayer::Make();
+}
+
+nlohmann::json CmdMakeTextLayer::toJson() const {
+  return {{"type", static_cast<int>(getType())}, {"id", _id}};
+}
+
+bool CmdMakeTextLayer::doMerge(const Command& other) {
+  // 通常不可能多次创建同一个对象（相同id和type），记录异常
+  std::cerr << "异常: CmdMakeSolidLayer::doMerge, id = " << _id << std::endl;
+  // 返回true，避免重复创建
+  return true;
+}
+
 }  // namespace tgfx

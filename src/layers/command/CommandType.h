@@ -18,7 +18,7 @@
 
 #pragma once
 
-#define DEFINE_COMMAND_TYPE(name) static constexpr  int name = __COUNTER__;
+#define DEFINE_COMMAND_TYPE(name) static constexpr int name = __COUNTER__;
 
 namespace LayerCommandType {
 
@@ -78,3 +78,7 @@ DEFINE_COMMAND_TYPE(setRadiusX);
 DEFINE_COMMAND_TYPE(setRadiusY);
 DEFINE_COMMAND_TYPE(setColor);
 }  // namespace SolidLayerCommandType
+
+namespace TextLayerCommandType {
+DEFINE_COMMAND_TYPE(MakeTextLayer);
+}  // namespace TextLayerCommandType

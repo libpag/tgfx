@@ -20,6 +20,7 @@
 #include <math.h>
 #include <tgfx/layers/DisplayList.h>
 #include <tgfx/layers/ImageLayer.h>
+#include <tgfx/layers/TextLayer.h>
 #include <tgfx/layers/record/Recorder.h>
 #include <nlohmann/json.hpp>
 #include <vector>
@@ -451,5 +452,61 @@ TEST_F(RecordTestFixture, RecordImageLayer) {
 
   // ...更多属性断言...
 }
+
+TEST_F(RecordTestFixture, RecordTextLayer) {
+    auto textLayer = TextLayer::Make();
+    textLayer->setAlpha(0.85f);
+    textLayer->setBlendMode(BlendMode::SrcOver);
+    textLayer->setPosition(Point{200.0f, 300.0f});
+    textLayer->setMatrix(Matrix::MakeScale(1.2f, 1.2f));
+    textLayer->setRasterizationScale(1.0f);
+    textLayer->setVisible(true);
+    textLayer->setName("TestTextLayer");
+    
+    textLayer->setText("Hello, tgfx!");
+    textLayer->setTextColor(Color::FromRGBA(0, 0, 0, 255));
+    Font font;
+    font.setSize(24);
+    textLayer->setFont(font);
+    textLayer->setWidth(500.0f);
+    textLayer->setHeight(100.0f);
+    textLayer->setTextAlign(TextAlign::Center);
+    textLayer->setAutoWrap(true);
+    
+    EXPECT_EQ(Recorder::commands_.size(), static_cast<size_t>(4));
+    
+    auto jsonStr = Recorder::FlushCommands();
+    std::cout << jsonStr << std::endl;
+    int textUuid = textLayer->_uuid;
+    
+    std::map<int, std::shared_ptr<Recordable>> objMap;
+    Recorder::Replay(jsonStr, objMap);
+    auto replayLayer = objMap[textUuid];
+    auto castedReplayLayer = std::static_pointer_cast<TextLayer>(replayLayer);
+    EXPECT_NE(castedReplayLayer, nullptr);
+    EXPECT_FLOAT_EQ(castedReplayLayer->alpha(), 0.85f);
+    EXPECT_EQ(castedReplayLayer->blendMode(), BlendMode::SrcOver);
+    EXPECT_EQ(castedReplayLayer->position().x, 200.0f);
+    EXPECT_EQ(castedReplayLayer->position().y, 300.0f);
+    EXPECT_EQ(castedReplayLayer->matrix(), Matrix::MakeScale(1.2f, 1.2f));
+    EXPECT_FLOAT_EQ(castedReplayLayer->rasterizationScale(), 1.0f);
+    EXPECT_TRUE(castedReplayLayer->visible());
+    EXPECT_EQ(castedReplayLayer->name(), "TestTextLayer");
+    
+    // 验证 TextLayer 的文本属性
+    EXPECT_EQ(castedReplayLayer->text(), "Hello, tgfx!");
+    EXPECT_EQ(castedReplayLayer->textColor(), Color::FromRGBA(0, 0, 0, 255));
+    // EXPECT_EQ(castedReplayLayer->font().size(), 24);
+    EXPECT_FLOAT_EQ(castedReplayLayer->width(), 500.0f);
+    EXPECT_FLOAT_EQ(castedReplayLayer->height(), 100.0f);
+    EXPECT_EQ(castedReplayLayer->textAlign(), TextAlign::Center);
+    EXPECT_TRUE(castedReplayLayer->autoWrap());
+    
+    // 如果有更多属性，可以继续添加相应的断言
+}
+
+// TODO 添加 TextLayer 的测试用例
+
+
 
 }  // namespace tgfx

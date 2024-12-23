@@ -22,6 +22,7 @@
 #include "ShapeLayerCmd.h"
 #include "ShapeStyleCmd.h"
 #include "SolidLayerCmd.h"
+#include "TextLayerCmd.h"
 #include "tgfx/core/Color.h"
 
 namespace tgfx {
@@ -52,10 +53,16 @@ std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
     return command;
   }
 
+  command = TextLayerCmdFactory::MakeFrom(json);
+  if (command != nullptr) {
+    return command;
+  }
+
   command = ShapeStyleCmdFactory::MakeFrom(json);
   if (command != nullptr) {
     return command;
   }
+
   std::cerr << "不支持的命令, json is " << json.dump() << std::endl;
   return nullptr;
 }

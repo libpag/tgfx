@@ -18,14 +18,10 @@
 
 #pragma once
 
-#include <tgfx/core/Path.h>
-#include <tgfx/core/Shape.h>
-#include <tgfx/layers/ShapeLayer.h>
 #include <tgfx/layers/record/Recordable.h>
 #include <nlohmann/json.hpp>
-#include "Commands.h"
 #include "CommandType.h"
-
+#include "Commands.h"
 
 namespace tgfx {
 

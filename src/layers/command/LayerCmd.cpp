@@ -573,18 +573,18 @@ bool CmdAddChildAt::doMerge(const Command& other) {
 // ---------------- CmdRemoveChildAt ----------------
 
 void CmdRemoveChildAt::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
-  // auto it = objMap.find(_id);
-  // if (it == objMap.end()) {
-  //   std::cerr << "异常: CmdRemoveChildAt::execute, objMap[" << _id << "] 未找到。" << std::endl;
-  //   return;
-  // }
-  // if (!it->second) {
-  //   std::cerr << "异常: CmdRemoveChildAt::execute, objMap[" << _id << "] 是空指针。" << std::endl;
-  //   return;
-  // }
-  // auto layer = std::static_pointer_cast<Layer>(it->second);
-  // std::cout << "CmdRemoveChildAt: Layer Type: " << layer->TypeToString() << std::endl;
-  // layer->removeChildAt(_index);
+  auto it = objMap.find(_id);
+  if (it == objMap.end()) {
+    std::cerr << "异常: CmdRemoveChildAt::execute, objMap[" << _id << "] 未找到。" << std::endl;
+    return;
+  }
+  if (!it->second) {
+    std::cerr << "异常: CmdRemoveChildAt::execute, objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  auto layer = std::static_pointer_cast<Layer>(it->second);
+  std::cout << "CmdRemoveChildAt: Layer Type: " << layer->TypeToString() << std::endl;
+  layer->removeChildAt(_index);
 }
 
 nlohmann::json CmdRemoveChildAt::toJson() const {
@@ -598,18 +598,18 @@ bool CmdRemoveChildAt::doMerge(const Command& other) {
 // ---------------- CmdRemoveChildren ----------------
 
 void CmdRemoveChildren::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
-  // auto it = objMap.find(_id);
-  // if (it == objMap.end()) {
-  //   std::cerr << "异常: CmdRemoveChildren::execute, objMap[" << _id << "] 未找到。" << std::endl;
-  //   return;
-  // }
-  // if (!it->second) {
-  //   std::cerr << "异常: CmdRemoveChildren::execute, objMap[" << _id << "] 是空指针。" << std::endl;
-  //   return;
-  // }
-  // auto layer = std::static_pointer_cast<Layer>(it->second);
-  // std::cout << "CmdRemoveChildren: Layer Type: " << layer->TypeToString() << std::endl;
-  // layer->removeChildren(_beginIndex, _endIndex);
+  auto it = objMap.find(_id);
+  if (it == objMap.end()) {
+    std::cerr << "异常: CmdRemoveChildren::execute, objMap[" << _id << "] 未找到。" << std::endl;
+    return;
+  }
+  if (!it->second) {
+    std::cerr << "异常: CmdRemoveChildren::execute, objMap[" << _id << "] 是空指针。" << std::endl;
+    return;
+  }
+  auto layer = std::static_pointer_cast<Layer>(it->second);
+  std::cout << "CmdRemoveChildren: Layer Type: " << layer->TypeToString() << std::endl;
+  layer->removeChildren(_beginIndex, _endIndex);
 }
 
 nlohmann::json CmdRemoveChildren::toJson() const {

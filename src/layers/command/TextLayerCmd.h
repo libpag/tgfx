@@ -17,28 +17,32 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-#include <map>
-#include <string>
-#include "Recordable.h"
+
+#include <tgfx/layers/record/Recordable.h>
+#include <nlohmann/json.hpp>
+#include "CommandType.h"
+#include "Commands.h"
 
 namespace tgfx {
 
-struct Command;
-
-class Recorder {
+class TextLayerCmdFactory {
  public:
-  static void Replay(std::string jsonStr, std::map<int, std::shared_ptr<Recordable>>& objMap);
-  static std::string FlushCommands();
-
- private:
-  static void Record(std::unique_ptr<Command> command);
-  static void Remove(int uuid);
-  static std::vector<std::unique_ptr<Command>> commands_;
-
-  friend class LayerRecorder;
-  friend class ShapeLayerRecorder;
-  friend class SolidLayerRecorder;
-  friend class ShapeStyleRecorder;
-  friend class TextLayer;
+  static std::unique_ptr<Command> MakeFrom(const nlohmann::json& json);
 };
+
+struct CmdMakeTextLayer : Command {
+  explicit CmdMakeTextLayer(const int id) : Command(id) {
+  }
+
+  int getType() const override {
+    return TextLayerCommandType::MakeTextLayer;
+  }
+
+  void execute(std::map<int, std::shared_ptr<Recordable>>& objMap) override;
+
+  nlohmann::json toJson() const override;
+
+  bool doMerge(const Command& other) override;
+};
+
 }  // namespace tgfx
