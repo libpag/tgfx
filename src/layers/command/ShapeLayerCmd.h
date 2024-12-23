@@ -80,7 +80,7 @@ struct CmdSetShape : Command {
 struct CmdSetFillStyle : Command {
   int _styleId;
 
-  CmdSetFillStyle(int id, int styleId) : Command(id), _styleId(styleId) {
+  CmdSetFillStyle(const int id, const int styleId) : Command(id), _styleId(styleId) {
   }
 
   int getType() const override {

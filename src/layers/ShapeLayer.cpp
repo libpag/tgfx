@@ -24,6 +24,10 @@
 #include "tgfx/core/PathEffect.h"
 #include "tgfx/core/PathMeasure.h"
 
+#define ENABLE_METHOD_LOGGING 1
+#include "core/utils/Log.h"
+
+
 namespace tgfx {
 std::shared_ptr<ShapeLayer> ShapeLayer::Make() {
   TRACE_EVENT;
@@ -45,11 +49,11 @@ Path ShapeLayer::path() const {
 }
 
 void ShapeLayer::setPath(Path path) {
-  std::cout << "[ffjiefan] ShapeLayer::setPath called with path" << std::endl;
   Path oldPath = {};
   if (_shape && _shape->isSimplePath(&oldPath) && oldPath == path) {
     return;
   }
+  LOG_METHOD("");
   ShapeLayerRecorder::setPath(this, path);
   _shape = Shape::MakeFrom(std::move(path));
   invalidateContent();
@@ -59,7 +63,7 @@ void ShapeLayer::setShape(std::shared_ptr<Shape> value) {
   if (_shape == value) {
     return;
   }
-  std::cout << "[ffjiefan] ShapeLayer::setShape called with shape type is " << value->typeToString() << std::endl;
+  LOG_METHOD("");
   ShapeLayerRecorder::setShape(this, value);
   _shape = std::move(value);
   invalidateContent();
@@ -69,58 +73,64 @@ void ShapeLayer::setFillStyle(std::shared_ptr<ShapeStyle> style) {
   if (_fillStyle == style) {
     return;
   }
+  LOG_METHOD("");
+  ShapeLayerRecorder::setFillStyle(this, style);
   detachProperty(_fillStyle.get());
   _fillStyle = std::move(style);
   attachProperty(_fillStyle.get());
   invalidateContent();
-  ShapeLayerRecorder::setFillStyle(this, _fillStyle);
 }
 
 void ShapeLayer::setStrokeStyle(std::shared_ptr<ShapeStyle> style) {
   if (_strokeStyle == style) {
     return;
   }
+  LOG_METHOD("");
+  ShapeLayerRecorder::setStrokeStyle(this, style);
   detachProperty(_strokeStyle.get());
   _strokeStyle = std::move(style);
   attachProperty(_strokeStyle.get());
   invalidateContent();
-  ShapeLayerRecorder::setStrokeStyle(this, _strokeStyle);
 }
 
 void ShapeLayer::setLineCap(LineCap cap) {
   if (stroke.cap == cap) {
     return;
   }
+  LOG_METHOD("");
+  ShapeLayerRecorder::setLineCap(this, cap);
   stroke.cap = cap;
   invalidateContent();
-  ShapeLayerRecorder::setLineCap(this, cap);
 }
 
 void ShapeLayer::setLineJoin(LineJoin join) {
   if (stroke.join == join) {
     return;
   }
+  LOG_METHOD("");
+  ShapeLayerRecorder::setLineJoin(this, join);
   stroke.join = join;
   invalidateContent();
-  ShapeLayerRecorder::setLineJoin(this, join);
 }
 
 void ShapeLayer::setMiterLimit(float limit) {
   if (stroke.miterLimit == limit) {
     return;
   }
+  LOG_METHOD("");
+  ShapeLayerRecorder::setMiterLimit(this, limit);
   stroke.miterLimit = limit;
   invalidateContent();
-  ShapeLayerRecorder::setMiterLimit(this, limit);
 }
 
 void ShapeLayer::setLineWidth(float width) {
   if (stroke.width == width) {
     return;
   }
+  LOG_METHOD("");
+  ShapeLayerRecorder::setLineWidth(this, width);
   stroke.width = width;
   invalidateContent();
-  ShapeLayerRecorder::setLineWidth(this, width);
 }
 
 void ShapeLayer::setLineDashPattern(const std::vector<float>& pattern) {
@@ -128,18 +138,20 @@ void ShapeLayer::setLineDashPattern(const std::vector<float>& pattern) {
       std::equal(_lineDashPattern.begin(), _lineDashPattern.end(), pattern.begin())) {
     return;
   }
+  LOG_METHOD("");
+  ShapeLayerRecorder::setLineDashPattern(this, pattern);
   _lineDashPattern = pattern;
   invalidateContent();
-  ShapeLayerRecorder::setLineDashPattern(this, pattern);
 }
 
 void ShapeLayer::setLineDashPhase(float phase) {
   if (_lineDashPhase == phase) {
     return;
   }
+  LOG_METHOD("");
+  ShapeLayerRecorder::setLineDashPhase(this, phase);
   _lineDashPhase = phase;
   invalidateContent();
-  ShapeLayerRecorder::setLineDashPhase(this, phase);
 }
 
 void ShapeLayer::setStrokeStart(float start) {
@@ -152,9 +164,10 @@ void ShapeLayer::setStrokeStart(float start) {
   if (_strokeStart == start) {
     return;
   }
+  LOG_METHOD("");
+  ShapeLayerRecorder::setStrokeStart(this, start);
   _strokeStart = start;
   invalidateContent();
-  ShapeLayerRecorder::setStrokeStart(this, start);
 }
 
 void ShapeLayer::setStrokeEnd(float end) {
@@ -167,18 +180,20 @@ void ShapeLayer::setStrokeEnd(float end) {
   if (_strokeEnd == end) {
     return;
   }
+  LOG_METHOD("");
+  ShapeLayerRecorder::setStrokeEnd(this, end);
   _strokeEnd = end;
   invalidateContent();
-  ShapeLayerRecorder::setStrokeEnd(this, end);
 }
 
 void ShapeLayer::setStrokeAlign(StrokeAlign align) {
   if (_strokeAlign == align) {
     return;
   }
+  LOG_METHOD("");
+  ShapeLayerRecorder::setStrokeAlign(this, align);
   _strokeAlign = align;
   invalidateContent();
-  ShapeLayerRecorder::setStrokeAlign(this, align);
 }
 
 ShapeLayer::~ShapeLayer() {

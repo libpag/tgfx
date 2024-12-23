@@ -39,13 +39,13 @@ class ShapeLayerRecorder {
   static void setPath(ShapeLayer* layer, Path path);
 
   // 录制设置形状
-  static void setShape(ShapeLayer* layer, std::shared_ptr<Shape> shape);
+  static void setShape(ShapeLayer* layer, const std::shared_ptr<Shape>& shape);
 
   // 录制设置填充样式
-  static void setFillStyle(ShapeLayer* layer, std::shared_ptr<ShapeStyle> style);
+  static void setFillStyle(ShapeLayer* layer, const std::shared_ptr<ShapeStyle> &style);
 
   // 录制设置描边样式
-  static void setStrokeStyle(ShapeLayer* layer, std::shared_ptr<ShapeStyle> style);
+  static void setStrokeStyle(ShapeLayer* layer, const std::shared_ptr<ShapeStyle> &style);
 
   // 录制设置线帽样式
   static void setLineCap(ShapeLayer* layer, LineCap cap);
