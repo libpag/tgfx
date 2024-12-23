@@ -33,6 +33,10 @@ class SolidColor : public ShapeStyle {
    */
   static std::shared_ptr<SolidColor> Make(const Color& color = Color::Black());
 
+  std::string toDebugString() const override{
+    return ShapeStyle::toDebugString() + "SolidColor";
+  }
+
   /**
    * Returns the color of this SolidColor.
    */

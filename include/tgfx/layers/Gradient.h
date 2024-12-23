@@ -51,6 +51,10 @@ class Gradient : public ShapeStyle {
   static std::shared_ptr<ConicGradient> MakeConic(const Point& center, float startAngle,
                                                   float endAngle);
 
+  std::string toDebugString() const override{
+    return ShapeStyle::toDebugString() + "Gradient";
+  }
+
   /**
    * Returns the gradient type. Possible values are GradientType::Linear, GradientType::Radial, and
    * GradientType::Conic.

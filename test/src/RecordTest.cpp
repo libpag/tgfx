@@ -82,6 +82,7 @@ TEST_F(RecordTestFixture, RecordFromJson) {
   std::string jsonPath = ProjectPath::Absolute("test/src/record.json");
   auto jsonData = ReadFile(jsonPath);
   EXPECT_NE(jsonData, nullptr);
+
   auto jsonStr = std::string(reinterpret_cast<const char*>(jsonData->data()), jsonData->size());
   auto jsonArray = nlohmann::json::parse(jsonStr);
 

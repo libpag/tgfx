@@ -17,14 +17,19 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+#include <string>
 
 namespace tgfx {
 
 class Recordable {
  public:
   Recordable();
-
+  virtual ~Recordable() = default;
   int _uuid;
+
+  virtual std::string toDebugString() const {
+    return "uuid: " + std::to_string(_uuid);
+  }
 
  protected:
 

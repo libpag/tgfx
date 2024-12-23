@@ -27,7 +27,6 @@
 #define ENABLE_METHOD_LOGGING 1
 #include "core/utils/Log.h"
 
-
 namespace tgfx {
 std::shared_ptr<ShapeLayer> ShapeLayer::Make() {
   TRACE_EVENT;
@@ -73,7 +72,7 @@ void ShapeLayer::setFillStyle(std::shared_ptr<ShapeStyle> style) {
   if (_fillStyle == style) {
     return;
   }
-  LOG_METHOD("");
+  LOG_METHOD("style is " + style->toDebugString());
   ShapeLayerRecorder::setFillStyle(this, style);
   detachProperty(_fillStyle.get());
   _fillStyle = std::move(style);
@@ -85,7 +84,7 @@ void ShapeLayer::setStrokeStyle(std::shared_ptr<ShapeStyle> style) {
   if (_strokeStyle == style) {
     return;
   }
-  LOG_METHOD("");
+  LOG_METHOD("style is " + style->toDebugString());
   ShapeLayerRecorder::setStrokeStyle(this, style);
   detachProperty(_strokeStyle.get());
   _strokeStyle = std::move(style);

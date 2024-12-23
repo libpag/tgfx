@@ -41,6 +41,10 @@ class ImagePattern : public ShapeStyle {
                                             TileMode tileModeY = TileMode::Clamp,
                                             const SamplingOptions& sampling = {});
 
+  std::string toDebugString() const override{
+    return ShapeStyle::toDebugString() + "_ImagePattern";
+  }
+
  protected:
   std::shared_ptr<Shader> getShader() const override {
     return shader;
