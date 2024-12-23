@@ -718,7 +718,8 @@ bool Path::fromBinary(const std::vector<uint8_t>& data) {
         break;
       // 处理其他操作...
       default:
-        return false;  // 未知命令
+        std::cerr << "Unknown command: " << static_cast<int>(cmd) << std::endl;
+        break;
     }
   }
   return true;
@@ -766,7 +767,7 @@ bool Path::deserialize(const std::vector<uint8_t>& data) {
   return this->fromBinary(serialized.commands);
 }
 
-std::string Path::toJson() const {
+std::string Path::toString() const {
   auto binaryData = this->serialize();
   if (binaryData.empty()) {
     return "";
@@ -782,9 +783,8 @@ std::string Path::toJson() const {
   return hexString;
 }
 
-void Path::fromJson(const std::string& hexString) {
+void Path::fromString(const std::string& hexString) {
   if (hexString.empty()) {
-    // 不添加 data 字段
     return;
   }
   if (hexString.size() % 2 != 0) {
@@ -805,7 +805,6 @@ void Path::fromJson(const std::string& hexString) {
           byte |= (hexString[i + k] - 'a' + 10);
         } else {
           std::cout << "Invalid character: " << hexString[i + k] << std::endl;
-          return; // 无效字符
         }
       }
       binaryData.push_back(byte);

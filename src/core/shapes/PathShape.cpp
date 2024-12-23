@@ -61,7 +61,7 @@ void PathShape::configFromJson(const std::string& jsonStr) {
   // 还原PathShape的属性
   if (json.contains("path")) {
     this->path = Path();
-    this->path.fromJson(json.at("path"));
+    this->path.fromString(json.at("path"));
   }
 }
 
@@ -69,7 +69,7 @@ std::string PathShape::toJson() const {
   // 获取父类的JSON
   nlohmann::json json = nlohmann::json::parse(Shape::toJson());
   // 添加PathShape特有的属性
-  json["path"] = this->path.toJson();
+  json["path"] = this->path.toString();
 
   return json.dump();
 }

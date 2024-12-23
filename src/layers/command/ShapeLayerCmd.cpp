@@ -31,7 +31,7 @@ std::unique_ptr<Command> ShapeLayerCmdFactory::MakeFrom(const nlohmann::json& js
   }
   if (type == ShapeLayerCommandType::setPath) {
     Path path;
-    path.fromJson(json.at("path").dump());
+    path.fromString(json.at("path"));
     return std::make_unique<CmdSetPath>(id, path);
   }
   if (type == ShapeLayerCommandType::setShape) {
@@ -105,7 +105,7 @@ void CmdSetPath::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
 }
 
 nlohmann::json CmdSetPath::toJson() const {
-  return {{"type", static_cast<int>(getType())}, {"id", _id}, {"path", _path.toJson()}};
+  return {{"type", static_cast<int>(getType())}, {"id", _id}, {"path", _path.toString()}};
 }
 
 bool CmdSetPath::doMerge(const Command& other) {

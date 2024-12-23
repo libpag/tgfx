@@ -35,11 +35,11 @@ TEST(PathTest, SerializeDeserialize) {
 
   // -----------------------------------------------------
   // 序列化路径
-  auto jsonStr = originalPath.toJson();
+  auto jsonStr = originalPath.toString();
   std::cout << jsonStr << std::endl;
   // 反序列化到新路径
   Path deserializedPath;
-  deserializedPath.fromJson(jsonStr);
+  deserializedPath.fromString(jsonStr);
 
   // -----------------------------------------------------
   canvas->clearRect(Rect::MakeWH(surface->width(), surface->height()), Color::White());

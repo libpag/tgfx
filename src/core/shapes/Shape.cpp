@@ -180,7 +180,7 @@ std::shared_ptr<Shape> Shape::FromJson(const std::string& jsonStr) {
       break;
     case Type::Path: {
       Path path;
-      path.fromJson(json.at("path").get<std::string>());
+      path.fromString(json.at("path").get<std::string>());
       shape = std::make_shared<PathShape>(path);
       break;
     }

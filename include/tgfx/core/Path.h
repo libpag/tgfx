@@ -328,9 +328,9 @@ class Path {
   std::vector<uint8_t> serialize() const;
   bool deserialize(const std::vector<uint8_t>& data);
 
-  std::string toJson() const;
+  std::string toString() const;
 
-  void fromJson(const std::string& dump);
+  void fromString(const std::string& dump);
 
   // 定义路径操作的枚举
   enum class PathCommand : uint8_t {
