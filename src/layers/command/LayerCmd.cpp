@@ -194,7 +194,6 @@ void CmdSetAlpha::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
-  std::cout << "CmdSetAlpha: Layer Type: " << layer->TypeToString() << std::endl;
   layer->setAlpha(_alpha);
 }
 
@@ -220,7 +219,6 @@ void CmdSetBlendMode::execute(std::map<int, std::shared_ptr<Recordable>>& objMap
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
-  std::cout << "CmdSetBlendMode: Layer Type: " << layer->TypeToString() << std::endl;
   layer->setBlendMode(_blendMode);
 }
 
@@ -248,7 +246,6 @@ void CmdSetPosition::execute(std::map<int, std::shared_ptr<Recordable>>& objMap)
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
-  std::cout << "CmdSetPosition: Layer Type: " << layer->TypeToString() << std::endl;
   layer->setPosition(_position);
 }
 
@@ -333,7 +330,6 @@ void CmdSetShouldRasterize::execute(std::map<int, std::shared_ptr<Recordable>>& 
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
-  std::cout << "CmdSetShouldRasterize: Layer Type: " << layer->TypeToString() << std::endl;
   layer->setShouldRasterize(_shouldRasterize);
 }
 
@@ -363,7 +359,6 @@ void CmdSetRasterizationScale::execute(std::map<int, std::shared_ptr<Recordable>
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
-  std::cout << "CmdSetRasterizationScale: Layer Type: " << layer->TypeToString() << std::endl;
   layer->setRasterizationScale(_scale);
 }
 
@@ -391,7 +386,6 @@ void CmdSetAllowsEdgeAntialiasing::execute(std::map<int, std::shared_ptr<Recorda
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
-  std::cout << "CmdSetAllowsEdgeAntialiasing: Layer Type: " << layer->TypeToString() << std::endl;
   layer->setAllowsEdgeAntialiasing(_allows);
 }
 
@@ -419,7 +413,6 @@ void CmdSetAllowsGroupOpacity::execute(std::map<int, std::shared_ptr<Recordable>
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
-  std::cout << "CmdSetAllowsGroupOpacity: Layer Type: " << layer->TypeToString() << std::endl;
   layer->setAllowsGroupOpacity(_allows);
 }
 
@@ -452,7 +445,6 @@ void CmdSetFilters::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) 
     }
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
-  std::cout << "CmdSetFilters: Layer Type: " << layer->TypeToString() << std::endl;
   layer->setFilters(filters);
 }
 
@@ -487,7 +479,6 @@ void CmdSetMask::execute(std::map<int, std::shared_ptr<Recordable>>& objMap) {
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
-  std::cout << "CmdSetMask: Layer Type: " << layer->TypeToString() << std::endl;
   layer->setMask(std::static_pointer_cast<Layer>(maskIt->second));
 }
 
@@ -583,7 +574,6 @@ void CmdRemoveChildAt::execute(std::map<int, std::shared_ptr<Recordable>>& objMa
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
-  std::cout << "CmdRemoveChildAt: Layer Type: " << layer->TypeToString() << std::endl;
   layer->removeChildAt(_index);
 }
 
@@ -608,7 +598,6 @@ void CmdRemoveChildren::execute(std::map<int, std::shared_ptr<Recordable>>& objM
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
-  std::cout << "CmdRemoveChildren: Layer Type: " << layer->TypeToString() << std::endl;
   layer->removeChildren(_beginIndex, _endIndex);
 }
 
@@ -637,7 +626,6 @@ void CmdRemoveFromParent::execute(std::map<int, std::shared_ptr<Recordable>>& ob
     return;
   }
   auto layer = std::static_pointer_cast<Layer>(it->second);
-  std::cout << "CmdRemoveFromParent: Layer Type: " << layer->TypeToString() << std::endl;
   layer->removeFromParent();
 }
 
@@ -673,9 +661,7 @@ void CmdSetChildIndex::execute(std::map<int, std::shared_ptr<Recordable>>& objMa
     return;
   }
   auto parentLayer = std::static_pointer_cast<Layer>(parentIt->second);
-  std::cout << "CmdSetChildIndex: Parent Layer Type: " << parentLayer->TypeToString() << std::endl;
   auto childLayer = std::static_pointer_cast<Layer>(childIt->second);
-  std::cout << "CmdSetChildIndex: Child Layer Type: " << childLayer->TypeToString() << std::endl;
   parentLayer->setChildIndex(childLayer, _index);
 }
 
@@ -725,11 +711,8 @@ void CmdReplaceChild::execute(std::map<int, std::shared_ptr<Recordable>>& objMap
     return;
   }
   auto parentLayer = std::static_pointer_cast<Layer>(parentIt->second);
-  std::cout << "CmdReplaceChild: Parent Layer Type: " << parentLayer->TypeToString() << std::endl;
   auto oldChildLayer = std::static_pointer_cast<Layer>(oldChildIt->second);
-  std::cout << "CmdReplaceChild: Old Child Layer Type: " << oldChildLayer->TypeToString() << std::endl;
   auto newChildLayer = std::static_pointer_cast<Layer>(newChildIt->second);
-  std::cout << "CmdReplaceChild: New Child Layer Type: " << newChildLayer->TypeToString() << std::endl;
   parentLayer->replaceChild(oldChildLayer, newChildLayer);
 }
 
