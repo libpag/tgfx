@@ -102,8 +102,8 @@ TEST_F(RecordTestFixture, RecordFromJson) {
 
   for (const auto& json : jsonArray) {
     int rootId = json["rootId"];
-    std::string commands = json["commands"];
-    Recorder::Replay(commands, objMap);
+    nlohmann::json commands = json["commands"];
+    Recorder::Replay(commands.dump(), objMap);
 
     if (layer == nullptr) {
       if (auto it = objMap.find(rootId); it != objMap.end()) {
