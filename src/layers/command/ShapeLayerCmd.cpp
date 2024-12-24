@@ -141,7 +141,8 @@ void CmdSetFillStyle::execute(std::map<int, std::shared_ptr<Recordable>>& objMap
   }
   auto styleIt = objMap.find(_styleId);
   if (styleIt == objMap.end()) {
-    std::cerr << "异常: CmdSetFillStyle::execute 未找到 styleId = " << _styleId << std::endl;
+    // std::cerr << "异常: CmdSetFillStyle::execute 未找到 styleId = " << _styleId << std::endl;
+    std::static_pointer_cast<ShapeLayer>(it->second)->setFillStyle(nullptr);
     return;
   }
   auto style = std::static_pointer_cast<ShapeStyle>(styleIt->second);
@@ -166,7 +167,8 @@ void CmdSetStrokeStyle::execute(std::map<int, std::shared_ptr<Recordable>>& objM
   }
   auto styleIt = objMap.find(_styleId);
   if (styleIt == objMap.end()) {
-    std::cerr << "异常: CmdSetStrokeStyle::execute 未找到 styleId = " << _styleId << std::endl;
+    // std::cerr << "异常: CmdSetStrokeStyle::execute 未找到 styleId = " << _styleId << std::endl;
+    std::static_pointer_cast<ShapeLayer>(it->second)->setStrokeStyle(nullptr);
     return;
   }
   auto style = std::static_pointer_cast<ShapeStyle>(styleIt->second);
