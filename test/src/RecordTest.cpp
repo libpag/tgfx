@@ -44,10 +44,12 @@ class RecordTestFixture : public ::testing::Test {
  protected:
   std::shared_ptr<GLDevice> device;
   std::shared_ptr<Surface> surface;
+  Context* context;
+
 
   void SetUp() override {
     device = GLDevice::Make();
-    auto context = device->lockContext();
+    context = device->lockContext();
     surface = Surface::Make(context, 1000, 1000);
   }
 
@@ -56,7 +58,9 @@ class RecordTestFixture : public ::testing::Test {
   }
 
   void compare(const std::shared_ptr<DisplayList>& display, const std::string& baselineKey) {
-    display->render(surface.get());
+    if (display->render(surface.get())) {
+      context->flushAndSubmit();
+    }
     std::cout << " baselineKey: " << baselineKey << std::endl;
     EXPECT_TRUE(Baseline::Compare(surface, baselineKey));
   }
@@ -73,7 +77,10 @@ class RecordTestFixture : public ::testing::Test {
 
   std::string dump(const std::shared_ptr<DisplayList>& display,
                    const std::string& key = "test_image") {
-    display->render(surface.get());
+    if (display->render(surface.get())) {
+      context->flushAndSubmit();
+    }
+
 #ifdef GENERATOR_BASELINE_IMAGES
     // 保存图片查看
     Baseline::Compare(surface, key);
@@ -117,20 +124,20 @@ TEST_F(RecordTestFixture, RecordFromJson) {
 
   std::function<void(const std::shared_ptr<Layer>&, const std::string&)> traverseLayers =
       [&](const std::shared_ptr<Layer>& layer, const std::string& path) {
-        dump(layer, path);
+        if (layer->visible() && layer->_alpha > 0 && !layer->maskOwner) {
+          dump(layer, path);
+        }
         for (const auto& child : layer->children()) {
           EXPECT_NE(child, nullptr);
           if (child == nullptr) {
             continue;
           }
-          traverseLayers(child, path + "__" + child->toDebugString());
+          traverseLayers(child, path + "_" + child->toDebugString());
         }
       };
 
-  for (auto child : displayList->root()->children()) {
-    EXPECT_NE(child, nullptr);
-    traverseLayers(child, "RecordTest/RecordFromJson/" + child->toDebugString());
-  }
+  traverseLayers(layer, "RecordTest/RecordFromJson/root");
+
 }
 
 TEST_F(RecordTestFixture, RecordLayer) {
