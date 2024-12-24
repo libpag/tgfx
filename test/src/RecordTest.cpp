@@ -48,7 +48,7 @@ class RecordTestFixture : public ::testing::Test {
   void SetUp() override {
     device = GLDevice::Make();
     auto context = device->lockContext();
-    surface = Surface::Make(context, 400, 400);
+    surface = Surface::Make(context, 1000, 1000);
   }
 
   void TearDown() override {
@@ -113,7 +113,7 @@ TEST_F(RecordTestFixture, RecordFromJson) {
     }
     EXPECT_NE(layer, nullptr);
   }
-  // compare(displayList, "RecordTest/RecordFromJson");
+  compare(displayList, "RecordTest/RecordFromJson_1");
 
   std::function<void(const std::shared_ptr<Layer>&, const std::string&)> traverseLayers =
       [&](const std::shared_ptr<Layer>& layer, const std::string& path) {
