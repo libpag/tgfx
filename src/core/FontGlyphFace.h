@@ -17,7 +17,6 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-#include "tgfx/core/Font.h"
 #include "tgfx/core/GlyphFace.h"
 
 namespace tgfx {
@@ -27,7 +26,7 @@ class FontGlyphFace final : public GlyphFace {
 
   bool hasOutlines() const override;
 
-  std::shared_ptr<GlyphFace> makeScaled(float scale) override;
+  std::shared_ptr<GlyphFace> makeScaled(float scale) const override;
 
   bool getPath(GlyphID glyphID, Path* path) const override;
 

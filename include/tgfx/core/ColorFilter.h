@@ -65,6 +65,14 @@ class ColorFilter {
    */
   static std::shared_ptr<ColorFilter> Matrix(const std::array<float, 20>& rowMajor);
 
+  /**
+    * Creates a new ColorFilter that makes translucent colors fully opaque or fully transparent
+    * based on a specified alpha threshold. Colors with alpha values at or below this threshold
+    * will become fully transparent, while colors with alpha values above this threshold will
+    * become fully opaque.
+    */
+  static std::shared_ptr<ColorFilter> AlphaThreshold(float threshold);
+
   virtual ~ColorFilter() = default;
 
   /**
@@ -83,6 +91,14 @@ class ColorFilter {
     return false;
   }
 
+ protected:
+  enum class Type { Blend, Matrix, AlphaThreshold, Compose };
+
+  /**
+   * Returns the type of this color filter.
+   */
+  virtual Type type() const = 0;
+
  private:
   virtual std::unique_ptr<FragmentProcessor> asFragmentProcessor() const = 0;
 
@@ -90,5 +106,6 @@ class ColorFilter {
   friend class ColorFilterShader;
   friend class ComposeColorFilter;
   friend class ColorImageFilter;
+  friend class ColorFilterCaster;
 };
 }  // namespace tgfx

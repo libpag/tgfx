@@ -27,8 +27,10 @@ namespace tgfx {
  */
 class AppendShape : public Shape {
  public:
-  explicit AppendShape(std::vector<std::shared_ptr<Shape>> shapes) : shapes(std::move(shapes)) {
-  }
+  static std::shared_ptr<Shape> MakeFrom(std::shared_ptr<Shape> first,
+                                         std::shared_ptr<Shape> second);
+
+  bool isInverseFillType() const override;
 
   Rect getBounds(float resolutionScale = 1.0f) const override;
 
@@ -46,6 +48,11 @@ class AppendShape : public Shape {
  private:
   LazyUniqueKey uniqueKey = {};
   std::vector<std::shared_ptr<Shape>> shapes = {};
+
+  static void Append(std::vector<std::shared_ptr<Shape>>* shapes, std::shared_ptr<Shape> shape);
+
+  explicit AppendShape(std::vector<std::shared_ptr<Shape>> shapes) : shapes(std::move(shapes)) {
+  }
 
   friend class Shape;
 };

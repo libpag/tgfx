@@ -19,6 +19,7 @@
 #pragma once
 
 #include <memory>
+#include "tgfx/core/Font.h"
 #include "tgfx/core/Image.h"
 #include "tgfx/core/Path.h"
 #include "tgfx/core/Typeface.h"
@@ -27,13 +28,15 @@ namespace tgfx {
 /**
  * GlyphFace is a render-only font that contains only the necessary information to render glyphs.
  * It can be implemented externally to render glyphs from a custom font or used as a wrapper
- * around a Font object.
+ * around a Font object. GlyphFace is thread-safe and immutable.
  */
 class GlyphFace {
  public:
+  /**
+   * Wraps an existing Font object in a GlyphFace. Returns nullptr if the Font has no typeface.
+   */
   static std::shared_ptr<GlyphFace> Wrap(Font font);
 
-  GlyphFace() = default;
   virtual ~GlyphFace() = default;
 
   /**
@@ -50,7 +53,7 @@ class GlyphFace {
    * Returns a new GlyphFace with the same attributes as this one, but with the glyph size scaled by
    * the specified factor. If the scale is less than or equal to 0, returns nullptr.
    */
-  virtual std::shared_ptr<GlyphFace> makeScaled(float scale) = 0;
+  virtual std::shared_ptr<GlyphFace> makeScaled(float scale) const = 0;
 
   /**
    * Creates a path corresponding to glyph outline. If glyph has an outline, copies outline to path
@@ -71,10 +74,13 @@ class GlyphFace {
   virtual Rect getBounds(GlyphID glyphID) const = 0;
 
   /**
-   * Checks if the GlyphFace is backed by a Font object.
-   * If so, sets the font pointer to the backing Font object and returns true.
-   * Otherwise, returns false and leaves the font pointer unchanged.
+   * Checks if this GlyphFace is backed by a Font object. If it is, sets the font pointer to the
+   * backing Font object and returns true. Otherwise, returns false and leaves the font pointer
+   * unchanged.
    */
   virtual bool asFont(Font* font) const = 0;
+
+ protected:
+  GlyphFace() = default;
 };
 }  // namespace tgfx

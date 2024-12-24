@@ -503,7 +503,7 @@ class Layer : public Recordable {
 
   Paint getLayerPaint(float alpha, BlendMode blendMode);
 
-  std::shared_ptr<ImageFilter> getLayerFilter(float contentScale);
+  std::shared_ptr<Picture> applyFilters(std::shared_ptr<Picture> source, float contentScale);
 
   LayerContent* getRasterizedCache(const DrawArgs& args);
 

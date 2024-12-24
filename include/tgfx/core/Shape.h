@@ -39,7 +39,7 @@ class Shape {
 
   /**
    * Creates a new Shape from the given text blob. Returns nullptr if the text blob is nullptr or
-   * contains a typeface that can't generate a path, such as color emoji typefaces.
+   * contains a typeface that can't generate a path, such as bitmap typefaces.
    */
   static std::shared_ptr<Shape> MakeFrom(std::shared_ptr<TextBlob> textBlob);
 
@@ -49,6 +49,12 @@ class Shape {
    */
   static std::shared_ptr<Shape> Merge(std::shared_ptr<Shape> first, std::shared_ptr<Shape> second,
                                       PathOp pathOp = PathOp::Append);
+
+  /**
+   * Merges multiple Shapes into a new Shape using the PathOp::Append operation. Returns nullptr if
+   * the shape vector is empty.
+   */
+  static std::shared_ptr<Shape> Merge(const std::vector<std::shared_ptr<Shape>>& shapes);
 
   /**
    * Applies the specified stroke to the given Shape. If the stroke is nullptr, the original Shape
@@ -68,6 +74,12 @@ class Shape {
    */
   static std::shared_ptr<Shape> ApplyEffect(std::shared_ptr<Shape> shape,
                                             std::shared_ptr<PathEffect> effect);
+
+  /**
+   * Creates a new Shape by applying the inverse fill type to the given Shape. Returns nullptr if
+   * the shape is nullptr.
+   */
+  static std::shared_ptr<Shape> ApplyInverse(std::shared_ptr<Shape> shape);
 
   virtual ~Shape() = default;
 
@@ -102,6 +114,11 @@ class Shape {
    * the path parameter unchanged.
    */
   virtual bool isSimplePath(Path* path = nullptr) const;
+
+  /**
+   * Returns true if the PathFillType of the computed path is InverseWinding or InverseEvenOdd.
+   */
+  virtual bool isInverseFillType() const;
 
   /**
    * Returns the bounding box of the Shape. The bounds might be larger than the actual shape because
@@ -140,7 +157,7 @@ class Shape {
 
 
  protected:
-  enum class Type { Append, Effect, Glyph, Matrix, Merge, Path, Stroke };
+  enum class Type { Append, Effect, Glyph, Inverse, Matrix, Merge, Path, Stroke };
 
   /**
    * Returns the type of the Shape.
@@ -153,9 +170,7 @@ class Shape {
    */
   virtual UniqueKey getUniqueKey() const = 0;
 
- private:
-  static void Append(std::vector<std::shared_ptr<Shape>>* shapes, std::shared_ptr<Shape> shape);
-
+  friend class AppendShape;
   friend class StrokeShape;
   friend class MatrixShape;
   friend class ShapeDrawOp;

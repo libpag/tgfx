@@ -17,9 +17,26 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "MergeShape.h"
-#include "PathShape.h"
+#include "core/shapes/AppendShape.h"
 
 namespace tgfx {
+std::shared_ptr<Shape> Shape::Merge(std::shared_ptr<Shape> first, std::shared_ptr<Shape> second,
+                                    PathOp pathOp) {
+  if (first == nullptr) {
+    if (second == nullptr) {
+      return nullptr;
+    }
+    return second;
+  }
+  if (second == nullptr) {
+    return first;
+  }
+  if (pathOp == PathOp::Append) {
+    return AppendShape::MakeFrom(std::move(first), std::move(second));
+  }
+  return std::make_shared<MergeShape>(std::move(first), std::move(second), pathOp);
+}
+
 bool MergeShape::isRect(Rect* rect) const {
   if (pathOp != PathOp::Intersect) {
     return false;
@@ -41,20 +58,36 @@ bool MergeShape::isRect(Rect* rect) const {
   return true;
 }
 
+bool MergeShape::isInverseFillType() const {
+  switch (pathOp) {
+    case PathOp::Difference:
+      return first->isInverseFillType() && !second->isInverseFillType();
+    case PathOp::Intersect:
+      return first->isInverseFillType() && second->isInverseFillType();
+    case PathOp::Union:
+      return first->isInverseFillType() || second->isInverseFillType();
+    case PathOp::XOR:
+      return first->isInverseFillType() != second->isInverseFillType();
+    default:
+      return false;
+  }
+}
+
 Rect MergeShape::getBounds(float resolutionScale) const {
-  auto bounds = first->getBounds(resolutionScale);
-  if (pathOp == PathOp::Difference) {
-    return bounds;
-  }
+  auto firstBounds = first->getBounds(resolutionScale);
   auto secondBounds = second->getBounds(resolutionScale);
-  if (pathOp == PathOp::Intersect) {
-    if (!bounds.intersects(secondBounds)) {
-      return Rect::MakeEmpty();
-    }
-    return bounds;
+  switch (pathOp) {
+    case PathOp::Difference:
+      return second->isInverseFillType() ? secondBounds : firstBounds;
+    case PathOp::Intersect:
+      if (first->isInverseFillType() == second->isInverseFillType()) {
+        return firstBounds.intersects(secondBounds) ? firstBounds : Rect::MakeEmpty();
+      }
+      return first->isInverseFillType() ? secondBounds : firstBounds;
+    default:
+      firstBounds.join(secondBounds);
+      return firstBounds;
   }
-  bounds.join(secondBounds);
-  return bounds;
 }
 
 Path MergeShape::getPath(float resolutionScale) const {

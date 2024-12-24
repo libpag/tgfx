@@ -34,9 +34,16 @@ class StrokeShape : public Shape {
 
   bool isRect(Rect* rect = nullptr) const override;
 
+  bool isInverseFillType() const override {
+    return shape->isInverseFillType();
+  }
+
   Rect getBounds(float resolutionScale = 1.0f) const override;
 
   Path getPath(float resolutionScale = 1.0f) const override;
+
+  std::shared_ptr<Shape> shape = nullptr;
+  Stroke stroke = {};
 
   void configFromJson(const std::string& jsonStr) override;
   std::string toJson() const override;
@@ -47,11 +54,5 @@ class StrokeShape : public Shape {
   }
 
   UniqueKey getUniqueKey() const override;
-
- private:
-  std::shared_ptr<Shape> shape = nullptr;
-  Stroke stroke = {};
-
-  friend class Shape;
 };
 }  // namespace tgfx
