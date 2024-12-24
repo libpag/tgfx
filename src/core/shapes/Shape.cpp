@@ -101,6 +101,8 @@ std::shared_ptr<Shape> Shape::FromJson(const std::string& jsonStr) {
       shape = std::make_shared<StrokeShape>(std::move(inShape), stroke);
       break;
     }
+    case Type::Inverse:
+      break;
   }
   // 配置对象属性
   shape->configFromJson(json.dump());
