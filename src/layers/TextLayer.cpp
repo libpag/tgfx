@@ -19,6 +19,7 @@
 #include "tgfx/layers/TextLayer.h"
 #include <tgfx/layers/record/Recorder.h>
 #include "command/TextLayerCmd.h"
+#include "core/FontGlyphFace.h"
 #include "core/utils/Log.h"
 #include "core/utils/Profiling.h"
 #include "layers/contents/TextContent.h"
