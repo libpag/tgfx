@@ -46,11 +46,10 @@ class RecordTestFixture : public ::testing::Test {
   std::shared_ptr<Surface> surface;
   Context* context;
 
-
   void SetUp() override {
     device = GLDevice::Make();
     context = device->lockContext();
-    surface = Surface::Make(context, 1000, 1000);
+    surface = Surface::Make(context, 2000, 2000);
   }
 
   void TearDown() override {
@@ -102,10 +101,6 @@ TEST_F(RecordTestFixture, RecordFromJson) {
   std::shared_ptr<Layer> layer = nullptr;
 
   const std::shared_ptr displayList = std::make_unique<DisplayList>();
-
-  ContextScope scope;
-  auto context = scope.getContext();
-  auto surface = Surface::Make(context, 10000, 10000);
 
   for (const auto& json : jsonArray) {
     int rootId = json["rootId"];
