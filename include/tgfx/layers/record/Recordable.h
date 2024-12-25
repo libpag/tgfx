@@ -17,6 +17,10 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
+#define ENABLE_REMOVE_COMMAND 1
+#define ENABLE_MERGE_COMMAND 1
+
 #include <string>
 
 namespace tgfx {

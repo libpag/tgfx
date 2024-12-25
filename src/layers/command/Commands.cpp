@@ -67,6 +67,9 @@ std::unique_ptr<Command> Command::MakeFrom(const nlohmann::json& json) {
   return nullptr;
 }
 bool Command::merge(const Command& other) {
+#ifndef ENABLE_MERGE_COMMAND
+  return false;
+#endif
   // id 不同，或者 type 不同，不可合并
   if (other._id != _id || other.getType() != getType()) {
     return false;
