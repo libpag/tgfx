@@ -21,9 +21,8 @@
 #include <iostream>
 #include "core/images/PictureImage.h"
 
-#define ENABLE_METHOD_LOGGING 0
+#define ENABLE_METHOD_LOGGING 1
 #include "core/utils/Log.h"
-
 #include "core/utils/MathExtra.h"
 #include "core/utils/Profiling.h"
 #include "layers/DrawArgs.h"
@@ -834,22 +833,31 @@ bool Layer::hasValidMask() const {
 
 // 添加 TypeToString 方法
 std::string Layer::TypeToString() const {
+  std::string typeStr;
   switch (this->type()) {
     case LayerType::Layer:
-      return "Layer";
+      typeStr = "Layer";
+      break;
     case LayerType::Image:
-      return "Image";
+      typeStr = "Image";
+      break;
     case LayerType::Shape:
-      return "Shape";
+      typeStr = "Shape";
+      break;
     case LayerType::Gradient:
-      return "Gradient";
+      typeStr = "Gradient";
+      break;
     case LayerType::Text:
-      return "Text";
+      typeStr = "Text";
+      break;
     case LayerType::Solid:
-      return "Solid";
+      typeStr = "Solid";
+      break;
     default:
-      return "Unknown";
+      typeStr = "Unknown";
+      break;
   }
+  return typeStr + " " + _name;
 }
 
-} // namespace tgfx
+}  // namespace tgfx
