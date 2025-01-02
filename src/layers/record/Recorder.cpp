@@ -22,6 +22,21 @@
 namespace tgfx {
 std::vector<std::unique_ptr<Command>> Recorder::commands_;
 
+std::vector<std::shared_ptr<Command>> Recorder::MakeFrom(std::string jsonStr) {
+
+  std::vector<std::shared_ptr<Command>> commands;
+  // 解析 jsonStr
+  auto json = nlohmann::json::parse(jsonStr);
+  // 遍历命令
+  for (const auto& cmdJson : json) {
+    std::shared_ptr<Command> cmd = Command::MakeFrom(cmdJson);
+    if (cmd) {
+      commands.push_back(cmd);
+    }
+  }
+  return commands;
+}
+
 void Recorder::Replay(std::string jsonStr, std::map<int, std::shared_ptr<Recordable>>& objMap) {
   // 解析 jsonStr
   auto json = nlohmann::json::parse(jsonStr);

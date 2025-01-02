@@ -27,6 +27,7 @@ struct Command;
 
 class Recorder {
  public:
+  static std::vector<std::shared_ptr<Command>> MakeFrom(std::string jsonStr);
   static void Replay(std::string jsonStr, std::map<int, std::shared_ptr<Recordable>>& objMap);
   static std::string FlushCommands();
 
