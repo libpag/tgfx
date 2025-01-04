@@ -24,7 +24,7 @@
 #include "tgfx/core/PathEffect.h"
 #include "tgfx/core/PathMeasure.h"
 
-#define ENABLE_METHOD_LOGGING 0
+#define ENABLE_METHOD_LOGGING 1
 #include "core/utils/Log.h"
 
 namespace tgfx {
@@ -72,7 +72,7 @@ void ShapeLayer::setFillStyle(std::shared_ptr<ShapeStyle> style) {
   if (_fillStyle == style) {
     return;
   }
-  LOG_METHOD("style is " + style->toDebugString());
+  LOG_METHOD("style is " + (style ? style->toDebugString() : "null") + " my id is " + std::to_string(_uuid));
   ShapeLayerRecorder::setFillStyle(this, style);
   detachProperty(_fillStyle.get());
   _fillStyle = std::move(style);
@@ -84,7 +84,7 @@ void ShapeLayer::setStrokeStyle(std::shared_ptr<ShapeStyle> style) {
   if (_strokeStyle == style) {
     return;
   }
-  LOG_METHOD("style is " + style->toDebugString());
+  LOG_METHOD("style is " + (style ? style->toDebugString() : "null") + " my id is " + std::to_string(_uuid));
   ShapeLayerRecorder::setStrokeStyle(this, style);
   detachProperty(_strokeStyle.get());
   _strokeStyle = std::move(style);
