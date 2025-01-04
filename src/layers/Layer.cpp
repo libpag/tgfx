@@ -21,7 +21,7 @@
 #include <iostream>
 #include "core/images/PictureImage.h"
 
-#define ENABLE_METHOD_LOGGING 1
+#define ENABLE_METHOD_LOGGING 0
 #include "core/utils/Log.h"
 #include "core/utils/MathExtra.h"
 #include "core/utils/Profiling.h"

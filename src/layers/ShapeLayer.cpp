@@ -24,7 +24,7 @@
 #include "tgfx/core/PathEffect.h"
 #include "tgfx/core/PathMeasure.h"
 
-#define ENABLE_METHOD_LOGGING 1
+#define ENABLE_METHOD_LOGGING 0
 #include "core/utils/Log.h"
 
 namespace tgfx {
