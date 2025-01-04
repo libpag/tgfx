@@ -27,6 +27,7 @@ namespace tgfx {
 
 class Recordable {
  public:
+  static constexpr int NULLPTR_UUID = -1;
   Recordable();
   virtual ~Recordable() = default;
   int _uuid;
@@ -36,7 +37,6 @@ class Recordable {
   }
 
  protected:
-
   friend class Recorder;
   friend class LayerRecorder;
 };

@@ -30,17 +30,19 @@ void ShapeLayerRecorder::setShape(ShapeLayer* layer, const std::shared_ptr<Shape
   Recorder::Record(std::make_unique<CmdSetShape>(layer->_uuid, shape));
 }
 void ShapeLayerRecorder::setFillStyle(ShapeLayer* layer, const std::shared_ptr<ShapeStyle>& style) {
-  if (style == nullptr) {
-    return;
+  int styleUUid = Recordable::NULLPTR_UUID;
+  if (style != nullptr) {
+    styleUUid = style->_uuid;
   }
-  Recorder::Record(std::make_unique<CmdSetFillStyle>(layer->_uuid, style->_uuid));
+  Recorder::Record(std::make_unique<CmdSetFillStyle>(layer->_uuid, styleUUid));
 }
 void ShapeLayerRecorder::setStrokeStyle(ShapeLayer* layer,
                                         const std::shared_ptr<ShapeStyle>& style) {
-  if (style == nullptr) {
-    return;
+  int styleUUid = Recordable::NULLPTR_UUID;
+  if (style != nullptr) {
+    styleUUid = style->_uuid;
   }
-  Recorder::Record(std::make_unique<CmdSetStrokeStyle>(layer->_uuid, style->_uuid));
+  Recorder::Record(std::make_unique<CmdSetStrokeStyle>(layer->_uuid, styleUUid));
 }
 void ShapeLayerRecorder::setLineCap(ShapeLayer* layer, LineCap cap) {
   Recorder::Record(std::make_unique<CmdSetLineCap>(layer->_uuid, cap));

@@ -139,9 +139,13 @@ void CmdSetFillStyle::execute(std::map<int, std::shared_ptr<Recordable>>& objMap
     std::cerr << "异常: CmdSetFillStyle::execute 未找到 id = " << _id << std::endl;
     return;
   }
+  if (_styleId == Recordable::NULLPTR_UUID) {
+    std::static_pointer_cast<ShapeLayer>(it->second)->setFillStyle(nullptr);
+    return;
+  }
   auto styleIt = objMap.find(_styleId);
   if (styleIt == objMap.end()) {
-    // std::cerr << "异常: CmdSetFillStyle::execute 未找到 styleId = " << _styleId << std::endl;
+    std::cerr << "异常: CmdSetFillStyle::execute 未找到 styleId = " << _styleId << std::endl;
     std::static_pointer_cast<ShapeLayer>(it->second)->setFillStyle(nullptr);
     return;
   }
@@ -165,9 +169,13 @@ void CmdSetStrokeStyle::execute(std::map<int, std::shared_ptr<Recordable>>& objM
     std::cerr << "异常: CmdSetStrokeStyle::execute 未找到 id = " << _id << std::endl;
     return;
   }
+  if (_styleId == Recordable::NULLPTR_UUID) {
+    std::static_pointer_cast<ShapeLayer>(it->second)->setStrokeStyle(nullptr);
+    return;
+  }
   auto styleIt = objMap.find(_styleId);
   if (styleIt == objMap.end()) {
-    // std::cerr << "异常: CmdSetStrokeStyle::execute 未找到 styleId = " << _styleId << std::endl;
+    std::cerr << "异常: CmdSetStrokeStyle::execute 未找到 styleId = " << _styleId << std::endl;
     std::static_pointer_cast<ShapeLayer>(it->second)->setStrokeStyle(nullptr);
     return;
   }
