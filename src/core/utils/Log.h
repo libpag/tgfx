@@ -83,9 +83,8 @@ class FunctionTimer {
 
   ~FunctionTimer() {
     auto endTime = std::chrono::high_resolution_clock::now();
-    auto duration =
-        std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime_).count();
-    LOGI("[ffjiefan][Timer][%s] %s took %lld ms", fileName_, functionName_, duration);
+    volatile auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime_).count() / 1000.0;
+    LOGI("[ffjiefan][Timer][%s] %s took %.2f ms", fileName_, functionName_, duration);
   }
 
  private:
