@@ -27,6 +27,7 @@ namespace tgfx {
 std::vector<std::unique_ptr<Command>> Recorder::commands_;
 
 std::vector<std::shared_ptr<Command>> Recorder::MakeFrom(std::string jsonStr) {
+  auto start = std::chrono::high_resolution_clock::now(); // 开始计时
   LOG_FUNC_TIME();
   std::vector<std::shared_ptr<Command>> commands;
   // 解析 jsonStr
@@ -38,7 +39,10 @@ std::vector<std::shared_ptr<Command>> Recorder::MakeFrom(std::string jsonStr) {
       commands.push_back(cmd);
     }
   }
-  LOG_METHOD("MakeFrom 执行完成，commands count： " + std::to_string(commands.size()));
+  auto end = std::chrono::high_resolution_clock::now(); // 结束计时
+  std::chrono::duration<double, std::micro> duration = end - start;
+  // 加一个手工耗时打印，方便对照LOG_FUNC_TIME宏的结果
+  LOG_METHOD("MakeFrom 执行完成，commands count： " + std::to_string(commands.size()) + "; 耗时：" + std::to_string(duration.count() / 1000.0) + " ms");
   return commands;
 }
 
