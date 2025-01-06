@@ -17,7 +17,6 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define ENABLE_METHOD_LOGGING 1
-#define ENABLE_FUNCTION_TIMING 1
 
 #include <tgfx/layers/record/Recorder.h>
 #include <chrono>

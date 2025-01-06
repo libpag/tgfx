@@ -30,16 +30,13 @@ namespace tgfx {
 #define LOG_METHOD(message)                                                                  \
   std::cout << "[ffjiefan][" << SHORT_FILE << "] " << __FUNCTION__ << " called. " << message \
             << std::endl
+#define LOG_FUNC_TIME() FunctionTimer functionTimer(__FUNCTION__, SHORT_FILE)
 #else
 #define LOG_METHOD(message)
 #define LOG_METHOD_STATIC(type, message)
-#endif
-
-#if ENABLE_FUNCTION_TIMING
-#define LOG_FUNC_TIME() FunctionTimer functionTimer(__FUNCTION__, SHORT_FILE)
-#else
 #define LOG_FUNC_TIME()
 #endif
+
 
 #define ABORT(msg)                                                                \
   do {                                                                            \
