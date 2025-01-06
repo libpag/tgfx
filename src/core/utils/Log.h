@@ -18,20 +18,18 @@
 
 #pragma once
 
-#include <cstdlib>
-#include "tgfx/platform/Print.h"
-#include <iostream>
 #include <chrono>
+#include <cstdlib>
+#include <iostream>
+#include "tgfx/platform/Print.h"
 
 namespace tgfx {
 
-
-
-
 #if ENABLE_METHOD_LOGGING
 #define SHORT_FILE (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
-#define LOG_METHOD(message) \
-std::cout << "[ffjiefan][" << SHORT_FILE << "] " << __FUNCTION__ << " called. " << message << std::endl
+#define LOG_METHOD(message)                                                                  \
+  std::cout << "[ffjiefan][" << SHORT_FILE << "] " << __FUNCTION__ << " called. " << message \
+            << std::endl
 #else
 #define LOG_METHOD(message)
 #define LOG_METHOD_STATIC(type, message)
@@ -77,22 +75,23 @@ std::cout << "[ffjiefan][" << SHORT_FILE << "] " << __FUNCTION__ << " called. " 
 #endif
 
 class FunctionTimer {
-public:
-    FunctionTimer(const char* functionName, const char* fileName)
-        : functionName_(functionName),
-          fileName_(fileName),
-          startTime_(std::chrono::high_resolution_clock::now()) {}
-    
-    ~FunctionTimer() {
-        auto endTime = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime_).count();
-        LOGI("Function %s in %s took %lld ms", functionName_, fileName_, duration);
-    }
+ public:
+  FunctionTimer(const char* functionName, const char* fileName)
+      : functionName_(functionName), fileName_(fileName),
+        startTime_(std::chrono::high_resolution_clock::now()) {
+  }
 
-private:
-    const char* functionName_;
-    const char* fileName_;
-    std::chrono::high_resolution_clock::time_point startTime_;
+  ~FunctionTimer() {
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime_).count();
+    LOGI("[ffjiefan][Timer][%s] %s took %lld ms", fileName_, functionName_, duration);
+  }
+
+ private:
+  const char* functionName_;
+  const char* fileName_;
+  std::chrono::high_resolution_clock::time_point startTime_;
 };
 
 }  // namespace tgfx
