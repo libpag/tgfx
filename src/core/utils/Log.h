@@ -21,6 +21,7 @@
 #include <cstdlib>
 #include "tgfx/platform/Print.h"
 #include <iostream>
+#include <chrono>
 
 namespace tgfx {
 
@@ -36,7 +37,11 @@ std::cout << "[ffjiefan][" << SHORT_FILE << "] " << __FUNCTION__ << " called. " 
 #define LOG_METHOD_STATIC(type, message)
 #endif
 
-
+#if ENABLE_FUNCTION_TIMING
+#define LOG_FUNC_TIME() FunctionTimer functionTimer(__FUNCTION__, SHORT_FILE)
+#else
+#define LOG_FUNC_TIME()
+#endif
 
 #define ABORT(msg)                                                                \
   do {                                                                            \
@@ -70,4 +75,24 @@ std::cout << "[ffjiefan][" << SHORT_FILE << "] " << __FUNCTION__ << " called. " 
 #define DEBUG_ASSERT(assertion)
 
 #endif
+
+class FunctionTimer {
+public:
+    FunctionTimer(const char* functionName, const char* fileName)
+        : functionName_(functionName),
+          fileName_(fileName),
+          startTime_(std::chrono::high_resolution_clock::now()) {}
+    
+    ~FunctionTimer() {
+        auto endTime = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime_).count();
+        LOGI("Function %s in %s took %lld ms", functionName_, fileName_, duration);
+    }
+
+private:
+    const char* functionName_;
+    const char* fileName_;
+    std::chrono::high_resolution_clock::time_point startTime_;
+};
+
 }  // namespace tgfx

@@ -17,6 +17,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define ENABLE_METHOD_LOGGING 1
+#define ENABLE_FUNCTION_TIMING 1
 
 #include <tgfx/layers/record/Recorder.h>
 #include <chrono>
@@ -27,8 +28,8 @@ namespace tgfx {
 std::vector<std::unique_ptr<Command>> Recorder::commands_;
 
 std::vector<std::shared_ptr<Command>> Recorder::MakeFrom(std::string jsonStr) {
+  LOG_FUNC_TIME();
   auto start = std::chrono::high_resolution_clock::now();
-
   std::vector<std::shared_ptr<Command>> commands;
   // 解析 jsonStr
   auto json = nlohmann::json::parse(jsonStr);
@@ -47,8 +48,8 @@ std::vector<std::shared_ptr<Command>> Recorder::MakeFrom(std::string jsonStr) {
 }
 
 void Recorder::Replay(std::string jsonStr, std::map<int, std::shared_ptr<Recordable>>& objMap) {
+  LOG_FUNC_TIME();
   auto start = std::chrono::high_resolution_clock::now();
-
   // 解析 jsonStr
   auto json = nlohmann::json::parse(jsonStr);
   // 遍历命令
