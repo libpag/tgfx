@@ -16,13 +16,18 @@
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
+#define ENABLE_METHOD_LOGGING 1
+
 #include <tgfx/layers/record/Recorder.h>
+#include <chrono>
+#include "core/utils/Log.h"
 #include "layers/command/Commands.h"
 
 namespace tgfx {
 std::vector<std::unique_ptr<Command>> Recorder::commands_;
 
 std::vector<std::shared_ptr<Command>> Recorder::MakeFrom(std::string jsonStr) {
+  auto start = std::chrono::high_resolution_clock::now();
 
   std::vector<std::shared_ptr<Command>> commands;
   // 解析 jsonStr
@@ -34,10 +39,16 @@ std::vector<std::shared_ptr<Command>> Recorder::MakeFrom(std::string jsonStr) {
       commands.push_back(cmd);
     }
   }
+
+  auto end = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+  LOG_METHOD("MakeFrom 执行完成，耗时 " + std::to_string(duration) + " 毫秒。");
   return commands;
 }
 
 void Recorder::Replay(std::string jsonStr, std::map<int, std::shared_ptr<Recordable>>& objMap) {
+  auto start = std::chrono::high_resolution_clock::now();
+
   // 解析 jsonStr
   auto json = nlohmann::json::parse(jsonStr);
   // 遍历命令
@@ -47,9 +58,14 @@ void Recorder::Replay(std::string jsonStr, std::map<int, std::shared_ptr<Recorda
       cmd->execute(objMap);
     }
   }
+
+  auto end = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+  LOG_METHOD("Replay 执行完成，耗时 " + std::to_string(duration) + " 毫秒。");
 }
 
 std::string Recorder::FlushCommands() {
+  auto start = std::chrono::high_resolution_clock::now();
   if (commands_.empty()) {
     return "";
   }
@@ -61,6 +77,10 @@ std::string Recorder::FlushCommands() {
   // 清空 commands_
   commands_.clear();
   // 返回 json 字符串
+
+  auto end = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+  LOG_METHOD("FlushCommands 执行完成，耗时 " + std::to_string(duration) + " 毫秒。");
   return jsonArray.dump();
 }
 
